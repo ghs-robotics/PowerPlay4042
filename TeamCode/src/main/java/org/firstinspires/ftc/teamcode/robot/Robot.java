@@ -11,12 +11,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Robot {
 
-    public DcMotor intakeMotor;
-    public DcMotor shooterMotor;
-    public DcMotor extendingLiftMotor;
 
-    public Servo indexingServo;
-    public Servo liftingServo;
 
     //we should rename these
 

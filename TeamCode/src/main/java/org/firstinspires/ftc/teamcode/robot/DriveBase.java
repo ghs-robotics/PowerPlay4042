@@ -26,10 +26,10 @@ public class DriveBase {
 
     public DriveBase (HardwareMap hardwareMap, Telemetry telemetry){
         this.hardwareMap = hardwareMap;
-        leftFrontDrive = hardwareMap.get(DcMotor.class, "leftFrontDrive");
-        rightFrontDrive = hardwareMap.get(DcMotor.class, "rightFrontDrive");
-        leftRearDrive = hardwareMap.get(DcMotor.class, "leftRearDrive");
-        rightRearDrive = hardwareMap.get(DcMotor.class, "rightRearDrive");
+        leftFrontDrive = hardwareMap.get(DcMotor.class, "LFDrive");
+        rightFrontDrive = hardwareMap.get(DcMotor.class, "RFDrive");
+        leftRearDrive = hardwareMap.get(DcMotor.class, "LRDrive");
+        rightRearDrive = hardwareMap.get(DcMotor.class, "RRDrive");
 
         leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
