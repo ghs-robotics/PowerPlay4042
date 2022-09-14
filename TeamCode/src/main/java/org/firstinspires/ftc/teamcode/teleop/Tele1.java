@@ -9,6 +9,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.robot.Robot;
 
 @TeleOp
 //Want to try using Opmode instead of LinearOp since I heard this is better for TeleOp
@@ -44,6 +45,7 @@ public class Tele1 extends LinearOpMode {
             angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
             //driving
+            Robot.calculateDrivePower(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.right_stick_y);
 
             //////////////////////////////////////////////////////////////////////////////////////////////////
             ////////////////////////////////           Controller 2           ////////////////////////////////
@@ -53,8 +55,9 @@ public class Tele1 extends LinearOpMode {
             /////////////////////////////////           Telemetry           /////////////////////////////////
             /////////////////////////////////////////////////////////////////////////////////////////////////
 
-            telemetry.addData("gamepad2.right_stick_y", gamepad2.right_stick_y);
             telemetry.addData("gamepad2.right_stick_x", gamepad2.right_stick_x);
+            telemetry.addData("gamepad2.right_stick_y", gamepad2.right_stick_y);
+            telemetry.addData("gamepad2.left_stick_x", gamepad2.left_stick_x);
             telemetry.addData("gamepad2.left_stick_y", gamepad2.left_stick_y);
             telemetry.addData("gamepad2.a", gamepad2.a);
             telemetry.addData("gamepad2.y", gamepad2.y);

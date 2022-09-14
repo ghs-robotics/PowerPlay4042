@@ -18,6 +18,9 @@ public class Robot {
     public Servo indexingServo;
     public Servo liftingServo;
 
+    public static void calculateDrivePower(float left_stick_x, float left_stick_y, float right_stick_x, float right_stick_y) {
+    }
+
     //we should rename these
 
 }
