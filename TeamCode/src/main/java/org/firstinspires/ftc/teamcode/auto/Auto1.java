@@ -2,26 +2,27 @@ package org.firstinspires.ftc.teamcode.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.robot.Robot;
-
-@Autonomous
+import org.firstinspires.ftc.teamcode.robot.*;
+@Autonomous(name = "Auto1")
 public class Auto1 extends LinearOpMode {
+    Robot drive = new Robot(hardwareMap, telemetry);
 
-    Robot robot;
-    ElapsedTime runtime = new ElapsedTime();
-
+    /**
+     * This function is executed when this Op Mode is selected from the Driver Station.
+     */
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
 
-        telemetry.addData("Status", "Initialized");
+        // Put initialization blocks here.
         waitForStart();
-        runtime.reset();
-
-
-        telemetry.addData("Timer", runtime.seconds());
-        telemetry.update();
-
+        if (opModeIsActive()) {
+            // Put run blocks here.
+            while (opModeIsActive()) {
+                drive.setDrivePower();
+            }
+        }
     }
 }
