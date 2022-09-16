@@ -9,18 +9,18 @@ public class DriveBase {
     HardwareMap hardwareMap;
     Telemetry telemetry;
 
-    private DcMotor LFDrive;
-    private DcMotor LRDrive;
-    private DcMotor RFDrive;
-    private DcMotor RRDrive;
+    private DcMotor leftFrontDrive;
+    private DcMotor leftRearDrive;
+    private DcMotor rightFrontDrive;
+    private DcMotor rightRearDrive;
 
     public DriveBase(HardwareMap hardwareMap, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
 
-        LFDrive = hardwareMap.get(DcMotor .class,"LFDrive");
-        LRDrive = hardwareMap.get(DcMotor .class,"LRDrive");
-        RFDrive = hardwareMap.get(DcMotor .class,"RFDrive");
-        RRDrive = hardwareMap.get(DcMotor .class,"RRDrive");
+        leftFrontDrive = hardwareMap.get(DcMotor .class,"LFDrive");
+        leftRearDrive = hardwareMap.get(DcMotor .class,"LRDrive");
+        rightFrontDrive = hardwareMap.get(DcMotor .class,"RFDrive");
+        rightRearDrive = hardwareMap.get(DcMotor .class,"RRDrive");
 
     }
     public void calculateDrivePower(double x, double y, double r){
@@ -34,9 +34,9 @@ public class DriveBase {
     }
 
     public void sendDrivePower(double lf, double lr, double rf, double rr){ //reversed to match motor polarity or something
-        LFDrive.setPower(lf);
-        LRDrive.setPower(lr);
-        RFDrive.setPower(rf);
-        RRDrive.setPower(rr);
+        leftFrontDrive.setPower(lf);
+        leftRearDrive.setPower(lr);
+        rightFrontDrive.setPower(rf);
+        rightRearDrive.setPower(rr);
     }
 }
