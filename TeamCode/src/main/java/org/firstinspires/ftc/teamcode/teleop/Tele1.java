@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.robot.Robot;
+
 @TeleOp
 public class Tele1 extends LinearOpMode {
 
@@ -12,6 +14,7 @@ public class Tele1 extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        Robot drive = new Robot(hardwareMap, telemetry);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -28,7 +31,7 @@ public class Tele1 extends LinearOpMode {
             //////////////////////////////////////////////////////////////////////////////////////////////////
 
             //driving
-
+            drive.calculateDrivePower(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
             //////////////////////////////////////////////////////////////////////////////////////////////////
             ////////////////////////////////           Controller 2           ////////////////////////////////
             //////////////////////////////////////////////////////////////////////////////////////////////////

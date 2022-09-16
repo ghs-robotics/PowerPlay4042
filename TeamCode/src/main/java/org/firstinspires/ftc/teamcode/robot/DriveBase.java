@@ -23,11 +23,20 @@ public class DriveBase {
         RRDrive = hardwareMap.get(DcMotor .class,"RRDrive");
 
     }
-    public void setDrivePower(){
-        LFDrive.setPower(1);
-        LRDrive.setPower(1);
-        RFDrive.setPower(-1);
-        RRDrive.setPower(-1);
+    public void calculateDrivePower(double x, double y, double r){
+        r = -r;
+        double lf = r - x + y;
+        double lr = r + x + y;
+        double rf = r - x - y;
+        double rr = r + x - y;
+
+        sendDrivePower(lf, lr, rf, rr);
     }
 
+    public void sendDrivePower(double lf, double lr, double rf, double rr){ //reversed to match motor polarity or something
+        LFDrive.setPower(lf);
+        LRDrive.setPower(lr);
+        RFDrive.setPower(rf);
+        RRDrive.setPower(rr);
+    }
 }
