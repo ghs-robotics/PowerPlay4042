@@ -1,20 +1,30 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.robot.Robot;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 @TeleOp
+//Want to try using Opmode instead of LinearOp since I heard this is better for TeleOp
 public class Tele1 extends LinearOpMode {
 
-    //Robot robot = new Robot(hardwareMap, telemetry);
+    BNO055IMU imu;
+    Orientation angles;
     ElapsedTime runtime = new ElapsedTime();
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Robot drive = new Robot(hardwareMap, telemetry);
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -30,8 +40,11 @@ public class Tele1 extends LinearOpMode {
             ////////////////////////////////           Controller 1           ////////////////////////////////
             //////////////////////////////////////////////////////////////////////////////////////////////////
 
+            //gyro angle setting
+            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
             //driving
-            drive.calculateDrivePower(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
+
             //////////////////////////////////////////////////////////////////////////////////////////////////
             ////////////////////////////////           Controller 2           ////////////////////////////////
             //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -40,11 +53,9 @@ public class Tele1 extends LinearOpMode {
             /////////////////////////////////           Telemetry           /////////////////////////////////
             /////////////////////////////////////////////////////////////////////////////////////////////////
 
-            telemetry.addData("gamepad1.right_stick_x", gamepad1.right_stick_x);
-            telemetry.addData("gamepad1.right_stick_y", gamepad1.right_stick_y);
-            telemetry.addData("gamepad1.left_stick_x", gamepad1.left_stick_x);
-            telemetry.addData("gamepad1.left_stick_y", gamepad1.left_stick_y);
-
+            telemetry.addData("gamepad2.right_stick_y", gamepad2.right_stick_y);
+            telemetry.addData("gamepad2.right_stick_x", gamepad2.right_stick_x);
+            telemetry.addData("gamepad2.left_stick_y", gamepad2.left_stick_y);
             telemetry.addData("gamepad2.a", gamepad2.a);
             telemetry.addData("gamepad2.y", gamepad2.y);
             /*telemetry.addData("z axis", angles.firstAngle);
