@@ -24,6 +24,6 @@ dependencies {
     implementation 'org.firstinspires.ftc:gameAssets-PowerPlay:1.0.0'
 
     //ftc dashboard + road runner
-    implementation 'com.acmerobotics.dashboard:dashboard:0.4.4'
+    implementation 'com.acmerobotics.dashboard:dashboard:0.4.5'
 }
 
