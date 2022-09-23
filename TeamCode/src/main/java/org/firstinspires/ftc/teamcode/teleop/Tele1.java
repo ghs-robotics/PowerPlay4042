@@ -8,6 +8,10 @@ import org.firstinspires.ftc.teamcode.robot.Robot;
 
 @TeleOp
 public class Tele1 extends LinearOpMode {
+    //Input Variables
+    private final float dpadInputScaler = 1;
+
+
     //Robot robot = new Robot(hardwareMap, telemetry);
     ElapsedTime runtime = new ElapsedTime();
 
@@ -65,19 +69,40 @@ public class Tele1 extends LinearOpMode {
             case 0:
                 if ( gamepad1.dpad_right ) axis++;
                 if ( gamepad1.dpad_left ) axis--;
-                if ( axis == 0 ) axis = gamepad1.left_stick_x;
+                if ( axis == 0 ) {
+                    axis = gamepad1.left_stick_x;
+                    if ( axis < 0 ) axis = -LinearBezier( -axis );
+                    else axis = LinearBezier( axis );
+                }
+                else axis *= dpadInputScaler;
                 break;
 
             case 1:
                 if ( gamepad1.dpad_up ) axis++;
                 if ( gamepad1.dpad_down ) axis--;
-                if ( axis == 0 ) axis = gamepad1.left_stick_y;
+                if ( axis == 0 ) {
+                    axis = gamepad1.left_stick_y;
+                    if ( axis < 0 ) axis = -LinearBezier( -axis );
+                    else axis = LinearBezier( axis );
+                }
+                else axis *= dpadInputScaler;
                 break;
 
             case 2:
                 axis = gamepad1.right_stick_x;
+                if ( axis < 0 ) axis = -LinearBezier( -axis );
+                else axis = LinearBezier( axis );
                 break;
         }
         return axis;
+    }
+    private float LinearBezier( float t ){
+        float y1 = 0;
+        float y2 = 0.2f;
+        float y3 = 1;
+
+        float oneMinusT = 1 - t;
+        float by = ( oneMinusT * oneMinusT * y1 ) + ( 2 * oneMinusT * t * y2 ) + ( t * t * y3 );
+        return by;
     }
 }
