@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.odometry.util.Encoder;
 
 public class DriveBase {
     HardwareMap hardwareMap;
@@ -13,6 +14,10 @@ public class DriveBase {
     private DcMotor leftRearDrive;
     private DcMotor rightFrontDrive;
     private DcMotor rightRearDrive;
+
+    private Encoder leftOdo;
+    private Encoder rightOdo;
+    private Encoder backOdo;
 
     public DriveBase(HardwareMap hardwareMap, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
