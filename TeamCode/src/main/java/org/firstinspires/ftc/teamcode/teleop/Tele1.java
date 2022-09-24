@@ -9,7 +9,8 @@ import org.firstinspires.ftc.teamcode.robot.Robot;
 @TeleOp
 public class Tele1 extends LinearOpMode {
     //Input Variables
-    private final float dpadInputScaler = 1;
+    private final float dpadInputScaler = 1; // controls the speed of dpad movement as a percentage of the max speed
+    private final float bezierP2Y = 0.1f; // 0.5 = no effect | 0.0 = max effect
 
 
     //Robot robot = new Robot(hardwareMap, telemetry);
@@ -71,8 +72,8 @@ public class Tele1 extends LinearOpMode {
                 if ( gamepad1.dpad_left ) axis--;
                 if ( axis == 0 ) {
                     axis = gamepad1.left_stick_x;
-                    if ( axis < 0 ) axis = -LinearBezier( -axis );
-                    else axis = LinearBezier( axis );
+                    if ( axis < 0 ) axis = -LinearBezierY( -axis );
+                    else axis = LinearBezierY( axis );
                 }
                 else axis *= dpadInputScaler;
                 break;
@@ -82,27 +83,27 @@ public class Tele1 extends LinearOpMode {
                 if ( gamepad1.dpad_down ) axis--;
                 if ( axis == 0 ) {
                     axis = gamepad1.left_stick_y;
-                    if ( axis < 0 ) axis = -LinearBezier( -axis );
-                    else axis = LinearBezier( axis );
+                    if ( axis < 0 ) axis = -LinearBezierY( -axis );
+                    else axis = LinearBezierY( axis );
                 }
                 else axis *= dpadInputScaler;
                 break;
 
             case 2:
                 axis = gamepad1.right_stick_x;
-                if ( axis < 0 ) axis = -LinearBezier( -axis );
-                else axis = LinearBezier( axis );
+                if ( axis < 0 ) axis = -LinearBezierY( -axis );
+                else axis = LinearBezierY( axis );
                 break;
         }
         return axis;
     }
-    private float LinearBezier( float t ){
+    private float LinearBezierY( float t ){
+        //Uses the Y coordinates of 3 points to solve for the Y coordinate along the linear bezier curve at percentage "t"
         float y1 = 0;
-        float y2 = 0.2f;
+        float y2 = bezierP2Y;
         float y3 = 1;
 
         float oneMinusT = 1 - t;
-        float by = ( oneMinusT * oneMinusT * y1 ) + ( 2 * oneMinusT * t * y2 ) + ( t * t * y3 );
-        return by;
+        return ( oneMinusT * oneMinusT * y1 ) + ( 2 * oneMinusT * t * y2 ) + ( t * t * y3 );
     }
 }
