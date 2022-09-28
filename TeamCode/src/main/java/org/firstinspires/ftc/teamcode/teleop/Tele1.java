@@ -15,8 +15,6 @@ import org.firstinspires.ftc.teamcode.robot.Robot;
 //Want to try using Opmode instead of LinearOp since I heard this is better for TeleOp
 public class Tele1 extends LinearOpMode {
 
-    BNO055IMU imu;
-    Orientation angles;
     Robot robot;
     ElapsedTime runtime = new ElapsedTime();
 
@@ -37,9 +35,6 @@ public class Tele1 extends LinearOpMode {
             //////////////////////////////////////////////////////////////////////////////////////////////////
             ////////////////////////////////           Controller 1           ////////////////////////////////
             //////////////////////////////////////////////////////////////////////////////////////////////////
-
-            //gyro angle setting
-            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
             //driving
             robot.calculateDrivePower(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
