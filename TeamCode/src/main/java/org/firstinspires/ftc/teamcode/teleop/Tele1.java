@@ -71,8 +71,7 @@ public class Tele1 extends LinearOpMode {
                 if ( gamepad1.dpad_right ) axis++;
                 if ( gamepad1.dpad_left ) axis--;
                 if ( axis == 0 ) {
-                    axis = gamepad1.left_stick_x;
-                    axis = LinearBezierY( axis );
+                    axis = LinearBezierY( gamepad1.left_stick_x );
                 }
                 else axis *= dpadInputScaler;
                 break;
@@ -81,8 +80,7 @@ public class Tele1 extends LinearOpMode {
                 if ( gamepad1.dpad_up ) axis++;
                 if ( gamepad1.dpad_down ) axis--;
                 if ( axis == 0 ) {
-                    axis = gamepad1.left_stick_y;
-                    axis = LinearBezierY( axis );
+                    axis = LinearBezierY( gamepad1.left_stick_y );
                 }
                 else axis *= dpadInputScaler;
                 break;
