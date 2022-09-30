@@ -34,10 +34,9 @@ public class Tele1 extends LinearOpMode {
             //////////////////////////////////////////////////////////////////////////////////////////////////
 
             //get input
-            float hInput = /*GetAxis( 0 )*/ gamepad1.left_stick_x;
-            float vInput = /*GetAxis( 1 )*/ gamepad1.left_stick_y;
-            float rInput = /*GetAxis( 2 )*/ gamepad1.right_stick_x;
-            //TODO: Change ^^^ to GetAxis() when you know the gamepad1 input works first
+            float hInput = GetAxis( 0 );
+            float vInput = GetAxis( 1 );
+            float rInput = GetAxis( 2 );
 
             //driving
             drive.calculateDrivePower(hInput, vInput, rInput);
