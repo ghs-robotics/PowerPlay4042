@@ -27,6 +27,12 @@ dependencies {
     implementation 'org.openftc:easyopencv:1.5.2'
 
     //ftc dashboard + road runner
-    implementation 'com.acmerobotics.dashboard:dashboard:0.4.4'
+    implementation 'com.acmerobotics.dashboard:dashboard:0.4.5'
+
+    //roadrunner + dashboard (maybe?)
+    implementation 'org.apache.commons:commons-math3:3.6.1'
+    implementation 'com.acmerobotics.roadrunner:core:0.5.6'
+
+
 }
 
