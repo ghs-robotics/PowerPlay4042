@@ -17,10 +17,10 @@ public class DriveBase {
     public DriveBase(HardwareMap hardwareMap, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
 
-        leftFrontDrive = hardwareMap.get(DcMotor .class,"LFDrive");
-        leftRearDrive = hardwareMap.get(DcMotor .class,"LRDrive");
-        rightFrontDrive = hardwareMap.get(DcMotor .class,"RFDrive");
-        rightRearDrive = hardwareMap.get(DcMotor .class,"RRDrive");
+//        leftFrontDrive = hardwareMap.get(DcMotor .class,"LFDrive");
+//        leftRearDrive = hardwareMap.get(DcMotor .class,"LRDrive");
+//        rightFrontDrive = hardwareMap.get(DcMotor .class,"RFDrive");
+//        rightRearDrive = hardwareMap.get(DcMotor .class,"RRDrive");
 
     }
     public void calculateDrivePower(double x, double y, double r){
