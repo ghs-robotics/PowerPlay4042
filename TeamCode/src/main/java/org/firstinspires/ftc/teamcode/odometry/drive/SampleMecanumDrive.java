@@ -3,22 +3,19 @@ package org.firstinspires.ftc.teamcode.odometry.drive;
 import static org.firstinspires.ftc.teamcode.odometry.drive.DriveConstants.MAX_ACCEL;
 import static org.firstinspires.ftc.teamcode.odometry.drive.DriveConstants.MAX_ANG_ACCEL;
 import static org.firstinspires.ftc.teamcode.odometry.drive.DriveConstants.MAX_ANG_VEL;
-import static org.firstinspires.ftc.teamcode.odometry.drive.DriveConstants.kV;
-import static org.firstinspires.ftc.teamcode.odometry.drive.DriveConstants.kA;
-import static org.firstinspires.ftc.teamcode.odometry.drive.DriveConstants.kStatic;
 import static org.firstinspires.ftc.teamcode.odometry.drive.DriveConstants.MAX_VEL;
-import static org.firstinspires.ftc.teamcode.odometry.drive.DriveConstants.MOTOR_VELO_PID;
 import static org.firstinspires.ftc.teamcode.odometry.drive.DriveConstants.RUN_USING_ENCODER;
 import static org.firstinspires.ftc.teamcode.odometry.drive.DriveConstants.TRACK_WIDTH;
 import static org.firstinspires.ftc.teamcode.odometry.drive.DriveConstants.encoderTicksToInches;
+import static org.firstinspires.ftc.teamcode.odometry.drive.DriveConstants.kA;
+import static org.firstinspires.ftc.teamcode.odometry.drive.DriveConstants.kStatic;
+import static org.firstinspires.ftc.teamcode.odometry.drive.DriveConstants.kV;
 
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.drive.DriveSignal;
 import com.acmerobotics.roadrunner.drive.MecanumDrive;
-import com.acmerobotics.roadrunner.followers.HolonomicPIDVAFollower;
 import com.acmerobotics.roadrunner.followers.TrajectoryFollower;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
@@ -29,16 +26,14 @@ import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
-import org.firstinspires.ftc.teamcode.odometry.trajectorysequence.TrajectorySequenceRunner;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.firstinspires.ftc.teamcode.odometry.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.odometry.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.odometry.trajectorysequence.TrajectorySequenceRunner;
@@ -71,6 +66,72 @@ public class SampleMecanumDrive extends MecanumDrive {
     private List<DcMotorEx> motors;
 
     private VoltageSensor batteryVoltageSensor;
+
+    //region AutonomousMovement -------------------------------------------------------------------------------------------|
+    private final Vector2D ArenaDimensions = new Vector2D( 144, 144 );
+    private final Vector2D TileDimensions = new Vector2D( 24, 24 );
+    private final Vector2D TileNumber =
+            new Vector2D(
+                    ArenaDimensions.getX() / TileDimensions.getX(),
+                    ArenaDimensions.getY() / TileDimensions.getY()
+            );
+
+    private final double StopDistThreshold = 0.1;
+
+    public Vector2D TileCords( Vector2D index, Vector2D percentInTile ) {
+        //index from ( 0, 0 ) to ( 5, 5 )
+        Vector2D bottomLeftCorner = new Vector2D(
+                ( index.getX() * TileDimensions.getX() ) - ( ArenaDimensions.getX() / 2 ),
+                ( index.getY() * TileDimensions.getY() ) - ( ArenaDimensions.getY() / 2 )
+        );
+        Vector2D distInTile = new Vector2D(
+                percentInTile.getX() * TileDimensions.getX(),
+                percentInTile.getY() * TileDimensions.getY()
+        );
+        return new Vector2D(
+                bottomLeftCorner.getX() + distInTile.getX(),
+                bottomLeftCorner.getY() + distInTile.getY()
+        );
+    }
+    public void MoveToPos( Vector2D target ) {
+        Pose2d crntPos = getPoseEstimate();
+        float spd = 1; //Could be modified throughout the function to smoothly stop and start.
+
+        int axesMovedOn = 0;
+        boolean moveOnXAxis = false;
+
+        //Check if X axis of the robot is further from a poll
+        if ( Math.abs( ( Math.abs( crntPos.getX() ) % TileDimensions.getX() ) - ( TileDimensions.getX() / 2 ) ) <
+                Math.abs( ( Math.abs( crntPos.getY() ) % TileDimensions.getY() ) - ( TileDimensions.getY() / 2 ) ) ) {
+            moveOnXAxis = true;
+        }
+
+        while ( axesMovedOn < 2) {
+            crntPos = new Pose2d( 0, 0, 0 );
+
+            if ( moveOnXAxis ) {
+                double dif = target.getX() - crntPos.getX();
+                if ( dif > StopDistThreshold ) {
+                    setWeightedDrivePower( new Pose2d( Math.signum( dif ) * spd, 0, 0 ) );
+                }
+                else {
+                    moveOnXAxis = false;
+                    axesMovedOn++;
+                }
+            }
+            else {
+                double dif = target.getY() - crntPos.getY();
+                if ( dif > StopDistThreshold ) {
+                    setWeightedDrivePower( new Pose2d( 0, Math.signum( dif ) * spd, 0 ) );
+                }
+                else {
+                    moveOnXAxis = true;
+                    axesMovedOn++;
+                }
+            }
+        }
+    }
+    //endregion -----------------------------------------------------------------------------------------------------------|
 
     public SampleMecanumDrive(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
