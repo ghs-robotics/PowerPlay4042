@@ -17,22 +17,23 @@ public class Tele1 extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         Robot robot = new Robot(hardwareMap, telemetry);
 
+
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
         waitForStart();
         runtime.reset();
         while (opModeIsActive()){
-            //reset lift at start
-            double sec = runtime.seconds();
-            boolean release = sec < 3;
 
             //////////////////////////////////////////////////////////////////////////////////////////////////
             ////////////////////////////////           Controller 1           ////////////////////////////////
             //////////////////////////////////////////////////////////////////////////////////////////////////
 
             //driving
-            robot.setWeightedDrivePower(new Pose2d(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x));
+
+            robot.calculateDrivePower(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
+            robot.setWeightedDrivePower(new Pose2d(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x));
+
             //////////////////////////////////////////////////////////////////////////////////////////////////
             ////////////////////////////////           Controller 2           ////////////////////////////////
             //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -41,17 +42,16 @@ public class Tele1 extends LinearOpMode {
             /////////////////////////////////           Telemetry           /////////////////////////////////
             /////////////////////////////////////////////////////////////////////////////////////////////////
 
-            telemetry.addData("gamepad1.right_stick_x", gamepad1.right_stick_x);
-            telemetry.addData("gamepad1.right_stick_y", gamepad1.right_stick_y);
+            Pose2d estimate = robot.getPoseEstimate();
+
+            telemetry.addData("x pos:", estimate.getX());
+            telemetry.addData("y pos:", estimate.getY());
+            telemetry.addData("heading", Math.toDegrees(estimate.getHeading()));
+
             telemetry.addData("gamepad1.left_stick_x", gamepad1.left_stick_x);
             telemetry.addData("gamepad1.left_stick_y", gamepad1.left_stick_y);
+            telemetry.addData("gamepad1.right_stick_x", gamepad1.right_stick_x);
 
-            telemetry.addData("gamepad2.a", gamepad2.a);
-            telemetry.addData("gamepad2.y", gamepad2.y);
-            /*telemetry.addData("z axis", angles.firstAngle);
-            telemetry.addData("y axis", angles.secondAngle);
-            telemetry.addData("x axis", angles.thirdAngle);
-            telemetry.addData("shooter power variable", shooterPower); */
             telemetry.update();
         }
     }
