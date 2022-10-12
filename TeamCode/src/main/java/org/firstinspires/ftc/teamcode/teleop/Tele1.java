@@ -15,7 +15,7 @@ public class Tele1 extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Robot drive = new Robot(hardwareMap, telemetry);
+        Robot robot = new Robot(hardwareMap, telemetry);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -32,8 +32,7 @@ public class Tele1 extends LinearOpMode {
             //////////////////////////////////////////////////////////////////////////////////////////////////
 
             //driving
-            drive.setWeightedDrivePower(
-                    new Pose2d( gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x ) );
+            robot.setWeightedDrivePower(new Pose2d(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x));
             //////////////////////////////////////////////////////////////////////////////////////////////////
             ////////////////////////////////           Controller 2           ////////////////////////////////
             //////////////////////////////////////////////////////////////////////////////////////////////////
