@@ -1,45 +1,28 @@
 package org.firstinspires.ftc.teamcode.robot;
 
-import static org.firstinspires.ftc.teamcode.odometry.drive.DriveConstants.MAX_ACCEL;
-import static org.firstinspires.ftc.teamcode.odometry.drive.DriveConstants.MAX_ANG_ACCEL;
-import static org.firstinspires.ftc.teamcode.odometry.drive.DriveConstants.MAX_ANG_VEL;
-import static org.firstinspires.ftc.teamcode.odometry.drive.DriveConstants.MAX_VEL;
 import static org.firstinspires.ftc.teamcode.odometry.drive.DriveConstants.MOTOR_VELO_PID;
 import static org.firstinspires.ftc.teamcode.odometry.drive.DriveConstants.TRACK_WIDTH;
 import static org.firstinspires.ftc.teamcode.odometry.drive.DriveConstants.encoderTicksToInches;
 import static org.firstinspires.ftc.teamcode.odometry.drive.DriveConstants.kA;
 import static org.firstinspires.ftc.teamcode.odometry.drive.DriveConstants.kStatic;
 import static org.firstinspires.ftc.teamcode.odometry.drive.DriveConstants.kV;
-import static org.firstinspires.ftc.teamcode.odometry.drive.SampleMecanumDrive.getAccelerationConstraint;
-import static org.firstinspires.ftc.teamcode.odometry.drive.SampleMecanumDrive.getVelocityConstraint;
 
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
-import com.acmerobotics.roadrunner.drive.DriveSignal;
 import com.acmerobotics.roadrunner.drive.MecanumDrive;
 import com.acmerobotics.roadrunner.followers.TrajectoryFollower;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
-import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
-import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
-import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.odometry.drive.StandardTrackingWheelLocalizer;
-import org.firstinspires.ftc.teamcode.odometry.trajectorysequence.TrajectorySequenceBuilder;
-import org.firstinspires.ftc.teamcode.odometry.util.Encoder;
-
-
 import org.firstinspires.ftc.teamcode.odometry.trajectorysequence.TrajectorySequenceRunner;
-import org.firstinspires.ftc.teamcode.odometry.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.odometry.util.LynxModuleUtil;
 
 import java.util.ArrayList;
@@ -50,7 +33,6 @@ public class DriveBase extends MecanumDrive {
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
 
     HardwareMap hardwareMap;
-    Telemetry telemetry;
 
     private DcMotorEx leftFrontDrive;
     private DcMotorEx leftRearDrive;
@@ -66,8 +48,6 @@ public class DriveBase extends MecanumDrive {
 
 
     private TrajectorySequenceRunner trajectorySequenceRunner;
-    private static final TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(MAX_VEL, MAX_ANG_VEL, TRACK_WIDTH);
-    public static final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(MAX_ACCEL);
 
     private TrajectoryFollower follower;
 
@@ -141,8 +121,6 @@ public class DriveBase extends MecanumDrive {
 
     public void update() {
         updatePoseEstimate();
-        DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
-        if (signal != null) setDriveSignal(signal);
     }
 
     public void waitForIdle() {
@@ -196,29 +174,5 @@ public class DriveBase extends MecanumDrive {
     @Override
     protected double getRawExternalHeading() {
         return 0;
-    }
-
-    public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
-        return new TrajectoryBuilder(startPose, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
-    }
-
-    public TrajectoryBuilder trajectoryBuilder(Pose2d startPose, boolean reversed) {
-        return new TrajectoryBuilder(startPose, reversed, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
-    }
-
-    public TrajectoryBuilder trajectoryBuilder(Pose2d startPose, double startHeading) {
-        return new TrajectoryBuilder(startPose, startHeading, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
-    }
-
-    public TrajectorySequenceBuilder trajectorySequenceBuilder(Pose2d startPose) {
-        return new TrajectorySequenceBuilder(
-                startPose,
-                VEL_CONSTRAINT, ACCEL_CONSTRAINT,
-                MAX_ANG_VEL, MAX_ANG_ACCEL
-        );
-    }
-
-    public Pose2d getLastError() {
-        return trajectorySequenceRunner.getLastPoseError();
     }
 }

@@ -17,7 +17,6 @@ public class Tele1 extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         Robot robot = new Robot(hardwareMap, telemetry);
 
-
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
