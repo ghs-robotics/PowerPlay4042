@@ -49,8 +49,6 @@ import java.util.List;
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
 
-    pose
-
     public static double LATERAL_MULTIPLIER = 1;
 
     public static double VX_WEIGHT = 1;
