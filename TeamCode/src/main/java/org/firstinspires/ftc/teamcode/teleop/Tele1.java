@@ -30,7 +30,7 @@ public class Tele1 extends LinearOpMode {
 
             //driving
 
-            robot.calculateDrivePower(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
+            //robot.calculateDrivePower(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
             robot.setWeightedDrivePower(new Pose2d(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x));
 
             //////////////////////////////////////////////////////////////////////////////////////////////////
