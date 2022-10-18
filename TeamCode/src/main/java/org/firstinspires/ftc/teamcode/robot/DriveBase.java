@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robot;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Vector;
 
 import androidx.annotation.NonNull;
 
@@ -12,6 +13,7 @@ import com.acmerobotics.roadrunner.drive.MecanumDrive;
 import com.acmerobotics.roadrunner.followers.HolonomicPIDVAFollower;
 import com.acmerobotics.roadrunner.followers.TrajectoryFollower;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
@@ -105,20 +107,17 @@ public class DriveBase extends MecanumDrive {
 
         setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
-
-
     }
 
-    public void calculateDrivePower(double x, double y, double r){
-        r = -r;
-        double lf = r - x + y;
-        double lr = r + x + y;
-        double rf = r - x - y;
-        double rr = r + x - y;
+    public void metaDrivePower(double x, double y, double r){
+        Pose2d estimate = getPoseEstimate();
 
-        setDrivePowers(lf, lr, rf, rr);
+        Vector2d input = new Vector2d(x, y).rotated(-estimate.getHeading());
+
+        setWeightedDrivePower(new Pose2d(input.getX(), input.getY(), r));
     }
 
+    //normal driving
     public void setWeightedDrivePower(Pose2d drivePower) {
         Pose2d vel = drivePower;
 

@@ -45,7 +45,7 @@ public class Tele1 extends LinearOpMode {
 
             //driving
             if (switchDrive)
-                robot.calculateDrivePower(hInput, vInput, rInput);
+                robot.metaDrivePower(hInput, vInput, rInput);
             else
                 robot.setWeightedDrivePower(new Pose2d(-hInput, vInput, rInput));
 
