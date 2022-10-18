@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.robot.Robot;
 public class LocalizationTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        Robot drive = new Robot(hardwareMap, telemetry);
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
 
         waitForStart();

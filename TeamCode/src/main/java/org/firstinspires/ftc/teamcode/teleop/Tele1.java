@@ -17,6 +17,8 @@ public class Tele1 extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         Robot robot = new Robot(hardwareMap, telemetry);
 
+        boolean switchDrive = true;
+
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
@@ -28,10 +30,15 @@ public class Tele1 extends LinearOpMode {
             ////////////////////////////////           Controller 1           ////////////////////////////////
             //////////////////////////////////////////////////////////////////////////////////////////////////
 
-            //driving
+            //switch drive
+            if (gamepad1.a)
+                switchDrive = !switchDrive;
 
-            //robot.calculateDrivePower(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
-            robot.setWeightedDrivePower(new Pose2d(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x));
+            //driving
+            if (switchDrive)
+                robot.calculateDrivePower(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
+            else
+                robot.setWeightedDrivePower(new Pose2d(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x));
 
             //////////////////////////////////////////////////////////////////////////////////////////////////
             ////////////////////////////////           Controller 2           ////////////////////////////////
@@ -46,11 +53,14 @@ public class Tele1 extends LinearOpMode {
             telemetry.addData("x pos:", estimate.getX());
             telemetry.addData("y pos:", estimate.getY());
             telemetry.addData("heading", Math.toDegrees(estimate.getHeading()));
+            telemetry.addData("switch ", switchDrive);
+            telemetry.addLine();
 
             telemetry.addData("gamepad1.left_stick_x", gamepad1.left_stick_x);
             telemetry.addData("gamepad1.left_stick_y", gamepad1.left_stick_y);
             telemetry.addData("gamepad1.right_stick_x", gamepad1.right_stick_x);
 
+            robot.update();
             telemetry.update();
         }
     }
