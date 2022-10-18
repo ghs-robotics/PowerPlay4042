@@ -47,7 +47,7 @@ public class Tele1 extends LinearOpMode {
             //driving
             robot.calculateDrivePower(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
 
-            drive.calculateDrivePower(hInput, vInput, rInput);
+            robot.calculateDrivePower(hInput, vInput, rInput);
             //////////////////////////////////////////////////////////////////////////////////////////////////
             ////////////////////////////////           Controller 2           ////////////////////////////////
             //////////////////////////////////////////////////////////////////////////////////////////////////
