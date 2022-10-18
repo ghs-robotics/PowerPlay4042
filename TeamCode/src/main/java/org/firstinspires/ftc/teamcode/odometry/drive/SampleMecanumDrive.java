@@ -100,14 +100,14 @@ public class SampleMecanumDrive extends MecanumDrive {
         int axesMovedOn = 0;
         boolean moveOnXAxis = false;
 
-        //Check if X axis of the robot is further from a poll
-        if ( Math.abs( ( Math.abs( crntPos.getX() ) % TileDimensions.getX() ) - ( TileDimensions.getX() / 2 ) ) <
+        //Check if Y axis of the robot is further from a poll
+        if ( Math.abs( ( Math.abs( crntPos.getX() ) % TileDimensions.getX() ) - ( TileDimensions.getX() / 2 ) ) >
                 Math.abs( ( Math.abs( crntPos.getY() ) % TileDimensions.getY() ) - ( TileDimensions.getY() / 2 ) ) ) {
             moveOnXAxis = true;
         }
 
         while ( axesMovedOn < 2) {
-            crntPos = new Pose2d( 0, 0, 0 );
+            crntPos = getPoseEstimate();
 
             if ( moveOnXAxis ) {
                 double dif = target.getX() - crntPos.getX();
