@@ -9,6 +9,10 @@ import org.firstinspires.ftc.teamcode.robot.Robot;
 
 @TeleOp
 public class Tele1 extends LinearOpMode {
+    //Input Variables
+    private final float dpadInputScaler = 1; // controls the speed of dpad movement as a percentage of the max speed
+    private final float bezierP2Y = 0.1f; // 0.5 = no effect | 0.0 = max effect
+
 
     //Robot robot = new Robot(hardwareMap, telemetry);
     ElapsedTime runtime = new ElapsedTime();
@@ -30,15 +34,20 @@ public class Tele1 extends LinearOpMode {
             ////////////////////////////////           Controller 1           ////////////////////////////////
             //////////////////////////////////////////////////////////////////////////////////////////////////
 
+            //get input
+            float hInput = GetAxis( 0 );
+            float vInput = GetAxis( 1 );
+            float rInput = GetAxis( 2 );
+
             //switch drive
             if (gamepad1.a)
                 switchDrive = !switchDrive;
 
             //driving
             if (switchDrive)
-                robot.calculateDrivePower(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
+                robot.calculateDrivePower(hInput, vInput, rInput);
             else
-                robot.setWeightedDrivePower(new Pose2d(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x));
+                robot.setWeightedDrivePower(new Pose2d(-hInput, vInput, rInput));
 
             //////////////////////////////////////////////////////////////////////////////////////////////////
             ////////////////////////////////           Controller 2           ////////////////////////////////
@@ -56,12 +65,61 @@ public class Tele1 extends LinearOpMode {
             telemetry.addData("switch ", switchDrive);
             telemetry.addLine();
 
-            telemetry.addData("gamepad1.left_stick_x", gamepad1.left_stick_x);
-            telemetry.addData("gamepad1.left_stick_y", gamepad1.left_stick_y);
-            telemetry.addData("gamepad1.right_stick_x", gamepad1.right_stick_x);
+            telemetry.addData("horizontalInput", hInput);
+            telemetry.addData("verticalInput", vInput);
+            telemetry.addData("rotationInput", rInput);
+
+            //telemetry.addData("gamepad1.left_stick_x", gamepad1.left_stick_x);
+            //telemetry.addData("gamepad1.left_stick_y", gamepad1.left_stick_y);
+            //telemetry.addData("gamepad1.right_stick_x", gamepad1.right_stick_x);
 
             robot.update();
             telemetry.update();
         }
+    }
+    private float GetAxis( int axisType ) {
+        // 0 = horizontal | 1 = vertical | 2 = rotational
+        float axis = 0;
+        switch ( axisType ){
+            case 0:
+                if ( gamepad1.dpad_right ) axis++;
+                if ( gamepad1.dpad_left ) axis--;
+                if ( axis == 0 ) {
+                    axis = LinearBezierY( gamepad1.left_stick_x );
+                }
+                else axis *= dpadInputScaler;
+                break;
+
+            case 1:
+                if ( gamepad1.dpad_up ) axis++;
+                if ( gamepad1.dpad_down ) axis--;
+                if ( axis == 0 ) {
+                    axis = LinearBezierY( gamepad1.left_stick_y );
+                }
+                else axis *= dpadInputScaler;
+                break;
+
+            case 2:
+                axis = gamepad1.right_stick_x;
+                axis = LinearBezierY( axis );
+                break;
+        }
+        return axis;
+    }
+    private float LinearBezierY( float t ){
+        //Uses the Y coordinates of 3 points to solve for the Y coordinate along the linear bezier curve at percentage "t"
+        float negativeValue = 1;
+        if ( t < 0 ) {
+            t *= -1;
+            negativeValue = -1;
+        }
+        if ( t > 1) t = 1;
+
+        float y1 = 0;
+        float y2 = bezierP2Y;
+        float y3 = 1;
+
+        float oneMinusT = 1 - t;
+        return negativeValue * ( ( oneMinusT * oneMinusT * y1 ) + ( 2 * oneMinusT * t * y2 ) + ( t * t * y3 ) );
     }
 }
