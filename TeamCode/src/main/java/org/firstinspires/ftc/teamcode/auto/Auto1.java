@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.vision.AprilTagDetectionPipeline;
+import org.firstinspires.ftc.teamcode.vision.DetectionSystem;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -26,152 +27,37 @@ public class Auto1 extends LinearOpMode {
     public void runOpMode() {
         Robot drive = new Robot(hardwareMap, telemetry);
 
-
-/*==================================================================================================
-////////////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-||||||||||||||||||||||||||||||||||||||||| CAMERA SETUP |||||||||||||||||||||||||||||||||||||||||||||
-\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\////////////////////////////////////////////////////
-==================================================================================================*/
-
-        OpenCvCamera camera;
-        AprilTagDetectionPipeline aprilTagDetectionPipeline;
-
-        // Lens intrinsics
-        // UNITS ARE PIXELS
-        // NOTE: this calibration is for the C920 webcam at 800x448.
-        // You will need to do your own calibration for other configurations!
-        double fx = 578.272;
-        double fy = 578.272;
-        double cx = 402.145;
-        double cy = 221.506;
-        // UNITS ARE METERS
-        double tagsize = 0.166; //This is 30% of original pdf size
-
         //Tag IDs for 3 different park locations
         int LEFT = 11;
         int MIDDLE = 12;
         int RIGHT = 13;
-        AprilTagDetection tagOfInterest = null;
+        AprilTagDetection tag = DetectionSystem.runTagDetection(hardwareMap, telemetry);
 
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam"), cameraMonitorViewId);
-        aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
-
-        camera.setPipeline(aprilTagDetectionPipeline);
-        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-            @Override
-            public void onOpened() {
-                camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-            }
-
-            @Override
-            public void onError(int errorCode) {
-                telemetry.addLine("Error: Camera could not open");
-                telemetry.update();
-            }
-        });
-
-        telemetry.setMsTransmissionInterval(50);
-
-
-/*==================================================================================================
-////////////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-||||||||||||||||||||||||||||||||||||||||| TAG DETECTION ||||||||||||||||||||||||||||||||||||||||||||
-\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\////////////////////////////////////////////////////
-==================================================================================================*/
-
-
-        while (!isStarted() && !isStopRequested()) {
-            ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
-
-            if (currentDetections.size() != 0) {
-                boolean tagFound = false;
-
-                for (AprilTagDetection tag : currentDetections) {
-                    if (tag.id == LEFT || tag.id == MIDDLE || tag.id == RIGHT) {
-                        tagOfInterest = tag;
-                        tagFound = true;
-                        break;
-                    }
-                }
-
-                if (tagFound) {
-                    telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
-                    tagToTelemetry(tagOfInterest);
-                } else {
-                    telemetry.addLine("Don't see tag of interest :(");
-
-                    if (tagOfInterest == null) {
-                        telemetry.addLine("(The tag has never been seen)");
-                    } else {
-                        telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
-                        tagToTelemetry(tagOfInterest);
-                    }
-                }
-
-            } else {
-                telemetry.addLine("Don't see tag of interest :(");
-
-                if (tagOfInterest == null) {
-                    telemetry.addLine("(The tag has never been seen)");
-                } else {
-                    telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
-                    tagToTelemetry(tagOfInterest);
-                }
-
-            }
-
+        if(tag == null || tag.id == LEFT) {
+            //Go to left parking spot
+            telemetry.addLine("Pathing to left parking spot");
             telemetry.update();
-            sleep(20);
-        }
-
-        /*
-         * The START command just came in: now work off the latest snapshot acquired
-         * during the init loop.
-         */
-
-        /* Update the telemetry */
-        if (tagOfInterest != null) {
-            telemetry.addLine("Tag snapshot:\n");
-            tagToTelemetry(tagOfInterest);
+        } else if(tag.id == MIDDLE) {
+            //Go to middle parking spot
+            telemetry.addLine("Pathing to middle parking spot");
             telemetry.update();
         } else {
-            telemetry.addLine("No tag snapshot available, it was never sighted during the init loop :(");
+            //Go to right parking spot
+            telemetry.addLine("Pathing to right parking spot");
             telemetry.update();
         }
 
-        if (tagOfInterest == null || tagOfInterest.id == LEFT ) {
-            //Move to left parking location
-            //TODO: implement moving to location after tag detection
-        } else if (tagOfInterest.id == MIDDLE) {
-            //Move to middle parking location
-            //TODO: implement moving to location after tag detection
-        } else if (tagOfInterest.id == RIGHT) {
-            //Move to right parking location
-            //TODO: implement moving to location after tag detection
-        }
-
-
+        sleep(5000);
 /*==================================================================================================
 ////////////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 ||||||||||||||||||||||||||||||||||||||||| BEGIN OPMODE |||||||||||||||||||||||||||||||||||||||||||||
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\////////////////////////////////////////////////////
 ==================================================================================================*/
 
-        while (opModeIsActive()) {
+        if (opModeIsActive()) {
             sleep(20);
+            //do stuff
         }
     }
 
-    void tagToTelemetry (AprilTagDetection detection)
-    {
-        final double FEET_PER_METER = 3.28084;
-        telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
-        telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x * FEET_PER_METER));
-        telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y * FEET_PER_METER));
-        telemetry.addLine(String.format("Translation Z: %.2f feet", detection.pose.z * FEET_PER_METER));
-        telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", Math.toDegrees(detection.pose.yaw)));
-        telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
-        telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
-    }
 }
