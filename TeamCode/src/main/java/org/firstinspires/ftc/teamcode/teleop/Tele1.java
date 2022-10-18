@@ -5,7 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.robot.Robot;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.firstinspires.ftc.teamcode.odometry.drive.SampleMecanumDrive;
 
 @TeleOp
 public class Tele1 extends LinearOpMode {
@@ -19,7 +20,8 @@ public class Tele1 extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Robot robot = new Robot(hardwareMap, telemetry);
+        //Robot robot = new Robot(hardwareMap, telemetry);
+        SampleMecanumDrive robot = new SampleMecanumDrive( hardwareMap );
 
         boolean switchDrive = true;
 
@@ -39,7 +41,9 @@ public class Tele1 extends LinearOpMode {
             float vInput = GetAxis( 1 );
             float rInput = GetAxis( 2 );
 
-            //switch drive
+            robot.setWeightedDrivePower(new Pose2d(-hInput, vInput, rInput));
+
+            /*//switch drive
             if (gamepad1.a)
                 switchDrive = !switchDrive;
 
@@ -47,11 +51,35 @@ public class Tele1 extends LinearOpMode {
             if (switchDrive)
                 robot.metaDrivePower(hInput, vInput, rInput);
             else
-                robot.setWeightedDrivePower(new Pose2d(-hInput, vInput, rInput));
+                robot.setWeightedDrivePower(new Pose2d(-hInput, vInput, rInput));*/
+
+            robot.setWeightedDrivePower(new Pose2d(-hInput, vInput, rInput));
 
             //////////////////////////////////////////////////////////////////////////////////////////////////
             ////////////////////////////////           Controller 2           ////////////////////////////////
             //////////////////////////////////////////////////////////////////////////////////////////////////
+
+            //Reset Pose2D
+            if ( gamepad2.a ) {
+                robot.setPoseEstimate( new Pose2d( -12, 0, 0) );
+            }
+
+            //MoveTo calls
+            if ( gamepad2.x ) {
+                robot.MoveToPos(
+                    robot.TileCords( new Vector2D( 4, 5 ), new Vector2D( 0.5, 0.5 ) )
+                );
+            }
+            else if ( gamepad2.y ) {
+                robot.MoveToPos(
+                        robot.TileCords( new Vector2D( 2, 1 ), new Vector2D( 0.5, 0.5 ) )
+                );
+            }
+            else if ( gamepad2.b ) {
+                robot.MoveToPos(
+                        robot.TileCords( new Vector2D( 3, 3 ), new Vector2D( 0.5, 0.5 ) )
+                );
+            }
 
             /////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////           Telemetry           /////////////////////////////////
