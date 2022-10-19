@@ -6,37 +6,40 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class DriveBase {
-    HardwareMap hardwareMap;
-    Telemetry telemetry;
 
-    private DcMotor leftFrontDrive;
-    private DcMotor leftRearDrive;
-    private DcMotor rightFrontDrive;
-    private DcMotor rightRearDrive;
+    private DcMotor frontLeftDrive;
+    private DcMotor backLeftDrive;
+    private DcMotor frontRightDrive;
+    private DcMotor backRightDrive;
+
+    private HardwareMap hardwareMap;
+    private Telemetry telemetry;
 
     public DriveBase(HardwareMap hardwareMap, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
+        this.telemetry = telemetry;
 
-//        leftFrontDrive = hardwareMap.get(DcMotor .class,"LFDrive");
-//        leftRearDrive = hardwareMap.get(DcMotor .class,"LRDrive");
-//        rightFrontDrive = hardwareMap.get(DcMotor .class,"RFDrive");
-//        rightRearDrive = hardwareMap.get(DcMotor .class,"RRDrive");
+        frontLeftDrive = hardwareMap.get(DcMotor.class,"FLDrive");
+        backLeftDrive = hardwareMap.get(DcMotor.class,"BLDrive");
+        frontRightDrive = hardwareMap.get(DcMotor.class,"FRDrive");
+        backRightDrive = hardwareMap.get(DcMotor.class,"BRDrive");
 
     }
-    public void calculateDrivePower(double x, double y, double r){
-        r = -r;
-        double lf = r - x + y;
-        double lr = r + x + y;
-        double rf = r - x - y;
-        double rr = r + x - y;
+    public void calculateDrivePower(double x, double y, double rot){
+        rot = -rot;
+        double frontLeft = rot - x + y;
+        double backLeft = rot + x + y;
+        double frontRight = rot - x - y;
+        double backRight = rot + x - y;
 
-        sendDrivePower(lf, lr, rf, rr);
+        sendDrivePower(frontLeft, backLeft, frontRight, backRight);
     }
 
-    public void sendDrivePower(double lf, double lr, double rf, double rr){ //reversed to match motor polarity or something
-        leftFrontDrive.setPower(lf);
-        leftRearDrive.setPower(lr);
-        rightFrontDrive.setPower(rf);
-        rightRearDrive.setPower(rr);
+    public void sendDrivePower(double frontLeft, double backLeft, double frontRight, double backRight){
+        //reversed to match motor polarity or something
+        frontLeftDrive.setPower(frontLeft);
+        backLeftDrive.setPower(backLeft);
+        frontRightDrive.setPower(frontRight);
+        backRightDrive.setPower(backRight);
     }
 }

@@ -4,24 +4,25 @@ import static android.os.SystemClock.sleep;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.vision.AprilTagDetectionPipeline;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera;
 
 import java.util.ArrayList;
 
-import org.firstinspires.ftc.teamcode.robot.*;
+public class Camera {
 
-public class DetectionSystem {
+    private HardwareMap hardwareMap;
+    private Telemetry telemetry;
 
-    public static AprilTagDetection runTagDetection(HardwareMap hardwareMap, Telemetry telemetry) {
+    public Camera(HardwareMap hardwareMap, Telemetry telemetry) {
+        this.hardwareMap = hardwareMap;
+        this.telemetry = telemetry;
+    }
+
+    public AprilTagDetection runTagDetection() {
         OpenCvCamera camera;
         AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
@@ -61,7 +62,7 @@ public class DetectionSystem {
             }
 
             @Override
-            public void onError(int errorCode) {
+             public void onError(int errorCode) {
                 telemetry.addLine("Error: Camera could not open");
                 telemetry.update();
             }
@@ -134,7 +135,7 @@ public class DetectionSystem {
         return tagOfInterest;
     }
 
-    static void tagToTelemetry(AprilTagDetection detection, Telemetry telemetry)
+    private void tagToTelemetry(AprilTagDetection detection, Telemetry telemetry)
     {
         final double FEET_PER_METER = 3.28084;
         telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
