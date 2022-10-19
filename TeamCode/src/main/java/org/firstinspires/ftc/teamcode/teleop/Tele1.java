@@ -14,6 +14,7 @@ public class Tele1 extends LinearOpMode {
     private final float dpadInputScaler = 1; // controls the speed of dpad movement as a percentage of the max speed
     private final float bezierP2Y = 0.1f; // 0.5 = no effect | 0.0 = max effect
 
+    private Vector2D targetPos = new Vector2D( 0, 0 );
 
     //Robot robot = new Robot(hardwareMap, telemetry);
     ElapsedTime runtime = new ElapsedTime();
@@ -66,19 +67,17 @@ public class Tele1 extends LinearOpMode {
 
             //MoveTo calls
             if ( gamepad2.x ) {
-                robot.MoveToPos(
-                    robot.TileCords( new Vector2D( 4, 5 ), new Vector2D( 0.5, 0.5 ) )
-                );
+                targetPos = robot.TileCords( new Vector2D( 4, 5 ), new Vector2D( 0.5, 0.5 ) );
             }
             else if ( gamepad2.y ) {
-                robot.MoveToPos(
-                        robot.TileCords( new Vector2D( 2, 1 ), new Vector2D( 0.5, 0.5 ) )
-                );
+                targetPos = robot.TileCords( new Vector2D( 2, 1 ), new Vector2D( 0.5, 0.5 ) );
             }
             else if ( gamepad2.b ) {
-                robot.MoveToPos(
-                        robot.TileCords( new Vector2D( 3, 3 ), new Vector2D( 0.5, 0.5 ) )
-                );
+                targetPos = robot.TileCords( new Vector2D( 3, 3 ), new Vector2D( 0.5, 0.5 ) );
+            }
+
+            if ( gamepad2.right_bumper ) {
+                robot.MoveToPosLoop( targetPos, robot, telemetry );
             }
 
             /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -86,6 +85,9 @@ public class Tele1 extends LinearOpMode {
             /////////////////////////////////////////////////////////////////////////////////////////////////
 
             Pose2d estimate = robot.getPoseEstimate();
+
+            telemetry.addData("targetPosX:", targetPos.getX() );
+            telemetry.addData("targetPosY:", targetPos.getY() );
 
             telemetry.addData("x pos:", estimate.getX());
             telemetry.addData("y pos:", estimate.getY());

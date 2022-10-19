@@ -1,4 +1,16 @@
 package org.firstinspires.ftc.teamcode.odometry.drive;
+
+import static org.firstinspires.ftc.teamcode.odometry.drive.DriveConstants.MAX_ACCEL;
+import static org.firstinspires.ftc.teamcode.odometry.drive.DriveConstants.MAX_ANG_ACCEL;
+import static org.firstinspires.ftc.teamcode.odometry.drive.DriveConstants.MAX_ANG_VEL;
+import static org.firstinspires.ftc.teamcode.odometry.drive.DriveConstants.MAX_VEL;
+import static org.firstinspires.ftc.teamcode.odometry.drive.DriveConstants.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.teamcode.odometry.drive.DriveConstants.TRACK_WIDTH;
+import static org.firstinspires.ftc.teamcode.odometry.drive.DriveConstants.encoderTicksToInches;
+import static org.firstinspires.ftc.teamcode.odometry.drive.DriveConstants.kA;
+import static org.firstinspires.ftc.teamcode.odometry.drive.DriveConstants.kStatic;
+import static org.firstinspires.ftc.teamcode.odometry.drive.DriveConstants.kV;
+
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -25,25 +37,11 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.odometry.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.odometry.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.odometry.trajectorysequence.TrajectorySequenceRunner;
 import org.firstinspires.ftc.teamcode.odometry.util.LynxModuleUtil;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.firstinspires.ftc.teamcode.odometry.drive.DriveConstants.MAX_ACCEL;
-import static org.firstinspires.ftc.teamcode.odometry.drive.DriveConstants.MAX_ANG_ACCEL;
-import static org.firstinspires.ftc.teamcode.odometry.drive.DriveConstants.MAX_ANG_VEL;
-import static org.firstinspires.ftc.teamcode.odometry.drive.DriveConstants.MAX_VEL;
-import static org.firstinspires.ftc.teamcode.odometry.drive.DriveConstants.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.teamcode.odometry.drive.DriveConstants.TRACK_WIDTH;
-import static org.firstinspires.ftc.teamcode.odometry.drive.DriveConstants.encoderTicksToInches;
-import static org.firstinspires.ftc.teamcode.odometry.drive.DriveConstants.kA;
-import static org.firstinspires.ftc.teamcode.odometry.drive.DriveConstants.kStatic;
-import static org.firstinspires.ftc.teamcode.odometry.drive.DriveConstants.kV;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -102,9 +100,49 @@ public class SampleMecanumDrive extends MecanumDrive {
                 bottomLeftCorner.getY() + distInTile.getY()
         );
     }
-    public void MoveToPos( Vector2D target ) {
+    public boolean GetMoveDir() {
         Pose2d crntPos = getPoseEstimate();
-        float spd = 1; //Could be modified throughout the function to smoothly stop and start.
+
+        //Check if Y axis of the robot is further from a poll
+        if ( Math.abs( ( Math.abs( crntPos.getX() ) % TileDimensions.getX() ) - ( TileDimensions.getX() / 2 ) ) >
+                Math.abs( ( Math.abs( crntPos.getY() ) % TileDimensions.getY() ) - ( TileDimensions.getY() / 2 ) ) ) {
+            return true;
+        }
+        return false;
+    }
+    public boolean MoveToPos( Vector2D target, boolean moveOnXAxis ) {
+        double spd = 0.2; //Could be modified throughout the function to smoothly stop and start.
+
+        int axesMovedOn = 0;
+        boolean changeMoveDir = false;
+
+            Pose2d crntPos = getPoseEstimate();
+
+        if ( moveOnXAxis ) {
+            double dif = target.getX() - crntPos.getX();
+            if ( dif > StopDistThreshold ) {
+                setWeightedDrivePower( new Pose2d( Math.signum( dif ) * spd, 0, 0 ) );
+            }
+            else {
+                moveOnXAxis = false;
+                axesMovedOn++;
+            }
+        }
+        else {
+            double dif = target.getY() - crntPos.getY();
+            if ( dif > StopDistThreshold ) {
+                setWeightedDrivePower( new Pose2d( 0, Math.signum( dif ) * spd, 0 ) );
+            }
+            else {
+                moveOnXAxis = true;
+                axesMovedOn++;
+            }
+        }
+        return false;
+    }
+    public void MoveToPosLoop(Vector2D target, SampleMecanumDrive robot, Telemetry telemetry ) {
+        Pose2d crntPos = getPoseEstimate();
+        double spd = 0.2; //Could be modified throughout the function to smoothly stop and start.
 
         int axesMovedOn = 0;
         boolean moveOnXAxis = false;
@@ -115,12 +153,14 @@ public class SampleMecanumDrive extends MecanumDrive {
             moveOnXAxis = true;
         }
 
-        while ( axesMovedOn < 2) {
+        moveOnXAxis = true;
+
+        while ( axesMovedOn < 2 ) {
             crntPos = getPoseEstimate();
 
             if ( moveOnXAxis ) {
                 double dif = target.getX() - crntPos.getX();
-                if ( dif > StopDistThreshold ) {
+                if ( Math.abs( dif ) > StopDistThreshold ) {
                     setWeightedDrivePower( new Pose2d( Math.signum( dif ) * spd, 0, 0 ) );
                 }
                 else {
@@ -130,14 +170,24 @@ public class SampleMecanumDrive extends MecanumDrive {
             }
             else {
                 double dif = target.getY() - crntPos.getY();
-                if ( dif > StopDistThreshold ) {
-                    setWeightedDrivePower( new Pose2d( 0, Math.signum( dif ) * spd, 0 ) );
+                if ( Math.abs( dif ) > StopDistThreshold ) {
+                    setWeightedDrivePower( new Pose2d( 0, -Math.signum( dif ) * spd, 0 ) );
                 }
                 else {
                     moveOnXAxis = true;
                     axesMovedOn++;
                 }
             }
+
+            Pose2d estimate = robot.getPoseEstimate();
+
+            telemetry.addData("x pos:", estimate.getX());
+            telemetry.addData("y pos:", estimate.getY());
+            telemetry.addData("heading", Math.toDegrees(estimate.getHeading()));
+
+            robot.update();
+            update();
+            telemetry.update();
         }
     }
     //endregion -----------------------------------------------------------------------------------------------------------|
