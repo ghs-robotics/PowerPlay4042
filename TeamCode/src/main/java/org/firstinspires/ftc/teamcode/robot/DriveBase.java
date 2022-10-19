@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
+import com.acmerobotics.roadrunner.drive.DriveSignal;
 import com.acmerobotics.roadrunner.drive.MecanumDrive;
 import com.acmerobotics.roadrunner.followers.HolonomicPIDVAFollower;
 import com.acmerobotics.roadrunner.followers.TrajectoryFollower;
@@ -140,6 +141,8 @@ public class DriveBase extends MecanumDrive {
 
     public void update() {
         updatePoseEstimate();
+        DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
+        if (signal != null) setDriveSignal(signal);
     }
 
     public void waitForIdle() {
@@ -185,14 +188,6 @@ public class DriveBase extends MecanumDrive {
     public void setMotorPowers(double rf, double rr, double lf, double lr) {
         leftFrontDrive.setPower(-lf);
         leftRearDrive.setPower(-lr);
-        rightFrontDrive.setPower(rf);
-        rightRearDrive.setPower(rr);
-    }
-
-    //for calculateDrivePowers
-    public void setDrivePowers(double lf, double lr, double rf, double rr){
-        leftFrontDrive.setPower(lf);
-        leftRearDrive.setPower(lr);
         rightFrontDrive.setPower(rf);
         rightRearDrive.setPower(rr);
     }
