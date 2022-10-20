@@ -83,7 +83,10 @@ public class SampleMecanumDrive extends MecanumDrive {
                     ArenaDimensions.getY() / TileDimensions.getY()
             );
 
-    private final double StopDistThreshold = 0.1;
+    private final double MoveToSpd = 0.4;
+    private final double MoveToSlowDist = 5;
+    private final double MoveToSlowSpd = 0.2;
+    private final double MoveToStopDist = 0.1;
 
     public Vector2D TileCords( Vector2D index, Vector2D percentInTile ) {
         //index from ( 0, 0 ) to ( 5, 5 )
@@ -100,49 +103,9 @@ public class SampleMecanumDrive extends MecanumDrive {
                 bottomLeftCorner.getY() + distInTile.getY()
         );
     }
-    public boolean GetMoveDir() {
-        Pose2d crntPos = getPoseEstimate();
-
-        //Check if Y axis of the robot is further from a poll
-        if ( Math.abs( ( Math.abs( crntPos.getX() ) % TileDimensions.getX() ) - ( TileDimensions.getX() / 2 ) ) >
-                Math.abs( ( Math.abs( crntPos.getY() ) % TileDimensions.getY() ) - ( TileDimensions.getY() / 2 ) ) ) {
-            return true;
-        }
-        return false;
-    }
-    public boolean MoveToPos( Vector2D target, boolean moveOnXAxis ) {
-        double spd = 0.2; //Could be modified throughout the function to smoothly stop and start.
-
-        int axesMovedOn = 0;
-        boolean changeMoveDir = false;
-
-            Pose2d crntPos = getPoseEstimate();
-
-        if ( moveOnXAxis ) {
-            double dif = target.getX() - crntPos.getX();
-            if ( dif > StopDistThreshold ) {
-                setWeightedDrivePower( new Pose2d( Math.signum( dif ) * spd, 0, 0 ) );
-            }
-            else {
-                moveOnXAxis = false;
-                axesMovedOn++;
-            }
-        }
-        else {
-            double dif = target.getY() - crntPos.getY();
-            if ( dif > StopDistThreshold ) {
-                setWeightedDrivePower( new Pose2d( 0, Math.signum( dif ) * spd, 0 ) );
-            }
-            else {
-                moveOnXAxis = true;
-                axesMovedOn++;
-            }
-        }
-        return false;
-    }
     public void MoveToPosLoop(Vector2D target, SampleMecanumDrive robot, Telemetry telemetry ) {
         Pose2d crntPos = getPoseEstimate();
-        double spd = 0.2; //Could be modified throughout the function to smoothly stop and start.
+        double crntSpd = MoveToSpd;
 
         int axesMovedOn = 0;
         boolean moveOnXAxis = false;
@@ -160,21 +123,29 @@ public class SampleMecanumDrive extends MecanumDrive {
 
             if ( moveOnXAxis ) {
                 double dif = target.getX() - crntPos.getX();
-                if ( Math.abs( dif ) > StopDistThreshold ) {
-                    setWeightedDrivePower( new Pose2d( Math.signum( dif ) * spd, 0, 0 ) );
+                double absDif = Math.abs( dif );
+
+                if ( absDif > MoveToStopDist) {
+                    if ( absDif <= MoveToSlowDist ) crntSpd = MoveToSlowSpd;
+                    setWeightedDrivePower( new Pose2d( Math.signum( dif ) * crntSpd, 0, 0 ) );
                 }
                 else {
                     moveOnXAxis = false;
+                    crntSpd = MoveToSpd;
                     axesMovedOn++;
                 }
             }
             else {
                 double dif = target.getY() - crntPos.getY();
-                if ( Math.abs( dif ) > StopDistThreshold ) {
-                    setWeightedDrivePower( new Pose2d( 0, -Math.signum( dif ) * spd, 0 ) );
+                double absDif = Math.abs( dif );
+
+                if ( Math.abs( dif ) > MoveToStopDist) {
+                    if ( absDif <= MoveToSlowDist ) crntSpd = MoveToSlowSpd;
+                    setWeightedDrivePower( new Pose2d( 0, -Math.signum( dif ) * crntSpd, 0 ) );
                 }
                 else {
                     moveOnXAxis = true;
+                    crntSpd = MoveToSpd;
                     axesMovedOn++;
                 }
             }
