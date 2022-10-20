@@ -38,10 +38,10 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.odometry.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.teamcode.odometry.trajectorysequence.TrajectorySequenceBuilder;
-import org.firstinspires.ftc.teamcode.odometry.trajectorysequence.TrajectorySequenceRunner;
-import org.firstinspires.ftc.teamcode.odometry.util.LynxModuleUtil;
+import org.firstinspires.ftc.teamcode.Old.Old.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.Old.Old.trajectorysequence.TrajectorySequenceBuilder;
+import org.firstinspires.ftc.teamcode.Old.Old.trajectorysequence.TrajectorySequenceRunner;
+import org.firstinspires.ftc.teamcode.Old.Old.util.LynxModuleUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
