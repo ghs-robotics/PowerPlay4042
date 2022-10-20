@@ -83,7 +83,7 @@ public class SampleMecanumDrive extends MecanumDrive {
                     ArenaDimensions.getY() / TileDimensions.getY()
             );
 
-    private final double MoveToSpd = 0.4;
+    private final double MoveToSpd = 0.5;
     private final double MoveToSlowDist = 5;
     private final double MoveToSlowSpd = 0.2;
     private final double MoveToStopDist = 0.1;

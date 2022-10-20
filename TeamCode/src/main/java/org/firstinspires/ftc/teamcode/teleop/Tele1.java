@@ -54,7 +54,6 @@ public class Tele1 extends LinearOpMode {
             else
                 robot.setWeightedDrivePower(new Pose2d(-hInput, vInput, rInput));*/
 
-            robot.setWeightedDrivePower(new Pose2d(-hInput, vInput, rInput));
 
             //////////////////////////////////////////////////////////////////////////////////////////////////
             ////////////////////////////////           Controller 2           ////////////////////////////////
@@ -62,7 +61,8 @@ public class Tele1 extends LinearOpMode {
 
             //Reset Pose2D
             if ( gamepad2.a ) {
-                robot.setPoseEstimate( new Pose2d( -12, 0, 0) );
+                Vector2D startPos = robot.TileCords( new Vector2D( 0, 2 ), new Vector2D( 0.5, 1 ) );
+                robot.setPoseEstimate( new Pose2d( startPos.getX(), startPos.getY(), 0) );
             }
 
             //MoveTo calls
@@ -70,10 +70,10 @@ public class Tele1 extends LinearOpMode {
                 targetPos = robot.TileCords( new Vector2D( 4, 5 ), new Vector2D( 0.5, 0.5 ) );
             }
             else if ( gamepad2.y ) {
-                targetPos = robot.TileCords( new Vector2D( 2, 1 ), new Vector2D( 0.5, 0.5 ) );
+                targetPos = robot.TileCords( new Vector2D( 1, 1 ), new Vector2D( 0.5, 0.5 ) );
             }
             else if ( gamepad2.b ) {
-                targetPos = robot.TileCords( new Vector2D( 3, 3 ), new Vector2D( 0.5, 0.5 ) );
+                targetPos = robot.TileCords( new Vector2D( 3, 2 ), new Vector2D( 0.5, 0.5 ) );
             }
 
             if ( gamepad2.right_bumper ) {
