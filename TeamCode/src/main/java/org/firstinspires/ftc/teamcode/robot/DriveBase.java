@@ -87,9 +87,9 @@ public class DriveBase extends MecanumDrive {
         }
 
         leftFrontDrive = hardwareMap.get(DcMotorEx .class,"LFDrive");
-        leftRearDrive = hardwareMap.get(DcMotorEx .class,"LRDrive");
+        leftRearDrive = hardwareMap.get(DcMotorEx .class,"LBDrive");
         rightFrontDrive = hardwareMap.get(DcMotorEx .class,"RFDrive");
-        rightRearDrive = hardwareMap.get(DcMotorEx .class,"RRDrive");
+        rightRearDrive = hardwareMap.get(DcMotorEx .class,"R'[0n gBDrive");
 
         leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftRearDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
