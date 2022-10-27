@@ -22,7 +22,7 @@ public class Auto1 extends LinearOpMode {
         int MIDDLE = 12;
         int RIGHT = 13;
 
-        AprilTagDetection tag = bot.camera.runTagDetection();
+        /*AprilTagDetection tag = bot.camera.runTagDetection();
 
         if(tag == null || tag.id == LEFT) {
             //Go to left parking spot
@@ -38,7 +38,9 @@ public class Auto1 extends LinearOpMode {
             telemetry.update();
         }
 
-        sleep(5000);
+        sleep(5000);*/
+
+        waitForStart();
 /*==================================================================================================
 ////////////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 ||||||||||||||||||||||||||||||||||||||||| BEGIN OPMODE |||||||||||||||||||||||||||||||||||||||||||||
@@ -48,6 +50,13 @@ public class Auto1 extends LinearOpMode {
         if (opModeIsActive()) {
             sleep(20);
             //do stuff
+
+            telemetry.addLine("Starting OpMode");
+            telemetry.update();
+
+//            sleep(3000);
+
+            bot.arm.gripTest();
         }
     }
 

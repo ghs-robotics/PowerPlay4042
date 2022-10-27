@@ -18,7 +18,6 @@ public class Tele1 extends LinearOpMode {
     private final float dpadInputScaler = 1; // controls the speed of dpad movement as a percentage of the max speed
     private final float bezierP2Y = 0.1f; // 0.5 = no effect | 0.0 = max effect
 
-    Robot robot;
     ElapsedTime runtime = new ElapsedTime();
 
     @Override
@@ -45,9 +44,13 @@ public class Tele1 extends LinearOpMode {
             float rInput = GetAxis( 2 );
 
             //driving
-            robot.drive.calculateDrivePower(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
+            bot.drive.calculateDrivePower(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
 
             bot.drive.calculateDrivePower(hInput, vInput, rInput);
+
+            bot.arm.driveArm(gamepad1.right_stick_y);
+
+
             //////////////////////////////////////////////////////////////////////////////////////////////////
             ////////////////////////////////           Controller 2           ////////////////////////////////
             //////////////////////////////////////////////////////////////////////////////////////////////////
