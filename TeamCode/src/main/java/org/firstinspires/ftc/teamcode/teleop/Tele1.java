@@ -39,9 +39,11 @@ public class Tele1 extends LinearOpMode {
             Pose2d input = GetInput();
 
             //driving
-            robot.drive.calculateDrivePower(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
+            //robot.drive.calculateDrivePower(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
 
-            bot.drive.calculateDrivePower(input.getX(), input.getY(), input.getHeading());
+            //bot.drive.calculateDrivePower(input.getX(), input.getY(), input.getHeading());
+
+            bot.smd.setWeightedDrivePower(new Pose2d(-input.getX(), input.getY(), input.getHeading()));
             //////////////////////////////////////////////////////////////////////////////////////////////////
             ////////////////////////////////           Controller 2           ////////////////////////////////
             //////////////////////////////////////////////////////////////////////////////////////////////////
