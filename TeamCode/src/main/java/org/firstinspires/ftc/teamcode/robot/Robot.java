@@ -11,10 +11,12 @@ public class Robot {
     public Telemetry telemetry;
 
     public Camera camera;
-    public DriveBase drive;
+    public DriveBase drive; //Remove drive because smd?
     public Arm arm;
 
     public SampleMecanumDrive smd;
+
+    public AutonomousMovement autoMove;
 
     public Robot(HardwareMap hardwareMap, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
@@ -25,5 +27,7 @@ public class Robot {
         arm = new Arm(hardwareMap, telemetry);
 
         smd = new SampleMecanumDrive(hardwareMap);
+
+        autoMove = new AutonomousMovement();
     }
 }
