@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 
 @TeleOp
@@ -13,6 +14,8 @@ public class Tele1 extends LinearOpMode {
     //Input Variables
     private final float dpadInputScaler = 1; // controls the speed of dpad movement as a percentage of the max speed
     private final float bezierP2Y = 0.1f; // 0.5 = no effect | 0.0 = max effect
+
+    private Vector2D targetPos = new Vector2D(0, 0);
 
     Robot robot;
     ElapsedTime runtime = new ElapsedTime();
@@ -48,9 +51,39 @@ public class Tele1 extends LinearOpMode {
             ////////////////////////////////           Controller 2           ////////////////////////////////
             //////////////////////////////////////////////////////////////////////////////////////////////////
 
+            //Reset Pose2D
+            if ( gamepad2.a ) {
+                Vector2D startPos = bot.autoMove.TileCords( new Vector2D( 0, 2 ), new Vector2D( 0.5, 1 ) );
+                bot.smd.setPoseEstimate( new Pose2d( startPos.getX(), startPos.getY(), 0) );
+            }
+
+            //MoveTo calls
+            if ( gamepad2.x ) {
+                targetPos = bot.autoMove.TileCords( new Vector2D( 4, 5 ), new Vector2D( 0.5, 0.5 ) );
+            }
+            else if ( gamepad2.y ) {
+                targetPos = bot.autoMove.TileCords( new Vector2D( 1, 1 ), new Vector2D( 0.5, 0.5 ) );
+            }
+            else if ( gamepad2.b ) {
+                targetPos = bot.autoMove.TileCords( new Vector2D( 3, 2 ), new Vector2D( 0.5, 0.5 ) );
+            }
+
+            if ( gamepad2.right_bumper ) {
+                bot.autoMove.MoveToPosLoop( targetPos, bot.smd, telemetry );
+            }
+
             /////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////           Telemetry           /////////////////////////////////
             /////////////////////////////////////////////////////////////////////////////////////////////////
+
+            Pose2d estimate = bot.smd.getPoseEstimate();
+
+            telemetry.addData("crntPosX:", estimate.getX());
+            telemetry.addData("crntPosY:", estimate.getY());
+            telemetry.addData("crntPosHeading:", estimate.getHeading());
+
+            telemetry.addData("targetPosX:", targetPos.getX());
+            telemetry.addData("targetPosY:", targetPos.getY());
 
             telemetry.addData("gamepad2.right_stick_y", gamepad2.right_stick_y);
             telemetry.addData("gamepad2.right_stick_x", gamepad2.right_stick_x);

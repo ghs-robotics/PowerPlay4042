@@ -35,8 +35,8 @@ public class AutonomousMovement {
                 bottomLeftCorner.getY() + distInTile.getY()
         );
     }
-    public void MoveToPosLoop(Vector2D target, SampleMecanumDrive bot, Telemetry telemetry ) {
-        Pose2d crntPos = bot.getPoseEstimate();
+    public void MoveToPosLoop(Vector2D target, SampleMecanumDrive smd, Telemetry telemetry ) {
+        Pose2d crntPos = smd.getPoseEstimate();
         double crntSpd = MoveToSpd;
 
         int axesMovedOn = 0;
@@ -51,7 +51,7 @@ public class AutonomousMovement {
         moveOnXAxis = true;
 
         while ( axesMovedOn < 2 ) {
-            crntPos = bot.getPoseEstimate();
+            crntPos = smd.getPoseEstimate();
 
             if ( moveOnXAxis ) {
                 double dif = target.getX() - crntPos.getX();
@@ -59,7 +59,7 @@ public class AutonomousMovement {
 
                 if ( absDif > MoveToStopDist) {
                     if ( absDif <= MoveToSlowDist ) crntSpd = MoveToSlowSpd;
-                    bot.setWeightedDrivePower( new Pose2d( Math.signum( dif ) * crntSpd, 0, 0 ) );
+                    smd.setWeightedDrivePower( new Pose2d( Math.signum( dif ) * crntSpd, 0, 0 ) );
                 }
                 else {
                     moveOnXAxis = false;
@@ -73,7 +73,7 @@ public class AutonomousMovement {
 
                 if ( Math.abs( dif ) > MoveToStopDist) {
                     if ( absDif <= MoveToSlowDist ) crntSpd = MoveToSlowSpd;
-                    bot.setWeightedDrivePower( new Pose2d( 0, -Math.signum( dif ) * crntSpd, 0 ) );
+                    smd.setWeightedDrivePower( new Pose2d( 0, -Math.signum( dif ) * crntSpd, 0 ) );
                 }
                 else {
                     moveOnXAxis = true;
@@ -82,13 +82,13 @@ public class AutonomousMovement {
                 }
             }
 
-            Pose2d estimate = bot.getPoseEstimate();
+            Pose2d estimate = smd.getPoseEstimate();
 
             telemetry.addData("x pos:", estimate.getX());
             telemetry.addData("y pos:", estimate.getY());
             telemetry.addData("heading", Math.toDegrees(estimate.getHeading()));
 
-            bot.update();
+            smd.update();
             telemetry.update();
         }
     }
