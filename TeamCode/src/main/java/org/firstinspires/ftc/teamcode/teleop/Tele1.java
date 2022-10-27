@@ -1,14 +1,11 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 
 @TeleOp
@@ -18,6 +15,9 @@ public class Tele1 extends LinearOpMode {
     private final float dpadInputScaler = 1; // controls the speed of dpad movement as a percentage of the max speed
     private final float bezierP2Y = 0.1f; // 0.5 = no effect | 0.0 = max effect
 
+    private Vector2D targetPos = new Vector2D(0, 0);
+
+    Robot robot;
     ElapsedTime runtime = new ElapsedTime();
 
     @Override
@@ -39,34 +39,60 @@ public class Tele1 extends LinearOpMode {
             //////////////////////////////////////////////////////////////////////////////////////////////////
 
             //get input
-            float hInput = GetAxis( 0 );
-            float vInput = GetAxis( 1 );
-            float rInput = GetAxis( 2 );
+            Pose2d input = GetInput();
 
             //driving
-            bot.drive.calculateDrivePower(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
+            //robot.drive.calculateDrivePower(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
 
-            bot.drive.calculateDrivePower(hInput, vInput, rInput);
+            //bot.drive.calculateDrivePower(input.getX(), input.getY(), input.getHeading());
 
-            bot.arm.driveArm(gamepad1.right_stick_y);
-
-
+            bot.smd.setWeightedDrivePower(new Pose2d(-input.getX(), input.getY(), input.getHeading()));
             //////////////////////////////////////////////////////////////////////////////////////////////////
             ////////////////////////////////           Controller 2           ////////////////////////////////
             //////////////////////////////////////////////////////////////////////////////////////////////////
+
+            //Reset Pose2D
+            if ( gamepad2.a ) {
+                Vector2D startPos = bot.autoMove.TileCords( new Vector2D( 0, 2 ), new Vector2D( 0.5, 1 ) );
+                bot.smd.setPoseEstimate( new Pose2d( startPos.getX(), startPos.getY(), 0) );
+            }
+
+            //MoveTo calls
+            if ( gamepad2.x ) {
+                targetPos = bot.autoMove.TileCords( new Vector2D( 4, 5 ), new Vector2D( 0.5, 0.5 ) );
+            }
+            else if ( gamepad2.y ) {
+                targetPos = bot.autoMove.TileCords( new Vector2D( 1, 1 ), new Vector2D( 0.5, 0.5 ) );
+            }
+            else if ( gamepad2.b ) {
+                targetPos = bot.autoMove.TileCords( new Vector2D( 3, 2 ), new Vector2D( 0.5, 0.5 ) );
+            }
+
+            if ( gamepad2.right_bumper ) {
+                bot.autoMove.MoveToPosLoop( targetPos, bot.smd, telemetry );
+            }
 
             /////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////           Telemetry           /////////////////////////////////
             /////////////////////////////////////////////////////////////////////////////////////////////////
 
+            Pose2d estimate = bot.smd.getPoseEstimate();
+
+            telemetry.addData("crntPosX:", estimate.getX());
+            telemetry.addData("crntPosY:", estimate.getY());
+            telemetry.addData("crntPosHeading:", estimate.getHeading());
+
+            telemetry.addData("targetPosX:", targetPos.getX());
+            telemetry.addData("targetPosY:", targetPos.getY());
+
             telemetry.addData("gamepad2.right_stick_y", gamepad2.right_stick_y);
             telemetry.addData("gamepad2.right_stick_x", gamepad2.right_stick_x);
             telemetry.addData("gamepad2.left_stick_y", gamepad2.left_stick_y);
 
-            telemetry.addData("rotationInput", rInput);
+            telemetry.addData("rotationInput", input.getX());
             telemetry.addData("gamepad1.right_stick_y", gamepad1.right_stick_y);
-            telemetry.addData("horizontalInput", hInput);
-            telemetry.addData("verticalInput", vInput);
+            telemetry.addData("horizontalInput", input.getY());
+            telemetry.addData("verticalInput", input.getHeading());
 
 
             telemetry.addData("gamepad2.a", gamepad2.a);
@@ -78,38 +104,42 @@ public class Tele1 extends LinearOpMode {
             telemetry.update();
         }
     }
-    private float GetAxis( int axisType ) {
-        // 0 = horizontal | 1 = vertical | 2 = rotational
-        float axis = 0;
-        switch ( axisType ){
-            case 0:
-                if ( gamepad1.dpad_right ) axis++;
-                if ( gamepad1.dpad_left ) axis--;
-                if ( axis == 0 ) {
-                    axis = LinearBezierY( gamepad1.left_stick_x );
-                }
-                else axis *= dpadInputScaler;
-                break;
+    private Pose2d GetInput() {
+        double hAxis = 0;
+        double vAxis = 0;
+        double rAxis = 0;
 
-            case 1:
-                if ( gamepad1.dpad_up ) axis++;
-                if ( gamepad1.dpad_down ) axis--;
-                if ( axis == 0 ) {
-                    axis = LinearBezierY( gamepad1.left_stick_y );
-                }
-                else axis *= dpadInputScaler;
-                break;
+        if ( gamepad1.dpad_right ) hAxis++;
+        if ( gamepad1.dpad_left ) hAxis--;
 
-            case 2:
-                axis = gamepad1.right_stick_x;
-                axis = LinearBezierY( axis );
-                break;
+        if ( gamepad1.dpad_up ) vAxis++;
+        if ( gamepad1.dpad_down ) vAxis--;
+
+        if ( hAxis == 0 && vAxis == 0 ) {
+            hAxis = gamepad1.left_stick_x;
+            vAxis = gamepad1.left_stick_y;
+
+            double mag = Math.hypot( hAxis, vAxis );
+            double curveMag = LinearBezierY( mag );
+
+            hAxis /= mag;
+            vAxis /= mag;
+
+            hAxis *= curveMag;
+            vAxis *= curveMag;
         }
-        return axis;
+        else {
+            hAxis *= dpadInputScaler;
+            vAxis *= dpadInputScaler;
+        }
+
+        rAxis = LinearBezierY( gamepad1.right_stick_x );
+
+        return new Pose2d( hAxis, vAxis, rAxis );
     }
-    private float LinearBezierY( float t ){
+    private double LinearBezierY( double t ){
         //Uses the Y coordinates of 3 points to solve for the Y coordinate along the linear bezier curve at percentage "t"
-        float negativeValue = 1;
+        double negativeValue = 1;
         if ( t < 0 ) {
             t *= -1;
             negativeValue = -1;
@@ -120,7 +150,7 @@ public class Tele1 extends LinearOpMode {
         float y2 = bezierP2Y;
         float y3 = 1;
 
-        float oneMinusT = 1 - t;
+        double oneMinusT = 1 - t;
         return negativeValue * ( ( oneMinusT * oneMinusT * y1 ) + ( 2 * oneMinusT * t * y2 ) + ( t * t * y3 ) );
     }
 }
