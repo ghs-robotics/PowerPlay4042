@@ -24,8 +24,8 @@ public class Arm {
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
 
-        liftMotor = hardwareMap.get(DcMotor.class,"LiftMot");
-        liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftMotor = hardwareMap.get(DcMotor.class,"LiftMot1");
+        liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         gripServo = hardwareMap.get(CRServo.class, "GripServ");
     }
