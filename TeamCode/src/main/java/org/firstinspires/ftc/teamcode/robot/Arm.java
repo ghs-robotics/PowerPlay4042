@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -24,7 +23,7 @@ public class Arm {
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
 
-        liftMotor = hardwareMap.get(DcMotor.class,"LiftMot");
+        liftMotor = hardwareMap.get(DcMotor.class,"LiftMot1");
         liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         gripServo = hardwareMap.get(CRServo.class, "GripServ");

@@ -12,8 +12,8 @@ import org.firstinspires.ftc.teamcode.robot.Robot;
 //Want to try using Opmode instead of LinearOp since I heard this is better for TeleOp
 public class Tele1 extends LinearOpMode {
     //Input Variables
-    private final float dpadInputScaler = 1; // controls the speed of dpad movement as a percentage of the max speed
-    private final float bezierP2Y = 0.1f; // 0.5 = no effect | 0.0 = max effect
+    private final float dpadInputScaler = 0.8f; // controls the speed of dpad movement as a percentage of the max speed
+    private final float bezierP2Y = 0.5f; // 0.5 = no effect | 0.0 = max effect
 
     private Vector2D targetPos = new Vector2D(0, 0);
 
@@ -45,7 +45,7 @@ public class Tele1 extends LinearOpMode {
             //robot.drive.calculateDrivePower(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
             //bot.drive.calculateDrivePower(input.getX(), input.getY(), input.getHeading());
 
-            bot.smd.setWeightedDrivePower(new Pose2d(-input.getX(), input.getY(), input.getHeading()));
+            bot.smd.setWeightedDrivePower(new Pose2d(-input.getY(), input.getX(), input.getHeading()));
 
             if(gamepad1.a) {
                 bot.arm.driveArm(gamepad1.right_stick_y);
@@ -125,6 +125,9 @@ public class Tele1 extends LinearOpMode {
 
             double mag = Math.hypot( hAxis, vAxis );
             double curveMag = LinearBezierY( mag );
+
+            telemetry.addData("inputMag:", mag);
+            telemetry.addData("inputCurveMag:", curveMag);
 
             hAxis /= mag;
             vAxis /= mag;
