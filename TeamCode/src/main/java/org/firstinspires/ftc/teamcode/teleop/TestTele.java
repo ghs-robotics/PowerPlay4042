@@ -57,19 +57,19 @@ public class TestTele extends LinearOpMode {
 
             //Reset Pose2D
             if ( gamepad2.a ) {
-                Vector2D startPos = bot.autoMove.TileCords( new Vector2D( 0, 2 ), new Vector2D( 0.5, 1 ) );
+                Vector2D startPos = bot.autoMove.TileCords( new Vector2D( 0, 5 ), new Vector2D( 0.5, 0.5 ) );
                 bot.smd.setPoseEstimate( new Pose2d( startPos.getX(), startPos.getY(), 0) );
             }
 
             //MoveTo calls
             if ( gamepad2.x ) {
-                targetPos = bot.autoMove.TileCords( new Vector2D( 4, 5 ), new Vector2D( 0.5, 0.5 ) );
+                targetPos = bot.autoMove.TileCords( new Vector2D( 1, 4 ), new Vector2D( 1, 0.5 ) );
             }
             else if ( gamepad2.y ) {
-                targetPos = bot.autoMove.TileCords( new Vector2D( 1, 1 ), new Vector2D( 0.5, 0.5 ) );
+                targetPos = bot.autoMove.TileCords( new Vector2D( 1, 5 ), new Vector2D( 1, 0.5 ) );
             }
             else if ( gamepad2.b ) {
-                targetPos = bot.autoMove.TileCords( new Vector2D( 3, 2 ), new Vector2D( 0.5, 0.5 ) );
+                targetPos = bot.autoMove.TileCords( new Vector2D( 1, 6 ), new Vector2D( 01, 0.5 ) );
             }
 
             if ( gamepad2.right_bumper ) {

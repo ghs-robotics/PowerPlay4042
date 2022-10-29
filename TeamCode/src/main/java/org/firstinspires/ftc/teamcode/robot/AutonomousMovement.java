@@ -48,7 +48,7 @@ public class AutonomousMovement {
             moveOnXAxis = true;
         }
 
-        moveOnXAxis = true;
+        moveOnXAxis = false;
 
         while ( axesMovedOn < 2 ) {
             crntPos = smd.getPoseEstimate();
