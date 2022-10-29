@@ -38,9 +38,8 @@ public class Arm {
     }
 
     public void driveArm(double power) {
-        liftMotor1.setPower(power);
-        liftMotor2.setPower(-power);
-
+            liftMotor1.setPower(power);
+            liftMotor2.setPower(-power);
     }
 
     public void calibrateArm() {
@@ -92,15 +91,20 @@ public class Arm {
 //        sleep(10000);
     }
 
-    public void gripper(boolean intake, boolean output) {
+    public void gripIntake(boolean btnPressed) {
         gripServo.setDirection(CRServo.Direction.FORWARD);
-        if(intake)
+        if(btnPressed)
             gripServo.setPower(1.0);
-        else if (output)
-            gripServo.setPower(-1.0);
         else
             gripServo.setPower(0);
     }
 
+    public void gripOutput(boolean btnPressed) {
+        gripServo.setDirection(CRServo.Direction.FORWARD);
+        if(btnPressed)
+            gripServo.setPower(-1.0);
+        else
+            gripServo.setPower(0.0);
+    }
 
     }
