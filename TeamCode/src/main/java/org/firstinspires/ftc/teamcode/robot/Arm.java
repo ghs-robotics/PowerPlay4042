@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Arm {
@@ -15,7 +16,9 @@ public class Arm {
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
 
-    private DcMotor liftMotor;
+    private DcMotor liftMotor1;
+    private DcMotor liftMotor2;
+
     private CRServo gripServo;
 
     private final int maxArmHeight = -3070;
@@ -24,14 +27,19 @@ public class Arm {
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
 
-        liftMotor = hardwareMap.get(DcMotor.class,"LiftMot1");
-        liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        liftMotor1 = hardwareMap.get(DcMotor.class,"LiftMot1");
+        liftMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        liftMotor2 = hardwareMap.get(DcMotor.class,"LiftMot2");
+        liftMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
 
         gripServo = hardwareMap.get(CRServo.class, "GripServ");
     }
 
     public void driveArm(double power) {
-        liftMotor.setPower(power);
+            liftMotor1.setPower(power);
+            liftMotor2.setPower(-power);
     }
 
     public void calibrateArm() {
@@ -39,12 +47,15 @@ public class Arm {
         telemetry.addLine("Testing Arm");
         telemetry.update();
 
-        liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         sleep(3000);
 
         while(true) {
-            telemetry.addData("Arm Pos:", liftMotor.getCurrentPosition());
+            telemetry.addData("Arm Pos Read 1:", liftMotor1.getCurrentPosition());
+            telemetry.addData("Arm Pos Read 2:", liftMotor2.getCurrentPosition());
             telemetry.update();
             sleep(200);
         }
@@ -73,10 +84,27 @@ public class Arm {
         telemetry.addLine("Testing Gripper");
         telemetry.update();
 
-        gripServo.setDirection(DcMotorSimple.Direction.FORWARD);
+        gripServo.setDirection(CRServo.Direction.FORWARD);
         gripServo.setPower(0.5);
 
 
-        sleep(10000);
-       }
+//        sleep(10000);
+    }
+
+    public void gripIntake(boolean btnPressed) {
+        gripServo.setDirection(CRServo.Direction.FORWARD);
+        if(btnPressed)
+            gripServo.setPower(1.0);
+        else
+            gripServo.setPower(0);
+    }
+
+    public void gripOutput(boolean btnPressed) {
+        gripServo.setDirection(CRServo.Direction.FORWARD);
+        if(btnPressed)
+            gripServo.setPower(-1.0);
+        else
+            gripServo.setPower(0.0);
+    }
+
     }

@@ -47,8 +47,7 @@ public class Auto1 extends LinearOpMode {
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\////////////////////////////////////////////////////
 ==================================================================================================*/
 
-        if (opModeIsActive()) {
-            sleep(20);
+        while (opModeIsActive()) {
             //do stuff
 
             telemetry.addLine("Starting OpMode");
