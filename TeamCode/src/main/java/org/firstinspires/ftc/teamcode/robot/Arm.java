@@ -91,12 +91,14 @@ public class Arm {
 //        sleep(10000);
     }
 
-    public void gripIntake(boolean btnPressed) {
+    public void grip(boolean rightPressed, boolean leftPressed) {
         gripServo.setDirection(CRServo.Direction.FORWARD);
-        if(btnPressed)
+        if(rightPressed)
             gripServo.setPower(1.0);
+        else if(leftPressed)
+            gripServo.setPower(-1.0);
         else
-            gripServo.setPower(0);
+            gripServo.setPower(0.0);
     }
 
     public void gripOutput(boolean btnPressed) {

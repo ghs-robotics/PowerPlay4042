@@ -50,8 +50,7 @@ public class Tele1 extends LinearOpMode {
 
             bot.arm.driveArm(gamepad2.left_stick_y);
 
-            bot.arm.gripIntake(gamepad2.right_bumper);
-            bot.arm.gripOutput(gamepad2.left_bumper);
+            bot.arm.grip(gamepad2.right_bumper, gamepad2.left_bumper);
 
             //////////////////////////////////////////////////////////////////////////////////////////////////
             ////////////////////////////////           Controller 2           ////////////////////////////////
