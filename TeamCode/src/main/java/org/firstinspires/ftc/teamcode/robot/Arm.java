@@ -4,11 +4,8 @@ import static android.os.SystemClock.sleep;
 
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Arm {
@@ -107,4 +104,12 @@ public class Arm {
             gripServo.setPower(0.0);
     }
 
+    public void gripper( boolean posBtn, boolean negBtn ) {
+        gripServo.setDirection(CRServo.Direction.FORWARD);
+
+        int pos = posBtn ? 1 : 0;
+        int neg = negBtn ? 1 : 0;
+
+        gripServo.setPower( pos - neg );
     }
+}

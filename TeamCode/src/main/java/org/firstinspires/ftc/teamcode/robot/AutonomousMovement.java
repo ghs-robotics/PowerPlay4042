@@ -7,13 +7,13 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.odometry.drive.SampleMecanumDrive;
 
 public class AutonomousMovement {
-    private final Vector2D ArenaDimensions = new Vector2D( 144, 144 );
-    private final Vector2D TileDimensions = new Vector2D( 24, 24 );
-    private final Vector2D TileNumber =
-            new Vector2D(
-                    ArenaDimensions.getX() / TileDimensions.getX(),
-                    ArenaDimensions.getY() / TileDimensions.getY()
-            );
+    private final Vector2D TileDimensions = new Vector2D(23.5f, 23.5f);
+    private final Vector2D TileNumber = new Vector2D(6, 6);
+    private final Vector2D ArenaDimensions =
+        new Vector2D(
+            TileDimensions.getX() * TileNumber.getX(),
+            TileDimensions.getY() * TileNumber.getY()
+        );
 
     private final double MoveToSpd = 0.5;
     private final double MoveToSlowDist = 5;
