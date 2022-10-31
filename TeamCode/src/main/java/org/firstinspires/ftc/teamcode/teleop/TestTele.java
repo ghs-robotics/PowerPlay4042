@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.robot.Robot;
 public class TestTele extends LinearOpMode {
     //Input Variables
     private final float dpadInputScaler = 1; // controls the speed of dpad movement as a percentage of the max speed
-    private final float bezierP2Y = 0.1f; // 0.5 = no effect | 0.0 = max effect
+    private final float bezierP2Y = 0.5f; // 0.5 = no effect | 0.0 = max effect
 
     private Vector2D targetPos = new Vector2D(0, 0);
 
@@ -47,32 +47,35 @@ public class TestTele extends LinearOpMode {
 
             bot.smd.setWeightedDrivePower(new Pose2d(-input.getX(), input.getY(), input.getHeading()));
 
-            if(gamepad1.a) {
+            /*if(gamepad1.a) {
                 bot.arm.driveArm(gamepad1.right_stick_y);
-            }
+            }*/
 
             //////////////////////////////////////////////////////////////////////////////////////////////////
             ////////////////////////////////           Controller 2           ////////////////////////////////
             //////////////////////////////////////////////////////////////////////////////////////////////////
 
             //Reset Pose2D
-            if ( gamepad2.a ) {
-                Vector2D startPos = bot.autoMove.TileCords( new Vector2D( 0, 5 ), new Vector2D( 0.5, 0.5 ) );
+            if ( gamepad2.right_bumper ) {
+                Vector2D startPos = bot.autoMove.TileCords( new Vector2D( 0, 4 ), new Vector2D( 0.5, 0.5 ) );
                 bot.smd.setPoseEstimate( new Pose2d( startPos.getX(), startPos.getY(), 0) );
             }
 
             //MoveTo calls
             if ( gamepad2.x ) {
-                targetPos = bot.autoMove.TileCords( new Vector2D( 1, 4 ), new Vector2D( 1, 0.5 ) );
-            }
-            else if ( gamepad2.y ) {
+                //Zone 1
                 targetPos = bot.autoMove.TileCords( new Vector2D( 1, 5 ), new Vector2D( 1, 0.5 ) );
             }
+            else if ( gamepad2.y ) {
+                //Zone 2
+                targetPos = bot.autoMove.TileCords( new Vector2D( 1, 4 ), new Vector2D( 1, 0.5 ) );
+            }
             else if ( gamepad2.b ) {
-                targetPos = bot.autoMove.TileCords( new Vector2D( 1, 6 ), new Vector2D( 01, 0.5 ) );
+                //Zone 3
+                targetPos = bot.autoMove.TileCords( new Vector2D( 1, 3 ), new Vector2D( 1, 0.5 ) );
             }
 
-            if ( gamepad2.right_bumper ) {
+            if ( gamepad2.a ) {
                 bot.autoMove.MoveToPosLoop( targetPos, bot.smd, telemetry );
             }
 
