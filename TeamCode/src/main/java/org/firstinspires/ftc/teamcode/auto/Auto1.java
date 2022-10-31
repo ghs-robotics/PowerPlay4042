@@ -62,7 +62,7 @@ public class Auto1 extends LinearOpMode {
                 telemetry.addLine("Pathing to right parking spot");
                 telemetry.update();
             }
-            bot.autoMove.MoveToPosLoop( targetPos, bot.smd, telemetry );
+            bot.autoMove.MoveToPos( targetPos, bot.smd, telemetry );
 
             telemetry.addLine("Starting OpMode");
             telemetry.update();

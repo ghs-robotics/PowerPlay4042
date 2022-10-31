@@ -35,7 +35,14 @@ public class AutonomousMovement {
                 bottomLeftCorner.getY() + distInTile.getY()
         );
     }
-    public void MoveToPosLoop(Vector2D target, SampleMecanumDrive smd, Telemetry telemetry ) {
+    public Vector2D RelativeToGlobalPos( Vector2D tileDist, SampleMecanumDrive smd ) {
+        Pose2d crntPos = smd.getPoseEstimate();
+        return new Vector2D(
+                crntPos.getX() + tileDist.getX() * TileDimensions.getX(),
+                crntPos.getY() + tileDist.getY() * TileDimensions.getY()
+        );
+    }
+    public void MoveToPos(Vector2D target, SampleMecanumDrive smd, Telemetry telemetry ) {
         Pose2d crntPos = smd.getPoseEstimate();
         double crntSpd = MoveToSpd;
 
@@ -45,10 +52,8 @@ public class AutonomousMovement {
         //Check if Y axis of the robot is further from a poll
         if ( Math.abs( ( Math.abs( crntPos.getX() ) % TileDimensions.getX() ) - ( TileDimensions.getX() / 2 ) ) >
                 Math.abs( ( Math.abs( crntPos.getY() ) % TileDimensions.getY() ) - ( TileDimensions.getY() / 2 ) ) ) {
-            moveOnXAxis = true;
+            moveOnXAxis = false;
         }
-
-        moveOnXAxis = false;
 
         while ( axesMovedOn < 2 ) {
             crntPos = smd.getPoseEstimate();
