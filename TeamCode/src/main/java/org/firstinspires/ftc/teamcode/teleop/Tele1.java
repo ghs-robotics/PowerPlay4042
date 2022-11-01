@@ -11,7 +11,6 @@ import org.firstinspires.ftc.teamcode.robot.Robot;
 @TeleOp
 //Want to try using Opmode instead of LinearOp since I heard this is better for TeleOp
 public class Tele1 extends LinearOpMode {
-    //Input Variables
     private final float dpadInputScaler = 1; // controls the speed of dpad movement as a percentage of the max speed
     private final float bezierP2Y = 0.1f; // 0.5 = no effect | 0.0 = max effect
 
@@ -32,14 +31,14 @@ public class Tele1 extends LinearOpMode {
         while (opModeIsActive()){
             //reset lift at start
             double sec = runtime.seconds();
-            boolean release = sec < 3;
+            //boolean release = sec < 3;
 
             //////////////////////////////////////////////////////////////////////////////////////////////////
             ////////////////////////////////           Controller 1           ////////////////////////////////
             //////////////////////////////////////////////////////////////////////////////////////////////////
 
             //get input
-            Pose2d input = GetInput();
+            //Pose2d input = GetInput();
 
             //Movement
             bot.smd.setWeightedDrivePower(
@@ -56,27 +55,6 @@ public class Tele1 extends LinearOpMode {
             //Gripper Movement
             bot.arm.gripper(gamepad2.left_bumper, gamepad2.right_bumper);
 
-            //Reset Pose2D
-            /*if ( gamepad2.a ) {
-                Vector2D startPos = bot.autoMove.TileCords( new Vector2D( 0, 2 ), new Vector2D( 0.5, 1 ) );
-                bot.smd.setPoseEstimate( new Pose2d( startPos.getX(), startPos.getY(), 0) );
-            }
-
-            //MoveTo calls
-            if ( gamepad2.x ) {
-                targetPos = bot.autoMove.TileCords( new Vector2D( 4, 5 ), new Vector2D( 0.5, 0.5 ) );
-            }
-            else if ( gamepad2.y ) {
-                targetPos = bot.autoMove.TileCords( new Vector2D( 1, 1 ), new Vector2D( 0.5, 0.5 ) );
-            }
-            else if ( gamepad2.b ) {
-                targetPos = bot.autoMove.TileCords( new Vector2D( 3, 2 ), new Vector2D( 0.5, 0.5 ) );
-            }
-
-            if ( gamepad2.right_bumper ) {
-                bot.autoMove.MoveToPosLoop( targetPos, bot.smd, telemetry );
-            }*/
-
             /////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////           Telemetry           /////////////////////////////////
             /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -90,18 +68,18 @@ public class Tele1 extends LinearOpMode {
             telemetry.addData("targetPosX:", targetPos.getX());
             telemetry.addData("targetPosY:", targetPos.getY());
 
-            telemetry.addData("gamepad2.right_stick_y", gamepad2.right_stick_y);
-            telemetry.addData("gamepad2.right_stick_x", gamepad2.right_stick_x);
-            telemetry.addData("gamepad2.left_stick_y", gamepad2.left_stick_y);
+            //telemetry.addData("gamepad2.right_stick_y", gamepad2.right_stick_y);
+            //telemetry.addData("gamepad2.right_stick_x", gamepad2.right_stick_x);
+            //telemetry.addData("gamepad2.left_stick_y", gamepad2.left_stick_y);
 
-            telemetry.addData("rotationInput", input.getX());
-            telemetry.addData("gamepad1.right_stick_y", gamepad1.right_stick_y);
-            telemetry.addData("horizontalInput", input.getY());
-            telemetry.addData("verticalInput", input.getHeading());
+            //telemetry.addData("rotationInput", input.getX());
+            //telemetry.addData("gamepad1.right_stick_y", gamepad1.right_stick_y);
+            //telemetry.addData("horizontalInput", input.getY());
+            //telemetry.addData("verticalInput", input.getHeading());
 
 
-            telemetry.addData("gamepad2.a", gamepad2.a);
-            telemetry.addData("gamepad2.y", gamepad2.y);
+            //telemetry.addData("gamepad2.a", gamepad2.a);
+            //telemetry.addData("gamepad2.y", gamepad2.y);
             /*telemetry.addData("z axis", angles.firstAngle);
             telemetry.addData("y axis", angles.secondAngle);
             telemetry.addData("x axis", angles.thirdAngle);
