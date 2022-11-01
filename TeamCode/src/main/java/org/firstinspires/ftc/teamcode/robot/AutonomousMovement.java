@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.odometry.drive.SampleMecanumDrive;
 
 public class AutonomousMovement {
     private final Vector2D TileDimensions = new Vector2D(23.5f, 23.5f);
-    private final Vector2D TileNumber = new Vector2D(6, 6);
+    private final Vector2D TileNumber = new Vector2D(6.0, 6.0);
     private final Vector2D ArenaDimensions =
         new Vector2D(
             TileDimensions.getX() * TileNumber.getX(),
@@ -20,19 +20,11 @@ public class AutonomousMovement {
     private final double MoveToSlowSpd = 0.35;
     private final double MoveToStopDist = 0.1;
 
-    public Vector2D TileCords( Vector2D index, Vector2D percentInTile ) {
-        //index from ( 0, 0 ) to ( 5, 5 )
-        Vector2D bottomLeftCorner = new Vector2D(
-                ( index.getX() * TileDimensions.getX() ) - ( ArenaDimensions.getX() / 2 ),
-                ( index.getY() * TileDimensions.getY() ) - ( ArenaDimensions.getY() / 2 )
-        );
-        Vector2D distInTile = new Vector2D(
-                percentInTile.getX() * TileDimensions.getX(),
-                percentInTile.getY() * TileDimensions.getY()
-        );
+    public Vector2D TileCords( Vector2D tile ) {
+        //index from ( 0, 0 ) to ( 6, 6 )
         return new Vector2D(
-                bottomLeftCorner.getX() + distInTile.getX(),
-                bottomLeftCorner.getY() + distInTile.getY()
+                ( tile.getX() * TileDimensions.getX() ) - ( ArenaDimensions.getX() / 2 ),
+                ( tile.getY() * TileDimensions.getY() ) - ( ArenaDimensions.getY() / 2 )
         );
     }
     public Vector2D RelativeToGlobalPos( Vector2D tileDist, SampleMecanumDrive smd ) {
@@ -42,7 +34,7 @@ public class AutonomousMovement {
                 crntPos.getY() + tileDist.getY() * TileDimensions.getY()
         );
     }
-    public void MoveToPos(Vector2D target, SampleMecanumDrive smd, Telemetry telemetry ) {
+    public void MoveToPos( Vector2D target, SampleMecanumDrive smd, Telemetry telemetry ) {
         Pose2d crntPos = smd.getPoseEstimate();
         double crntSpd = MoveToSpd;
 

@@ -57,7 +57,7 @@ public class TestTele extends LinearOpMode {
 
             //Reset Pose2D
             if ( gamepad2.right_bumper ) {
-                Vector2D startPos = bot.autoMove.TileCords( new Vector2D( 0, 4 ), new Vector2D( 0.5, 0.5 ) );
+                Vector2D startPos = bot.autoMove.TileCords( new Vector2D( 0.5, 4.5 ) );
                 bot.smd.setPoseEstimate( new Pose2d( startPos.getX(), startPos.getY(), 0) );
             }
 

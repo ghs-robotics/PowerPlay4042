@@ -40,7 +40,7 @@ public class Auto1 extends LinearOpMode {
         while (opModeIsActive()) {
             //do stuff
 
-            Vector2D startPos = bot.autoMove.TileCords( new Vector2D( 0, 4 ), new Vector2D( 0.5, 0.5 ) );
+            Vector2D startPos = bot.autoMove.TileCords( new Vector2D( 0.5, 4.5 ) );
             bot.smd.setPoseEstimate( new Pose2d( startPos.getX(), startPos.getY(), 0) );
 
             Vector2D targetPos = new Vector2D(0, 0);
@@ -48,7 +48,7 @@ public class Auto1 extends LinearOpMode {
                 //Go to left parking spot
 
                 //Zone 1
-                //targetPos = bot.autoMove.TileCords( new Vector2D( 1, 5 ), new Vector2D( 1, 0.5 ) );
+                //targetPos = bot.autoMove.TileCords( new Vector2D( 2, 5.5 ) );
                 targetPos = bot.autoMove.RelativeToGlobalPos( new Vector2D( 1.5f, 1 ), bot.smd );
 
                 telemetry.addLine("Pathing to left parking spot");
@@ -57,7 +57,7 @@ public class Auto1 extends LinearOpMode {
                 //Go to middle parking spot
 
                 //Zone 2
-                //targetPos = bot.autoMove.TileCords( new Vector2D( 1, 4 ), new Vector2D( 1, 0.5 ) );
+                //targetPos = bot.autoMove.TileCords( new Vector2D( 2, 4.5 ) );
                 targetPos = bot.autoMove.RelativeToGlobalPos( new Vector2D( 1.5f, 0 ), bot.smd );
 
                 telemetry.addLine("Pathing to middle parking spot");
@@ -66,7 +66,7 @@ public class Auto1 extends LinearOpMode {
                 //Go to right parking spot
 
                 //Zone 3
-                //targetPos = bot.autoMove.TileCords( new Vector2D( 1, 3 ), new Vector2D( 1, 0.5 ) );
+                //targetPos = bot.autoMove.TileCords( new Vector2D( 2, 3.5 ) );
                 targetPos = bot.autoMove.RelativeToGlobalPos( new Vector2D( 1.5f, -1 ), bot.smd );
 
                 telemetry.addLine("Pathing to right parking spot");
