@@ -15,9 +15,9 @@ public class AutonomousMovement {
             TileDimensions.getY() * TileNumber.getY()
         );
 
-    private final double MoveToSpd = 0.5;
-    private final double MoveToSlowDist = 5;
-    private final double MoveToSlowSpd = 0.2;
+    private final double MoveToSpd = 0.6;
+    private final double MoveToSlowDist = 3;
+    private final double MoveToSlowSpd = 0.35;
     private final double MoveToStopDist = 0.1;
 
     public Vector2D TileCords( Vector2D index, Vector2D percentInTile ) {

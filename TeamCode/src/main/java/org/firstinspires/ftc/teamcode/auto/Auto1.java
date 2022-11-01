@@ -5,10 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
-import org.firstinspires.ftc.teamcode.odometry.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.openftc.apriltag.AprilTagDetection;
-
-import org.firstinspires.ftc.teamcode.robot.*;
 @Autonomous(name = "Auto1")
 public class Auto1 extends LinearOpMode {
 
@@ -19,7 +17,6 @@ public class Auto1 extends LinearOpMode {
     @Override
     public void runOpMode() {
         Robot bot = new Robot(hardwareMap, telemetry);
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
         //Tag IDs for 3 different park locations
         int LEFT = 11;
@@ -43,25 +40,39 @@ public class Auto1 extends LinearOpMode {
         while (opModeIsActive()) {
             //do stuff
 
-            Vector2D startPos = bot.autoMove.TileCords( new Vector2D( 0, 5 ), new Vector2D( 0.5, 0.5 ) );
+            Vector2D startPos = bot.autoMove.TileCords( new Vector2D( 0, 4 ), new Vector2D( 0.5, 0.5 ) );
             bot.smd.setPoseEstimate( new Pose2d( startPos.getX(), startPos.getY(), 0) );
+
             Vector2D targetPos = new Vector2D(0, 0);
             if(tag == null || tag.id == LEFT) {
                 //Go to left parking spot
-                targetPos = bot.autoMove.TileCords( new Vector2D( 1, 6 ), new Vector2D( 1, 0.5 ) );
+
+                //Zone 1
+                //targetPos = bot.autoMove.TileCords( new Vector2D( 1, 5 ), new Vector2D( 1, 0.5 ) );
+                targetPos = bot.autoMove.RelativeToGlobalPos( new Vector2D( 1.5f, 1 ), bot.smd );
+
                 telemetry.addLine("Pathing to left parking spot");
                 telemetry.update();
             } else if(tag.id == MIDDLE) {
-                targetPos = bot.autoMove.TileCords( new Vector2D( 1, 5 ), new Vector2D( 1, 0.5 ) );
                 //Go to middle parking spot
+
+                //Zone 2
+                //targetPos = bot.autoMove.TileCords( new Vector2D( 1, 4 ), new Vector2D( 1, 0.5 ) );
+                targetPos = bot.autoMove.RelativeToGlobalPos( new Vector2D( 1.5f, 0 ), bot.smd );
+
                 telemetry.addLine("Pathing to middle parking spot");
                 telemetry.update();
             } else {
-                targetPos = bot.autoMove.TileCords( new Vector2D( 1, 4 ), new Vector2D( 1, 0.5 ) );
                 //Go to right parking spot
+
+                //Zone 3
+                //targetPos = bot.autoMove.TileCords( new Vector2D( 1, 3 ), new Vector2D( 1, 0.5 ) );
+                targetPos = bot.autoMove.RelativeToGlobalPos( new Vector2D( 1.5f, -1 ), bot.smd );
+
                 telemetry.addLine("Pathing to right parking spot");
                 telemetry.update();
             }
+            telemetry.addLine("Moving to target pos");
             bot.autoMove.MoveToPos( targetPos, bot.smd, telemetry );
 
             telemetry.addLine("Starting OpMode");

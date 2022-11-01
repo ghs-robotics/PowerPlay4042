@@ -64,18 +64,18 @@ public class TestTele extends LinearOpMode {
             //MoveTo calls
             if ( gamepad2.x ) {
                 //Zone 1
-                targetPos = bot.autoMove.TileCords( new Vector2D( 1, 5 ), new Vector2D( 1, 0.5 ) );
-                //targetPos = bot.autoMove.RelativeToGlobalPos( new Vector2D( 1.5f, 1 ), bot.smd );
+                //targetPos = bot.autoMove.TileCords( new Vector2D( 1, 5 ), new Vector2D( 1, 0.5 ) );
+                targetPos = bot.autoMove.RelativeToGlobalPos( new Vector2D( 1.5f, 1 ), bot.smd );
             }
             else if ( gamepad2.y ) {
                 //Zone 2
-                targetPos = bot.autoMove.TileCords( new Vector2D( 1, 4 ), new Vector2D( 1, 0.5 ) );
-                //targetPos = bot.autoMove.RelativeToGlobalPos( new Vector2D( 1.5f, 0 ), bot.smd );
+                //targetPos = bot.autoMove.TileCords( new Vector2D( 1, 4 ), new Vector2D( 1, 0.5 ) );
+                targetPos = bot.autoMove.RelativeToGlobalPos( new Vector2D( 1.5f, 0 ), bot.smd );
             }
             else if ( gamepad2.b ) {
                 //Zone 3
-                targetPos = bot.autoMove.TileCords( new Vector2D( 1, 3 ), new Vector2D( 1, 0.5 ) );
-                //targetPos = bot.autoMove.RelativeToGlobalPos( new Vector2D( 1.5f, -1 ), bot.smd );
+                //targetPos = bot.autoMove.TileCords( new Vector2D( 1, 3 ), new Vector2D( 1, 0.5 ) );
+                targetPos = bot.autoMove.RelativeToGlobalPos( new Vector2D( 1.5f, -1 ), bot.smd );
             }
 
             if ( gamepad2.a ) {
