@@ -79,6 +79,8 @@ public class AutonomousMovement {
                 }
             }
 
+            smd.setWeightedDrivePower(new Pose2d(0, 0, 0));
+
             Pose2d estimate = smd.getPoseEstimate();
 
             telemetry.addData("x pos:", estimate.getX());
