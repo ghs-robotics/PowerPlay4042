@@ -15,18 +15,18 @@ public class Arm {
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
 
-    private DcMotorEx liftMotor1;
-    private DcMotorEx liftMotor2;
+    public DcMotorEx liftMotor1;
+    public DcMotorEx liftMotor2;
 
     //private CRServo gripServo;
-    private Servo gripServo;
+    public Servo gripServo;
 
-    private final int maxArmHeight = 3070;
+    private final int maxArmHeight = 1000;
 
     //TODO these numbers need to be added
     private final int highPole = maxArmHeight;
-    private final int middlePole = 2000;
-    private final int lowPole = 1000;
+    private final int middlePole = 700;
+    private final int lowPole = 300;
 
 
     public Arm(HardwareMap hardwareMap, Telemetry telemetry) {
@@ -35,11 +35,11 @@ public class Arm {
 
         liftMotor1 = hardwareMap.get(DcMotorEx.class,"LiftMot1");
         liftMotor1.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        liftMotor1.setDirection(DcMotorSimple.Direction.FORWARD);
+        liftMotor1.setDirection(DcMotor.Direction.FORWARD);
 
         liftMotor2 = hardwareMap.get(DcMotorEx.class,"LiftMot2");
         liftMotor2.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        liftMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
+        liftMotor2.setDirection(DcMotor.Direction.REVERSE);
 
         gripServo = hardwareMap.get(Servo.class, "GripServ");
         gripServo.setDirection(Servo.Direction.FORWARD);
@@ -62,8 +62,9 @@ public class Arm {
         liftMotor2.setPower(power);
     }
 
-    public void runLiftToPos(boolean reset, boolean low, boolean mid, boolean high){
+    public void runLiftToPos(boolean reset, boolean low, boolean mid, boolean high) {
         int targetPos = liftMotor1.getCurrentPosition();
+        int error = liftMotor1.getCurrentPosition() - liftMotor2.getCurrentPosition();
 
         if (low)
             targetPos = lowPole;
@@ -74,10 +75,18 @@ public class Arm {
         else if (reset)
             targetPos = 0;
 
-        liftMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        liftMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        liftMotor1.setTargetPosition(targetPos);
-        liftMotor2.setTargetPosition(targetPos);
+        if (reset || low || mid || high) {
+            liftMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            liftMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            liftMotor1.setTargetPosition(targetPos);
+            liftMotor2.setTargetPosition(targetPos);
+            liftMotor1.setPower(1);
+            liftMotor2.setPower(1);
+        }
+        else {
+            liftMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            liftMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
     }
 
     public void runGripper(boolean in, boolean out){

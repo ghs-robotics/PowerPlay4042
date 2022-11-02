@@ -78,7 +78,6 @@ public class Auto1 extends LinearOpMode {
             telemetry.addLine("Starting OpMode");
             telemetry.update();
 
-            bot.arm.gripTest();
         }
     }
 

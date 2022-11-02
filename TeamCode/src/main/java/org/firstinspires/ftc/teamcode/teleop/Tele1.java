@@ -70,7 +70,7 @@ public class Tele1 extends LinearOpMode {
             bot.arm.runLiftToPos(gamepad2.b, gamepad2.a, gamepad2.x, gamepad2.y);
 
             //Arm Movement
-            bot.arm.driveArm(gamepad2.left_stick_y);
+            bot.arm.driveArm(-gamepad2.left_stick_y);
 
             //Gripper Movement
             bot.arm.runGripper(gamepad2.left_bumper, gamepad2.right_bumper);
@@ -81,9 +81,8 @@ public class Tele1 extends LinearOpMode {
 
             Pose2d estimate = bot.smd.getPoseEstimate();
 
-            telemetry.addData("crntPosX:", estimate.getX());
-            telemetry.addData("crntPosY:", estimate.getY());
-            telemetry.addData("crntPosHeading:", estimate.getHeading());
+            telemetry.addData("lift 1", bot.arm.liftMotor1.getCurrentPosition());
+            telemetry.addData("lift 2", bot.arm.liftMotor2.getCurrentPosition());
 
 //            telemetry.addData("targetPosX:", targetPos.getX());
 //            telemetry.addData("targetPosY:", targetPos.getY());
@@ -95,7 +94,7 @@ public class Tele1 extends LinearOpMode {
 
             //telemetry.addData("gamepad2.right_stick_y", gamepad2.right_stick_y);
             //telemetry.addData("gamepad2.right_stick_x", gamepad2.right_stick_x);
-            //telemetry.addData("gamepad2.left_stick_y", gamepad2.left_stick_y);
+            telemetry.addData("gamepad2.left_stick_y", gamepad2.left_stick_y);
 
             //telemetry.addData("rotationInput", input.getX());
             //telemetry.addData("gamepad1.right_stick_y", gamepad1.right_stick_y);
