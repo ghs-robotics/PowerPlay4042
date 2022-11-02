@@ -16,7 +16,6 @@ public class Tele1 extends LinearOpMode {
 
     private Vector2D targetPos = new Vector2D(0, 0);
 
-    Robot robot;
     ElapsedTime runtime = new ElapsedTime();
 
     @Override
@@ -28,6 +27,7 @@ public class Tele1 extends LinearOpMode {
 
         waitForStart();
         runtime.reset();
+        bot.arm.resetLiftPos(!opModeIsActive());
         while (opModeIsActive()){
             //reset lift at start
             double sec = runtime.seconds();
@@ -39,22 +39,41 @@ public class Tele1 extends LinearOpMode {
 
             //get input
             //Pose2d input = GetInput();
-            Pose2d input = new Pose2d(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
-
+            //Pose2d input = new Pose2d(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
             //Movement
-            bot.smd.setWeightedDrivePower(
-                new Pose2d(-input.getY(), input.getX(), input.getHeading())
-            );
+            //bot.smd.setWeightedDrivePower(
+            //   new Pose2d(-input.getY(), input.getX(), input.getHeading())
+            //);
+
+            //temporary movement
+            bot.smd.setWeightedDrivePower(new Pose2d(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x));
+
+            //dpad movement
+            if (gamepad1.dpad_up)
+                targetPos = bot.autoMove.RelativeToGlobalPos( new Vector2D( 1, 0 ), bot.smd );
+
+            if (gamepad1.dpad_down)
+                targetPos = bot.autoMove.RelativeToGlobalPos( new Vector2D( -1, 0 ), bot.smd );
+
+            if (gamepad1.dpad_left)
+                targetPos = bot.autoMove.RelativeToGlobalPos( new Vector2D( 0, 1 ), bot.smd );
+
+            if (gamepad1.dpad_right)
+                targetPos = bot.autoMove.RelativeToGlobalPos( new Vector2D( 0, -1 ), bot.smd );
 
             //////////////////////////////////////////////////////////////////////////////////////////////////
             ////////////////////////////////           Controller 2           ////////////////////////////////
             //////////////////////////////////////////////////////////////////////////////////////////////////
 
+            //run arm to position and release cone
+            //reset, low, middle, high
+            bot.arm.runLiftToPos(gamepad2.b, gamepad2.a, gamepad2.x, gamepad2.y);
+
             //Arm Movement
             bot.arm.driveArm(gamepad2.left_stick_y);
 
             //Gripper Movement
-            bot.arm.gripper(gamepad2.left_bumper, gamepad2.right_bumper);
+            bot.arm.runGripper(gamepad2.left_bumper, gamepad2.right_bumper);
 
             /////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////           Telemetry           /////////////////////////////////
@@ -66,12 +85,12 @@ public class Tele1 extends LinearOpMode {
             telemetry.addData("crntPosY:", estimate.getY());
             telemetry.addData("crntPosHeading:", estimate.getHeading());
 
-            telemetry.addData("targetPosX:", targetPos.getX());
-            telemetry.addData("targetPosY:", targetPos.getY());
-
-            telemetry.addData("horizontalInput", input.getY());
-            telemetry.addData("verticalInput", input.getX());
-            telemetry.addData("rotationInput", input.getHeading());
+//            telemetry.addData("targetPosX:", targetPos.getX());
+//            telemetry.addData("targetPosY:", targetPos.getY());
+//
+//            telemetry.addData("horizontalInput", input.getY());
+//            telemetry.addData("verticalInput", input.getX());
+//            telemetry.addData("rotationInput", input.getHeading());
             //telemetry.addData("gamepad1.right_stick_y", gamepad1.right_stick_y);
 
             //telemetry.addData("gamepad2.right_stick_y", gamepad2.right_stick_y);
