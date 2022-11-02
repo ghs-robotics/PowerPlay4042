@@ -14,6 +14,8 @@ public class Tele1 extends LinearOpMode {
     private final float dpadInputScaler = 1; // controls the speed of dpad movement as a percentage of the max speed
     private final float bezierP2Y = 0.1f; // 0.5 = no effect | 0.0 = max effect
 
+    private Pose2d tempInputScaler = new Pose2d(0.75, 0.75, 0.6);
+
     private Vector2D targetPos = new Vector2D(0, 0);
 
     ElapsedTime runtime = new ElapsedTime();
@@ -39,13 +41,18 @@ public class Tele1 extends LinearOpMode {
 
             //get input
             //Pose2d input = GetInput();
-            //Pose2d input = new Pose2d(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
-            //Movement
-            //bot.smd.setWeightedDrivePower(
-            //   new Pose2d(-input.getY(), input.getX(), input.getHeading())
-            //);
+            Pose2d input = new Pose2d(
+                gamepad1.left_stick_x * tempInputScaler.getX(),
+                gamepad1.left_stick_y * tempInputScaler.getY(),
+                gamepad1.right_stick_x * tempInputScaler.getHeading()
+            );
 
-            //temporary movement
+            //Movement
+            bot.smd.setWeightedDrivePower(
+               new Pose2d(-input.getY(), input.getX(), input.getHeading())
+            );
+
+            /*//temporary movement
             bot.smd.setWeightedDrivePower(new Pose2d(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x));
 
             //dpad movement
@@ -59,7 +66,7 @@ public class Tele1 extends LinearOpMode {
                 targetPos = bot.autoMove.RelativeToGlobalPos( new Vector2D( 0, 1 ), bot.smd );
 
             if (gamepad1.dpad_right)
-                targetPos = bot.autoMove.RelativeToGlobalPos( new Vector2D( 0, -1 ), bot.smd );
+                targetPos = bot.autoMove.RelativeToGlobalPos( new Vector2D( 0, -1 ), bot.smd );*/
 
             //////////////////////////////////////////////////////////////////////////////////////////////////
             ////////////////////////////////           Controller 2           ////////////////////////////////
