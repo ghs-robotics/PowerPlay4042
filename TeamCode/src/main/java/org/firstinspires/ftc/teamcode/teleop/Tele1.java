@@ -39,10 +39,11 @@ public class Tele1 extends LinearOpMode {
 
             //get input
             //Pose2d input = GetInput();
+            Pose2d input = new Pose2d(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
 
             //Movement
             bot.smd.setWeightedDrivePower(
-                new Pose2d(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x)
+                new Pose2d(-input.getY(), input.getX(), input.getHeading())
             );
 
             //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -68,6 +69,11 @@ public class Tele1 extends LinearOpMode {
             telemetry.addData("targetPosX:", targetPos.getX());
             telemetry.addData("targetPosY:", targetPos.getY());
 
+            telemetry.addData("horizontalInput", input.getY());
+            telemetry.addData("verticalInput", input.getX());
+            telemetry.addData("rotationInput", input.getHeading());
+            //telemetry.addData("gamepad1.right_stick_y", gamepad1.right_stick_y);
+
             //telemetry.addData("gamepad2.right_stick_y", gamepad2.right_stick_y);
             //telemetry.addData("gamepad2.right_stick_x", gamepad2.right_stick_x);
             //telemetry.addData("gamepad2.left_stick_y", gamepad2.left_stick_y);
@@ -77,13 +83,6 @@ public class Tele1 extends LinearOpMode {
             //telemetry.addData("horizontalInput", input.getY());
             //telemetry.addData("verticalInput", input.getHeading());
 
-
-            //telemetry.addData("gamepad2.a", gamepad2.a);
-            //telemetry.addData("gamepad2.y", gamepad2.y);
-            /*telemetry.addData("z axis", angles.firstAngle);
-            telemetry.addData("y axis", angles.secondAngle);
-            telemetry.addData("x axis", angles.thirdAngle);
-            telemetry.addData("shooter power variable", shooterPower); */
             telemetry.update();
         }
     }
