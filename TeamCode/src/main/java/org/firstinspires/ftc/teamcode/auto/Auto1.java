@@ -10,7 +10,7 @@ import org.openftc.apriltag.AprilTagDetection;
 @Autonomous(name = "Auto1")
 public class Auto1 extends LinearOpMode {
 
-
+    private boolean parked = false;
     /**
      * This function is executed when this Op Mode is selected from the Driver Station.
      */
@@ -73,12 +73,16 @@ public class Auto1 extends LinearOpMode {
                 telemetry.update();
             }
             telemetry.addLine("Moving to target pos");
-            bot.autoMove.MoveToPos( targetPos, bot.smd, telemetry );
+            if ( parked == false ) {
+                bot.autoMove.MoveToPos( targetPos, bot.smd, telemetry );
+                bot.smd.setWeightedDrivePower(new Pose2d(0, 0, 0));
+                parked = true;
+            }
 
             telemetry.addLine("Starting OpMode");
             telemetry.update();
 
-            bot.arm.gripTest();
+            //bot.arm.gripTest();
         }
     }
 
