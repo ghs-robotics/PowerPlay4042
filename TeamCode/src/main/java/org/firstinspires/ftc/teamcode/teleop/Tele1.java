@@ -39,7 +39,7 @@ public class Tele1 extends LinearOpMode {
             ////////////////////////////////           Controller 1           ////////////////////////////////
             //////////////////////////////////////////////////////////////////////////////////////////////////
 
-            //get input
+            //GET INPUT
             //Pose2d input = GetInput();
             Pose2d input = new Pose2d(
                 gamepad1.left_stick_x * tempInputScaler.getX(),
@@ -47,15 +47,12 @@ public class Tele1 extends LinearOpMode {
                 gamepad1.right_stick_x * tempInputScaler.getHeading()
             );
 
-            //Movement
+            //MOVEMENT
             bot.smd.setWeightedDrivePower(
                new Pose2d(-input.getY(), input.getX(), input.getHeading())
             );
 
-            /*//temporary movement
-            bot.smd.setWeightedDrivePower(new Pose2d(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x));
-
-            //dpad movement
+            /*//dpad movement
             if (gamepad1.dpad_up)
                 targetPos = bot.autoMove.RelativeToGlobalPos( new Vector2D( 1, 0 ), bot.smd );
 
@@ -76,10 +73,10 @@ public class Tele1 extends LinearOpMode {
             //reset, low, middle, high
             bot.arm.runLiftToPos(gamepad2.b, gamepad2.a, gamepad2.x, gamepad2.y);
 
-            //Arm Movement
+            //ARM MOVEMENT
             bot.arm.driveArm(-gamepad2.left_stick_y);
 
-            //Gripper Movement
+            //GRIPPER MOVEMENT
             bot.arm.runGripper(gamepad2.left_bumper, gamepad2.right_bumper);
 
             /////////////////////////////////////////////////////////////////////////////////////////////////

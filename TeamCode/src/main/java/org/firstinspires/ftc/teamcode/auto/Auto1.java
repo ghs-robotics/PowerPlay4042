@@ -38,6 +38,7 @@ public class Auto1 extends LinearOpMode {
 
 
         while (opModeIsActive()) {
+            //SET START POS
             Vector2D startPos = bot.autoMove.TileCords( new Vector2D( 0.5, 4.5 ) );
             bot.smd.setPoseEstimate( new Pose2d( startPos.getX(), startPos.getY(), 0) );
 
@@ -46,19 +47,20 @@ public class Auto1 extends LinearOpMode {
             if (tag == null) telemetry.addLine("Tag is NULL");
 
             if (tag == null || tag.id == LEFT) {
-                //Go to Zone 1
+                //GO TO ZONE 1
                 targetPos = bot.autoMove.RelativeToGlobalPos( new Vector2D( 1.5f, 1 ), bot.smd );
                 telemetry.addLine("Setting path to Zone 1");
             } else if (tag.id == MIDDLE) {
-                //Go to Zone 2
+                //GO TO ZONE 2
                 targetPos = bot.autoMove.RelativeToGlobalPos( new Vector2D( 1.5f, 0 ), bot.smd );
                 telemetry.addLine("Setting path to Zone 2");
             } else {
-                //Go to Zone 3
+                //GO TO ZONE 3
                 targetPos = bot.autoMove.RelativeToGlobalPos( new Vector2D( 1.5f, -1 ), bot.smd );
                 telemetry.addLine("Setting path to Zone 3");
             }
 
+            //MOVE TO TARGET POSITION
             telemetry.addLine("Moving to Zone");
             telemetry.update();
             if ( parked == false ) {
