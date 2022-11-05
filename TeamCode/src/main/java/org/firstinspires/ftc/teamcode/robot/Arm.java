@@ -69,10 +69,10 @@ public class Arm {
     }
 
     public void driveArm(double power) {
-        int current = liftMotor1.getCurrentPosition();
+        double current = liftMotor1.getCurrentPosition();
 
         if (current >= maxArmHeight - 100)
-            power /= current;
+            power *= (maxArmHeight - current) / 100;
         else if ((current >= maxArmHeight && power > 0) || (current <= 0 && power < 0))
             power = 0.1;
 
