@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.robot.Robot;
 @TeleOp
 //Want to try using Opmode instead of LinearOp since I heard this is better for TeleOp
 public class Tele1 extends LinearOpMode {
-    private final float dpadInputScaler = 0.5f; // controls the speed of dpad movement as a percentage of the max speed
+    private final float dpadInputScaler = 0.35f; // controls the speed of dpad movement as a percentage of the max speed
     private final float bezierP2Y = 0.5f; // 0.5 = no effect | 0.0 = max effect
 
     private Pose2d tempInputScaler = new Pose2d(0.75, 0.75, 0.6);
@@ -142,7 +142,8 @@ public class Tele1 extends LinearOpMode {
             vAxis *= dpadInputScaler;
         }
 
-        rAxis = LinearBezierY( gamepad1.right_stick_x );
+        rAxis = gamepad1.right_stick_x;
+        //rAxis = LinearBezierY( gamepad1.right_stick_x );
 
         return new Pose2d( hAxis, vAxis, rAxis );
     }
