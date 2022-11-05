@@ -51,7 +51,8 @@ public class Camera {
         double cx = 402.145;
         double cy = 221.506;
         // UNITS ARE METERS
-        double tagsize = 0.166; //This is 30% of original pdf size
+        //0.166 IRL - This is 30% of original pdf size
+        double tagsize = 0.0415; //This is a quarter of the IRL size
 
         //Tag IDs for 3 different park locations
         LEFT = 11;
