@@ -17,14 +17,30 @@ public class Camera {
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
 
+    // Lens intrinsics
+    // UNITS ARE PIXELS
+    // NOTE: this calibration is for the C920 webcam at 800x448.
+    // You will need to do your own calibration for other configurations!
+    private final double fx = 578.272;
+    private final double fy = 578.272;
+    private final double cx = 402.145;
+    private final double cy = 221.506;
+    // UNITS ARE METERS
+    private final double tagsize = 0.166; //This is 30% of original pdf size
+
+    private int LEFT;
+    private int MIDDLE;
+    private int RIGHT;
+
+    private AprilTagDetection tagOfInterest;
+    private AprilTagDetectionPipeline aprilTagDetectionPipeline;
+
     public Camera(HardwareMap hardwareMap, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
     }
-
-    public AprilTagDetection runTagDetection() {
+    public void setupTagDetection() {
         OpenCvCamera camera;
-        AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
         // Lens intrinsics
         // UNITS ARE PIXELS
@@ -38,17 +54,10 @@ public class Camera {
         double tagsize = 0.166; //This is 30% of original pdf size
 
         //Tag IDs for 3 different park locations
-        int LEFT = 11;
-        int MIDDLE = 12;
-        int RIGHT = 13;
-        AprilTagDetection tagOfInterest = null;
-
-/*==================================================================================================
-////////////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-||||||||||||||||||||||||||||||||||||||||| CAMERA SETUP |||||||||||||||||||||||||||||||||||||||||||||
-\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\////////////////////////////////////////////////////
-==================================================================================================*/
-
+        LEFT = 11;
+        MIDDLE = 12;
+        RIGHT = 13;
+        tagOfInterest = null;
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam"), cameraMonitorViewId);
@@ -62,22 +71,17 @@ public class Camera {
             }
 
             @Override
-             public void onError(int errorCode) {
+            public void onError(int errorCode) {
                 telemetry.addLine("Error: Camera could not open");
                 telemetry.update();
             }
         });
 
         telemetry.setMsTransmissionInterval(50);
+    }
 
+    public AprilTagDetection runTagDetection() {
 
-/*==================================================================================================
-////////////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-||||||||||||||||||||||||||||||||||||||||| TAG DETECTION ||||||||||||||||||||||||||||||||||||||||||||
-\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\////////////////////////////////////////////////////
-==================================================================================================*/
-
-        for(int i=0; i<500; i++) {
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
             if (currentDetections.size() != 0) {
@@ -119,18 +123,10 @@ public class Camera {
 
             telemetry.update();
             sleep(20);
-        }
 
-            /* Update the telemetry */
-            if (tagOfInterest != null) {
-                telemetry.addLine("Tag snapshot:\n");
-                tagToTelemetry(tagOfInterest, telemetry);
-                telemetry.update();
-            } else {
-                telemetry.addLine("No tag snapshot available, it was never sighted during the init loop :(");
-                telemetry.update();
-            }
-
+    ////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////
 
         return tagOfInterest;
     }
