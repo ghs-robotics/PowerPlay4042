@@ -106,10 +106,17 @@ public class Arm {
         }
     }
 
-    public void runGripper(boolean in, boolean out) {
-        if (in)
+    public void runGripper(boolean inMax, boolean outMax, boolean inLimited, boolean outLimited) {
+        double current = gripServo.getPosition();
+        double twentyDeg = 20 / 300;
+
+        if (inLimited)
+            gripServo.setPosition(current -twentyDeg);
+        else if (outLimited)
+            gripServo.setPosition(current +twentyDeg );
+        else if (inMax)
             gripServo.setPosition(Servo.MIN_POSITION);
-        else if (out)
+        else if (outMax)
             gripServo.setPosition(Servo.MAX_POSITION);
     }
 

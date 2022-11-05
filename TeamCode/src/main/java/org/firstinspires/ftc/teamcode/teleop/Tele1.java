@@ -77,8 +77,12 @@ public class Tele1 extends LinearOpMode {
             if (!useDriveArm)
                 bot.arm.driveArm(-gamepad2.left_stick_y);
 
-            //GRIPPER MOVEMENT
-            bot.arm.runGripper(gamepad2.left_bumper, gamepad2.right_bumper);
+            //GRIPPER MOVEMENT - bumpers for full range, triggers for 20 deg
+            boolean lTrig = gamepad2.left_trigger > 0.5;
+            boolean rTrig = gamepad2.right_trigger > 0.5;
+            bot.arm.runGripper(gamepad2.left_bumper, gamepad2.right_bumper, lTrig, rTrig);
+
+
 
             /////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////           Telemetry           /////////////////////////////////
