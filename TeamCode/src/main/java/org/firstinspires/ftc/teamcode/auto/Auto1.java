@@ -11,6 +11,7 @@ import org.openftc.apriltag.AprilTagDetection;
 public class Auto1 extends LinearOpMode {
 
     private boolean parked = false;
+    private AprilTagDetection tag;
     /**
      * This function is executed when this Op Mode is selected from the Driver Station.
      */
@@ -23,13 +24,12 @@ public class Auto1 extends LinearOpMode {
         int MIDDLE = 12;
         int RIGHT = 13;
 
+        bot.camera.setupTagDetection();
 
-        AprilTagDetection tag = bot.camera.runTagDetection();
+        while(!opModeIsActive()) {
+            tag = bot.camera.runTagDetection();
+        }
 
-
-        sleep(5000);
-
-        waitForStart();
 /*==================================================================================================
 ////////////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 ||||||||||||||||||||||||||||||||||||||||| BEGIN OPMODE |||||||||||||||||||||||||||||||||||||||||||||
@@ -63,7 +63,7 @@ public class Auto1 extends LinearOpMode {
             //MOVE TO TARGET POSITION
             telemetry.addLine("Moving to Zone");
             telemetry.update();
-            if ( parked == false ) {
+            if (!parked) {
                 bot.autoMove.MoveToPos( targetPos, bot.smd, telemetry );
                 parked = true;
             }
