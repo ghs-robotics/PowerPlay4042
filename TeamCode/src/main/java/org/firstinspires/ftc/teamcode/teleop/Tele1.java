@@ -49,8 +49,7 @@ public class Tele1 extends LinearOpMode {
 
             //MOVEMENT
             bot.smd.setWeightedDrivePower(
-               new Pose2d(-input.getY(), input.getX(), input.getHeading())
-            );
+               new Pose2d(-input.getY(), input.getX(), input.getHeading()));
 
             /*//dpad movement
             if (gamepad1.dpad_up)
@@ -72,9 +71,11 @@ public class Tele1 extends LinearOpMode {
             //run arm to position and release cone
             //reset, low, middle, high
             bot.arm.runLiftToPos(gamepad2.b, gamepad2.a, gamepad2.x, gamepad2.y);
+            boolean useDriveArm = gamepad2.b || gamepad2.a || gamepad2.x || gamepad2.y;
 
-            //ARM MOVEMENT
-            bot.arm.driveArm(-gamepad2.left_stick_y);
+            //ARM MOVEMENT - won't work while running arm to position
+            if (!useDriveArm)
+                bot.arm.driveArm(-gamepad2.left_stick_y);
 
             //GRIPPER MOVEMENT
             bot.arm.runGripper(gamepad2.left_bumper, gamepad2.right_bumper);
@@ -85,9 +86,9 @@ public class Tele1 extends LinearOpMode {
 
             Pose2d estimate = bot.smd.getPoseEstimate();
 
-            telemetry.addData("lift 1", bot.arm.liftMotor1.getCurrentPosition());
-            telemetry.addData("lift 2", bot.arm.liftMotor2.getCurrentPosition());
-
+            telemetry.addData("gripper status: ", bot.arm.gripperStatus());
+            telemetry.addData("lift 1 pos", bot.arm.liftMotor1.getCurrentPosition());
+            telemetry.addData("lift 2 pos", bot.arm.liftMotor2.getCurrentPosition());
 //            telemetry.addData("targetPosX:", targetPos.getX());
 //            telemetry.addData("targetPosY:", targetPos.getY());
 //
@@ -98,7 +99,7 @@ public class Tele1 extends LinearOpMode {
 
             //telemetry.addData("gamepad2.right_stick_y", gamepad2.right_stick_y);
             //telemetry.addData("gamepad2.right_stick_x", gamepad2.right_stick_x);
-            telemetry.addData("gamepad2.left_stick_y", gamepad2.left_stick_y);
+            //telemetry.addData("gamepad2.left_stick_y", gamepad2.left_stick_y);
 
             //telemetry.addData("rotationInput", input.getX());
             //telemetry.addData("gamepad1.right_stick_y", gamepad1.right_stick_y);
