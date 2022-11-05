@@ -14,7 +14,7 @@ public class Tele1 extends LinearOpMode {
     private final float dpadInputScaler = 0.35f; // controls the speed of dpad movement as a percentage of the max speed
     private final float bezierP2Y = 0.5f; // 0.5 = no effect | 0.0 = max effect
 
-    private Pose2d tempInputScaler = new Pose2d(1, 1, 0.75);
+    private Pose2d tempInputScaler = new Pose2d(0.75, 0.75, 0.75);
 
     private Vector2D targetPos = new Vector2D(0, 0);
 
@@ -138,8 +138,8 @@ public class Tele1 extends LinearOpMode {
             vAxis *= curveMag;*/
         }
         else {
-            hAxis *= -dpadInputScaler;
-            vAxis *= dpadInputScaler;
+            hAxis *= dpadInputScaler;
+            vAxis *=-dpadInputScaler;
         }
 
         rAxis = gamepad1.right_stick_x;
