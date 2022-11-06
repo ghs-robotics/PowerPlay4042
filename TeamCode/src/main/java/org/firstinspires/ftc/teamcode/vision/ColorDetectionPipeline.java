@@ -147,7 +147,8 @@ public class ColorDetectionPipeline extends OpenCvPipeline {
             boolean included = false;
             for (int detection : colorDetections)
                 if (result == detection) included = true;
-            if (!included) colorDetections.add(new Integer(result));
+            if(!included) colorDetections.add(new Integer(result));
+            //colorDetections.remove(0);
         }
 
         //Draw rectangle around center 30x30 pixels to help line up cameraq2qafu
