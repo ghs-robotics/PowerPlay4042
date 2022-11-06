@@ -14,7 +14,7 @@ public class Tele1 extends LinearOpMode {
     private final float dpadInputScaler = 0.35f; // controls the speed of dpad movement as a percentage of the max speed
     private final float bezierP2Y = 0.5f; // 0.5 = no effect | 0.0 = max effect
 
-    private Pose2d tempInputScaler = new Pose2d(0.75, 0.75, 0.6);
+    private Pose2d tempInputScaler = new Pose2d(0.75, 0.75, 0.75);
 
     private Vector2D targetPos = new Vector2D(0, 0);
 
@@ -128,24 +128,28 @@ public class Tele1 extends LinearOpMode {
             hAxis = gamepad1.left_stick_x;
             vAxis = gamepad1.left_stick_y;
 
-            double mag = Math.hypot( hAxis, vAxis );
+            /*double mag = Math.hypot( hAxis, vAxis );
             double curveMag = LinearBezierY( mag );
 
             hAxis /= mag;
             vAxis /= mag;
 
             hAxis *= curveMag;
-            vAxis *= curveMag;
+            vAxis *= curveMag;*/
         }
         else {
             hAxis *= dpadInputScaler;
-            vAxis *= dpadInputScaler;
+            vAxis *=-dpadInputScaler;
         }
 
         rAxis = gamepad1.right_stick_x;
         //rAxis = LinearBezierY( gamepad1.right_stick_x );
 
-        return new Pose2d( hAxis, vAxis, rAxis );
+        return new Pose2d(
+            hAxis * tempInputScaler.getX(),
+            vAxis * tempInputScaler.getY(),
+            rAxis * tempInputScaler.getHeading()
+        );
     }
     private double LinearBezierY( double t ){
         //Uses the Y coordinates of 3 points to solve for the Y coordinate along the linear bezier curve at percentage "t"
