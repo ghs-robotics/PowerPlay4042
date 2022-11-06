@@ -78,7 +78,7 @@ public class ColorDetectionPipeline extends OpenCvPipeline {
         input = new Mat(input, rectCrop);
 
         //Sample center 5x5 pixels
-        Rect sampleCrop = new Rect((int) (input.width() / 2), (int) (input.height() / 2), 5, 5);
+        Rect sampleCrop = new Rect((int) (input.width() / 2), (int) (input.height() / 2), 15, 15);
         Mat colorSample = new Mat(input, sampleCrop);
 
         //convert image from RGB to HSV
