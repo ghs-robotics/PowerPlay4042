@@ -12,8 +12,8 @@ public class Arm {
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
 
-    public DcMotorEx liftMotor1;
-    public DcMotorEx liftMotor2;
+    public DcMotor liftMotor1;
+    public DcMotor liftMotor2;
 
     //private CRServo gripServo;
     public Servo gripServo;
@@ -30,12 +30,12 @@ public class Arm {
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
 
-        liftMotor1 = hardwareMap.get(DcMotorEx.class, "LiftMot1");
-        liftMotor1.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        liftMotor1 = hardwareMap.get(DcMotor.class, "LiftMot1");
+        liftMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftMotor1.setDirection(DcMotor.Direction.FORWARD);
 
-        liftMotor2 = hardwareMap.get(DcMotorEx.class, "LiftMot2");
-        liftMotor2.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        liftMotor2 = hardwareMap.get(DcMotor.class, "LiftMot2");
+        liftMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftMotor2.setDirection(DcMotor.Direction.REVERSE);
 
         gripServo = hardwareMap.get(Servo.class, "GripServ");
