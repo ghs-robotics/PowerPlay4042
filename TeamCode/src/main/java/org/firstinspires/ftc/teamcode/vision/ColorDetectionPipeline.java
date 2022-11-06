@@ -64,10 +64,12 @@ public class ColorDetectionPipeline extends OpenCvPipeline {
     private Mat hueTargets;
 
     public ColorDetectionPipeline() {
+        colorDetections = new ArrayList<Integer>();
+
         hueTargets = new Mat(3, 1, CvType.CV_32SC1);
-        hueTargets.put(0, 0, 38);  //[ 38  ]
-        hueTargets.put(1, 0, 156); //[ 156 ]
-        hueTargets.put(2, 0, 195); //[ 195 ]
+        hueTargets.put(0, 0, 38.0);  //[ 38  ]
+        hueTargets.put(1, 0, 156.0); //[ 156 ]
+        hueTargets.put(2, 0, 195.0); //[ 195 ]
 
     }
 
@@ -92,10 +94,17 @@ public class ColorDetectionPipeline extends OpenCvPipeline {
         Core.reduce(avgColColor, avgColor, 1, Core.REDUCE_AVG);
         ArrayList<Mat> channels = new ArrayList<Mat>(3);
         Core.split(avgColor, channels);
+        Mat hueChannel = channels.get(0);
 
         //Compute distance from each target color hue
         Mat hueDiff = new Mat();
-        Core.absdiff(hueTargets, channels.get(0).reshape(channels.get(0).type(), 3), hueDiff);
+        Mat hueDupe = new Mat(3, 1, hueChannel.type());
+        hueDupe.put(0, 0, hueChannel.get(0, 0)[0]);
+        hueDupe.put(1, 0, hueChannel.get(0, 0)[0]);
+        hueDupe.put(2, 0, hueChannel.get(0,0)[0]);
+        hueTargets.convertTo(hueTargets, hueChannel.type());
+
+        Core.absdiff(hueTargets, hueChannel, hueDiff);
 
         //Find location of min hue difference
         int result = (int)Core.minMaxLoc(hueDiff).minLoc.y;
