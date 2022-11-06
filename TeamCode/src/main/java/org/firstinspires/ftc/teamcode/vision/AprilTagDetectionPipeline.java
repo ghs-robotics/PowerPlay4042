@@ -21,7 +21,11 @@
 
 package org.firstinspires.ftc.teamcode.vision;
 
+import static org.opencv.imgproc.Imgproc.GaussianBlur;
+import static org.opencv.imgproc.Imgproc.filter2D;
+
 import org.opencv.calib3d.Calib3d;
+import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfDouble;
@@ -29,7 +33,9 @@ import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.MatOfPoint3f;
 import org.opencv.core.Point;
 import org.opencv.core.Point3;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.apriltag.AprilTagDetectorJNI;
@@ -102,8 +108,43 @@ public class AprilTagDetectionPipeline extends OpenCvPipeline
     @Override
     public Mat processFrame(Mat input)
     {
+        //Crop image to center 1/9th
+        Rect rectCrop = new Rect((int)(input.width()/2), (int)(input.height()/2), (int)(input.width()/6),(int)(input.height()/6));
+        input = new Mat(input, rectCrop);
+
+        //Sharpen image
+
+        //Creating our sharpening filter
+//        Mat kernel = new Mat(3,3, CvType.CV_32F) {
+//            {
+//                put(0, 0, 0);
+//                put(0, 1, -1);
+//                put(0, 2, 0);
+//
+//                put(1, 0, -1);
+//                put(1, 1, 5);
+//                put(1, 2, -1);
+//
+//                put(2, 0, 0);
+//                put(2, 1, -1);
+//                put(2, 2, 0);
+//            }
+//        };
+//
+//        // Applying cv2.filter2D function
+//        Mat sharpened = new Mat(input.rows(), input.cols(), input.type());
+//        org.opencv.imgproc.Imgproc.filter2D(input, sharpened, -1, kernel);
+//        input = sharpened;
+
+
+
         // Convert to greyscale
         Imgproc.cvtColor(input, grey, Imgproc.COLOR_RGBA2GRAY);
+
+        Mat sharpenedImage = new Mat(input.rows(), input.cols(), input.type());
+        Imgproc.GaussianBlur(input, sharpenedImage, new Size(0, 0), 10);
+        Core.addWeighted(input, 1.5, sharpenedImage, -0.5, 0, sharpenedImage);
+        input = sharpenedImage;
 
         synchronized (decimationSync)
         {
