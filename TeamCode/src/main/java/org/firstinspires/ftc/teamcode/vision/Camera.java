@@ -35,10 +35,94 @@ public class Camera {
     private AprilTagDetection tagOfInterest;
     private AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
+    private int colorDetection;
+    private ColorDetectionPipeline colorDetectionPipeline;
+
     public Camera(HardwareMap hardwareMap, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
     }
+
+    public void setupColorDetection() {
+
+        OpenCvCamera camera;
+
+        //Tag IDs for 3 different park locations
+        LEFT = 0; //Lime
+        MIDDLE = 1; //Magenta
+        RIGHT = 2; //Cyan
+        colorDetection = -1;
+
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam"), cameraMonitorViewId);
+        colorDetectionPipeline = new ColorDetectionPipeline();
+
+        camera.setPipeline(colorDetectionPipeline);
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode) {
+                telemetry.addLine("Error: Camera could not open");
+                telemetry.update();
+            }
+        });
+
+        telemetry.setMsTransmissionInterval(50);
+    }
+
+    public int runColorDetection() {
+        int color = -1;
+        ArrayList<Integer> currentDetections = colorDetectionPipeline.getColorDetections();
+
+        if (currentDetections.size() != 0) {
+            boolean colorFound = false;
+
+            for (Integer detection : currentDetections) {
+                if (detection == LEFT || detection == MIDDLE || detection == RIGHT) {
+                    color = detection;
+                    colorFound = true;
+                    break;
+                }
+            }
+
+
+        if (colorFound) {
+            telemetry.addLine("Color of interest is in sight!");
+            telemetry.addLine("Spotted color #" + color);
+
+        } else {
+            telemetry.addLine("Don't see color of interest :(");
+
+            if (color == -1) {
+                telemetry.addLine("(The color has never been seen)");
+            } else {
+                telemetry.addLine("\nBut we HAVE seen the color before");
+            }
+        }
+
+        } else {
+            telemetry.addLine("Don't see color of interest :(");
+
+            if (color == -1) {
+                telemetry.addLine("(The color has never been seen)");
+            } else {
+                telemetry.addLine("\nBut we HAVE seen the color before");
+            }
+
+        }
+
+        telemetry.update();
+        sleep(20);
+
+
+        return color;
+
+    }
+
     public void setupTagDetection() {
         OpenCvCamera camera;
 

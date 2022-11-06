@@ -12,6 +12,7 @@ public class Auto1 extends LinearOpMode {
 
     private boolean parked = false;
     private AprilTagDetection tag;
+    private int color;
     /**
      * This function is executed when this Op Mode is selected from the Driver Station.
      */
@@ -20,14 +21,19 @@ public class Auto1 extends LinearOpMode {
         Robot bot = new Robot(hardwareMap, telemetry);
 
         //Tag IDs for 3 different park locations
-        int LEFT = 11;
-        int MIDDLE = 12;
-        int RIGHT = 13;
+//        int LEFT = 11;
+//        int MIDDLE = 12;
+//        int RIGHT = 13;
+        int LEFT = 0; //Lime
+        int MIDDLE = 1; //Magenta
+        int RIGHT = 2; //Cyan
 
-        bot.camera.setupTagDetection();
+//        bot.camera.setupTagDetection();
+        bot.camera.setupColorDetection();
 
         while(!opModeIsActive()) {
-            tag = bot.camera.runTagDetection();
+//          tag = bot.camera.runTagDetection();
+            color = bot.camera.runColorDetection();
         }
 
 /*==================================================================================================
