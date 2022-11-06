@@ -25,6 +25,7 @@ import static org.opencv.core.Core.mean;
 import static org.opencv.imgproc.Imgproc.GaussianBlur;
 import static org.opencv.imgproc.Imgproc.cvtColor;
 import static org.opencv.imgproc.Imgproc.filter2D;
+import static org.opencv.imgproc.Imgproc.rectangle;
 
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.Core;
@@ -48,7 +49,7 @@ import java.util.ArrayList;
 public class ColorDetectionPipeline extends OpenCvPipeline {
 
     private ArrayList<Integer> colorDetections;
-    final int colorThreshold = 10;
+    final int hueThreshold = 15;
 
     //RGB
 //    final int[] lime = {182, 255, 0};
@@ -64,9 +65,10 @@ public class ColorDetectionPipeline extends OpenCvPipeline {
 
     public ColorDetectionPipeline() {
         hueTargets = new Mat(3, 1, CvType.CV_32SC1);
-        hueTargets.put(0, 0, 38);
-        hueTargets.put(1, 0, 156);
-        hueTargets.put(0, 0, 195);
+        hueTargets.put(0, 0, 38);  //[ 38  ]
+        hueTargets.put(1, 0, 156); //[ 156 ]
+        hueTargets.put(2, 0, 195); //[ 195 ]
+
     }
 
     @Override
@@ -84,23 +86,32 @@ public class ColorDetectionPipeline extends OpenCvPipeline {
         cvtColor(colorSample, hsvConvert, Imgproc.COLOR_RGB2HSV);
 
         //Find average of each channel across sample pixels
+        Mat avgColColor = new Mat();
         Mat avgColor = new Mat();
-        Core.reduce(hsvConvert, avgColor, 0, Core.REDUCE_AVG);
+        Core.reduce(hsvConvert, avgColColor, 0, Core.REDUCE_AVG);
+        Core.reduce(avgColColor, avgColor, 1, Core.REDUCE_AVG);
         ArrayList<Mat> channels = new ArrayList<Mat>(3);
         Core.split(avgColor, channels);
 
         //Compute distance from each target color hue
         Mat hueDiff = new Mat();
-        Core.absdiff(hueTargets, channels.get(0).reshape(channels.get(0).type(),3), hueDiff);
+        Core.absdiff(hueTargets, channels.get(0).reshape(channels.get(0).type(), 3), hueDiff);
 
         //Find location of min hue difference
-        int result = (int)Core.minMaxLoc(hueDiff).maxLoc.x;
+        int result = (int)Core.minMaxLoc(hueDiff).minLoc.y;
 
-        //Add color detection if not already included
-        boolean included = false;
-        for(int detection : colorDetections)
-            if(result == detection) included = true;
-        if(!included) colorDetections.add(new Integer(result));
+        //Add color detection hue diff is small enough and not already detected
+        if(hueDiff.get(result, 0)[0] < hueThreshold ) {
+            boolean included = false;
+            for (int detection : colorDetections)
+                if (result == detection) included = true;
+            if (!included) colorDetections.add(new Integer(result));
+        }
+
+        //Draw rectangle around center 30x30 pixels to help line up camera
+        Point upperLeft = new Point((int)input.cols()/2 - 15, (int)input.cols()/2 + 15);
+        Point bottomRight = new Point((int)input.cols()/2 + 15, (int)input.cols()/2 - 15);
+        rectangle(input, upperLeft, bottomRight, new Scalar(255, 25, 25), 5);
 
         return input;
     }
