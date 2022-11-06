@@ -7,11 +7,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.openftc.apriltag.AprilTagDetection;
-@Autonomous(name = "Auto1")
-public class Auto1 extends LinearOpMode {
+@Autonomous(name = "Auto2")
+public class Auto2 extends LinearOpMode {
 
     private boolean parked = false;
-    private AprilTagDetection tag;
+    private int color;
     /**
      * This function is executed when this Op Mode is selected from the Driver Station.
      */
@@ -20,14 +20,14 @@ public class Auto1 extends LinearOpMode {
         Robot bot = new Robot(hardwareMap, telemetry);
 
         //Tag IDs for 3 different park locations
-        int LEFT = 11;
-        int MIDDLE = 12;
-        int RIGHT = 13;
+        int LEFT = 0; //Lime
+        int MIDDLE = 1; //Magenta
+        int RIGHT = 2; //Cyan
 
-        bot.camera.setupTagDetection();
+        bot.camera.setupColorDetection();
 
         while(!opModeIsActive()) {
-          tag = bot.camera.runTagDetection();
+            color = bot.camera.runColorDetection();
         }
 
 /*==================================================================================================
@@ -44,13 +44,13 @@ public class Auto1 extends LinearOpMode {
 
             Vector2D targetPos = new Vector2D(0, 0);
 
-            if (tag == null) telemetry.addLine("Tag is NULL");
+            if (color == -1) telemetry.addLine("Color is -1");
 
-            if (tag == null || tag.id == LEFT) {
+            if (color == -1 || color == LEFT) {
                 //GO TO ZONE 1
                 targetPos = bot.autoMove.RelativeToGlobalPos( new Vector2D( 1.5f, 1 ), bot.smd );
                 telemetry.addLine("Setting path to Zone 1");
-            } else if (tag.id == MIDDLE) {
+            } else if (color == MIDDLE) {
                 //GO TO ZONE 2
                 targetPos = bot.autoMove.RelativeToGlobalPos( new Vector2D( 1.5f, 0 ), bot.smd );
                 telemetry.addLine("Setting path to Zone 2");
