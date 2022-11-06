@@ -55,7 +55,7 @@ public class Camera {
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam"), cameraMonitorViewId);
-        colorDetectionPipeline = new ColorDetectionPipeline();
+        colorDetectionPipeline = new ColorDetectionPipeline(telemetry);
 
         camera.setPipeline(colorDetectionPipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -85,7 +85,6 @@ public class Camera {
                 if (detection == LEFT || detection == MIDDLE || detection == RIGHT) {
                     color = detection;
                     colorFound = true;
-                    break;
                 }
             }
 

@@ -27,6 +27,7 @@ import static org.opencv.imgproc.Imgproc.cvtColor;
 import static org.opencv.imgproc.Imgproc.filter2D;
 import static org.opencv.imgproc.Imgproc.rectangle;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
@@ -47,9 +48,10 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 
 public class ColorDetectionPipeline extends OpenCvPipeline {
+    private Telemetry telemetry;
 
     private ArrayList<Integer> colorDetections;
-    final int hueThreshold = 15;
+    final int hueThreshold = 20;
 
     //RGB
 //    final int[] lime = {182, 255, 0};
@@ -61,22 +63,18 @@ public class ColorDetectionPipeline extends OpenCvPipeline {
     final int[] magenta = {156, 255, 255};
     final int[] cyan = {95, 255, 255};
     final int[] hues = {38, 156, 195};
-    private Mat hueTargets;
+    private ArrayList<Double> hueTargets;
 
-    public ColorDetectionPipeline() {
+    public ColorDetectionPipeline(Telemetry telemetry) {
+        this.telemetry = telemetry;
+
         colorDetections = new ArrayList<Integer>();
-
-        hueTargets = new Mat(3, 1, CvType.CV_32SC1);
-        hueTargets.put(0, 0, 38.0);  //[ 38  ]
-        hueTargets.put(1, 0, 156.0); //[ 156 ]
-        hueTargets.put(2, 0, 195.0); //[ 195 ]
-
     }
 
     @Override
     public Mat processFrame(Mat input) {
         //Crop image to center 1/9th
-        Rect rectCrop = new Rect((int) (input.width() / 2), (int) (input.height() / 2), (int) (input.width() / 6), (int) (input.height() / 6));
+        Rect rectCrop = new Rect((int) (input.width() / 2), (int) (input.height() / 2), (int) (input.width() / 5), (int) (input.height() / 5));
         input = new Mat(input, rectCrop);
 
         //Sample center 5x5 pixels
@@ -96,31 +94,76 @@ public class ColorDetectionPipeline extends OpenCvPipeline {
         Core.split(avgColor, channels);
         Mat hueChannel = channels.get(0);
 
+        hueTargets = new ArrayList<Double>();
+        hueTargets.add(38.0);  //[ 38  ]
+        hueTargets.add(156.0); //[ 156 ]
+        hueTargets.add(195.0); //[ 195 ]
+
         //Compute distance from each target color hue
-        Mat hueDiff = new Mat();
-        Mat hueDupe = new Mat(3, 1, hueChannel.type());
-        hueDupe.put(0, 0, hueChannel.get(0, 0)[0]);
-        hueDupe.put(1, 0, hueChannel.get(0, 0)[0]);
-        hueDupe.put(2, 0, hueChannel.get(0,0)[0]);
-        hueTargets.convertTo(hueTargets, hueChannel.type());
+        ArrayList<Double> hueDiff = new ArrayList<Double>();
+//        Mat hueDupe = new Mat(3, 1, hueChannel.type());
+//        hueDupe.put(0, 0, hueChannel.get(0, 0)[0]);
+//        hueDupe.put(1, 0, hueChannel.get(0, 0)[0]);
+//        hueDupe.put(2, 0, hueChannel.get(0,0)[0]);
+        //hueTargets.convertTo(hueTargets, hueChannel.type());
 
-        Core.absdiff(hueTargets, hueChannel, hueDiff);
+//        telemetry.addData("hueDupe shape:", hueDupe.size());
+//        telemetry.addData("hueDupe shape:", hueDupe.height());
+//        telemetry.addData("hueDupe type:", hueDupe.type());
+//        telemetry.addData("hueTargets shape: ", hueTargets.size());
+//        telemetry.addData("hueTargets shape:", hueTargets.height());
+//        telemetry.addData("hueTargets type:", hueTargets.type());
+//        telemetry.update();
 
-        //Find location of min hue difference
-        int result = (int)Core.minMaxLoc(hueDiff).minLoc.y;
+        for(int i=0; i<hueTargets.size(); i++) {
+                hueDiff.add(Math.abs(hueTargets.get(i) - hueChannel.get(0, 0)[0]));
+            }
+
+//        Core.absdiff(hueTargets, hueChannel, hueDiff);
+//
+//        //Find location of min hue difference
+        int result = -1;
+        int minIndex = 0;
+        double min = hueDiff.get(0);
+        for(int i=1; i<hueDiff.size(); i++) {
+            if(hueDiff.get(i) < min) {
+                minIndex = i;
+                min = hueDiff.get(i);
+            }
+        }
+
+        result = minIndex;
+//        telemetry.addLine("Sighted Hue: " + hueChannel.get(0, 0)[0]);
+//        telemetry.addLine("Hue Difference: " + hueDiff.get(result));
+//        telemetry.addLine("Result is: " + result);
+//        telemetry.addLine("" + hueDiff.get(0));
+//        telemetry.addLine("" + hueDiff.get(1));
+//        telemetry.addLine("" + hueDiff.get(2));
+//
+//        telemetry.update();
 
         //Add color detection hue diff is small enough and not already detected
-        if(hueDiff.get(result, 0)[0] < hueThreshold ) {
+        if(hueDiff.get(result) < hueThreshold ) {
             boolean included = false;
             for (int detection : colorDetections)
                 if (result == detection) included = true;
             if (!included) colorDetections.add(new Integer(result));
         }
 
-        //Draw rectangle around center 30x30 pixels to help line up camera
-        Point upperLeft = new Point((int)input.cols()/2 - 15, (int)input.cols()/2 + 15);
-        Point bottomRight = new Point((int)input.cols()/2 + 15, (int)input.cols()/2 - 15);
-        rectangle(input, upperLeft, bottomRight, new Scalar(255, 25, 25), 5);
+        //Draw rectangle around center 30x30 pixels to help line up cameraq2qafu
+
+
+
+
+
+
+
+
+
+
+        Point upperLeft = new Point((int)input.cols()/2 - 10, (int)input.cols()/2 + 10);
+        Point bottomRight = new Point((int)input.cols()/2 + 10, (int)input.cols()/2 - 10);
+        rectangle(input, upperLeft, bottomRight, new Scalar(255, 25, 25), 3);
 
         return input;
     }
