@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.firstinspires.ftc.teamcode.robot.Robot;
-import org.openftc.apriltag.AprilTagDetection;
+
 @Autonomous(name = "Auto2")
 public class Auto2 extends LinearOpMode {
 
@@ -64,13 +64,13 @@ public class Auto2 extends LinearOpMode {
             telemetry.addLine("Moving to Zone");
             telemetry.update();
             if (!parked) {
-                bot.autoMove.MoveToPos(
+                bot.autoMove.MoveToPosOld(
                         bot.autoMove.RelativeToGlobalPos(new Vector2D(0.1f, 0), bot.smd),
                         bot.smd,
                         bot.telemetry
                 );
 
-                bot.autoMove.MoveToPos( targetPos, bot.smd, telemetry );
+                bot.autoMove.MoveToPosOld( targetPos, bot.smd, telemetry );
                 parked = true;
             }
 

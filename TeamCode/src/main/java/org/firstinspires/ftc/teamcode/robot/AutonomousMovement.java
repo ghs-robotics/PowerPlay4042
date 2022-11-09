@@ -6,6 +6,8 @@ import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.odometry.drive.SampleMecanumDrive;
 
+import java.util.ArrayList;
+
 public class AutonomousMovement {
     private final Vector2D TileDimensions = new Vector2D(23.5f, 23.5f);
     private final Vector2D TileNumber = new Vector2D(6.0, 6.0);
@@ -34,7 +36,7 @@ public class AutonomousMovement {
                 crntPos.getY() + tileDist.getY() * TileDimensions.getY()
         );
     }
-    public void MoveToPos( Vector2D target, SampleMecanumDrive smd, Telemetry telemetry ) {
+    public void MoveToPosOld(Vector2D target, SampleMecanumDrive smd, Telemetry telemetry ) {
         Pose2d crntPos = smd.getPoseEstimate();
         double crntSpd = MoveToSpd;
 
@@ -90,5 +92,39 @@ public class AutonomousMovement {
             smd.update();
             telemetry.update();
         }
+    }
+    public void MoveAlongPath(boolean moveOnXAxis, ArrayList<Double> distances, SampleMecanumDrive smd, Telemetry telemetry ){
+        for (double distance : distances ) {
+            double crntSpd = MoveToSpd;
+            Pose2d crntPos = smd.getPoseEstimate();
+
+            double startDist = moveOnXAxis ? crntPos.getX() : crntPos.getY();
+            double targetDist = startDist + distance;
+
+            double dif = moveOnXAxis ? crntPos.getX() - targetDist : crntPos.getY() - targetDist ;
+            double absDif = Math.abs( dif );
+
+            while (absDif > MoveToStopDist){
+                if ( absDif <= MoveToSlowDist ) crntSpd = MoveToSlowSpd;
+
+                Pose2d movePose;
+                if (moveOnXAxis) movePose = new Pose2d(Math.signum(dif) * crntSpd, 0, 0);
+                else movePose = new Pose2d(0, Math.signum(dif) * crntSpd, 0);
+
+                smd.setWeightedDrivePower( movePose );
+
+                crntPos = smd.getPoseEstimate();
+
+                dif = moveOnXAxis ? crntPos.getX() - targetDist : crntPos.getY() - targetDist ;
+                absDif = Math.abs( dif );
+            }
+
+            moveOnXAxis = !moveOnXAxis;
+        }
+
+        smd.setWeightedDrivePower(new Pose2d(0, 0, 0));
+
+        smd.update();
+        telemetry.update();
     }
 }
