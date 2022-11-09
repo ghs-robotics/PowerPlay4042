@@ -83,35 +83,40 @@ public class Camera {
 
             for (Integer detection : currentDetections) {
                 if (detection == LEFT || detection == MIDDLE || detection == RIGHT) {
-                    color = detection;
+                    color = currentDetections.get(currentDetections.size()-1);
                     colorFound = true;
+                    break;
                 }
             }
 
 
-        if (colorFound) {
-            telemetry.addLine("Color of interest is in sight!");
-            telemetry.addLine("Spotted color #" + color);
-
-        } else {
-            telemetry.addLine("Don't see color of interest :(");
-
-            if (color == -1) {
-                telemetry.addLine("(The color has never been seen)");
-            } else {
-                telemetry.addLine("\nBut we HAVE seen the color before");
-            }
+//        if (colorFound) {
+//            telemetry.addLine("Color of interest is in sight!");
+//            telemetry.addLine("Spotted color #" + color);
+//
+//        } else {
+//            telemetry.addLine("Don't see color of interest :(");
+//
+//            if (color == -1) {
+//                telemetry.addLine("(The color has never been seen)");
+//            } else {
+//                telemetry.addLine("\nBut we HAVE seen the color before");
+//            }
+//        }
+//
+//        } else {
+//            telemetry.addLine("Don't see color of interest :(");
+//
+//            if (color == -1) {
+//                telemetry.addLine("(The color has never been seen)");
+//            } else {
+//                telemetry.addLine("\nBut we HAVE seen the color before");
+//            }
+//
         }
 
-        } else {
-            telemetry.addLine("Don't see color of interest :(");
-
-            if (color == -1) {
-                telemetry.addLine("(The color has never been seen)");
-            } else {
-                telemetry.addLine("\nBut we HAVE seen the color before");
-            }
-
+        for(int detection : currentDetections) {
+            telemetry.addLine("Detection: " + detection);
         }
 
         telemetry.update();
