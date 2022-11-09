@@ -14,7 +14,8 @@ public class Tele1 extends LinearOpMode {
     private final float dpadInputScaler = 0.35f; // controls the speed of dpad movement as a percentage of the max speed
     private final float bezierP2Y = 0.5f; // 0.5 = no effect | 0.0 = max effect
 
-    private Pose2d tempInputScaler = new Pose2d(0.75, 0.75, 0.75);
+    private Pose2d inputScaler = new Pose2d(0.75, 0.75, 0.75);
+    private double YToXMovementRatio = 0.8;
 
     private Vector2D targetPos = new Vector2D(0, 0);
 
@@ -40,16 +41,24 @@ public class Tele1 extends LinearOpMode {
             //////////////////////////////////////////////////////////////////////////////////////////////////
 
             //GET INPUT
-            Pose2d input = GetInput();
             /*Pose2d input = new Pose2d(
                 gamepad1.left_stick_x * tempInputScaler.getX(),
                 gamepad1.left_stick_y * tempInputScaler.getY(),
                 gamepad1.right_stick_x * tempInputScaler.getHeading()
             );*/
+            Pose2d input = GetInput();
+            Pose2d scaledInput = new Pose2d(
+                    input.getX() * inputScaler.getX(),
+                    input.getY() * inputScaler.getY(),
+                    input.getHeading() * inputScaler.getHeading()
+            );
 
             //MOVEMENT
-            bot.smd.setWeightedDrivePower(
-               new Pose2d(-input.getY(), input.getX(), input.getHeading()));
+            Pose2d localDir = GetLocalDir(
+                    new Pose2d(-scaledInput.getY() * YToXMovementRatio, scaledInput.getX(), scaledInput.getHeading()),
+                    bot
+            );
+            bot.smd.setWeightedDrivePower(localDir);
 
             /*//dpad movement
             if (gamepad1.dpad_up)
@@ -145,11 +154,7 @@ public class Tele1 extends LinearOpMode {
         rAxis = gamepad1.right_stick_x;
         //rAxis = LinearBezierY( gamepad1.right_stick_x );
 
-        return new Pose2d(
-            hAxis * tempInputScaler.getX(),
-            vAxis * tempInputScaler.getY(),
-            rAxis * tempInputScaler.getHeading()
-        );
+        return new Pose2d(hAxis, vAxis, rAxis);
     }
     private double LinearBezierY( double t ){
         //Uses the Y coordinates of 3 points to solve for the Y coordinate along the linear bezier curve at percentage "t"
@@ -166,5 +171,14 @@ public class Tele1 extends LinearOpMode {
 
         double oneMinusT = 1 - t;
         return negativeValue * ( ( oneMinusT * oneMinusT * y1 ) + ( 2 * oneMinusT * t * y2 ) + ( t * t * y3 ) );
+    }
+    private Pose2d GetLocalDir( Pose2d globalDir, Robot bot ) {
+        double crntHeadingRad = Math.toRadians(bot.smd.getPoseEstimate().getHeading());
+
+        Vector2D rotatedVector = new Vector2D(
+                globalDir.getX() * Math.cos(crntHeadingRad) - globalDir.getY() * Math.sin(crntHeadingRad),
+                globalDir.getX() * Math.sin(crntHeadingRad) + globalDir.getY() * Math.cos(crntHeadingRad)
+        );
+        return new Pose2d(rotatedVector.getX(), rotatedVector.getY(), globalDir.getHeading());
     }
 }
