@@ -64,13 +64,14 @@ public class Auto2 extends LinearOpMode {
             telemetry.addLine("Moving to Zone");
             telemetry.update();
             if (!parked) {
-                bot.autoMove.MoveToPosOld(
-                        bot.autoMove.RelativeToGlobalPos(new Vector2D(0.1f, 0), bot.smd),
+                bot.autoMove.MoveToPos(
+                        true,
+                        bot.autoMove.RelativeToGlobalPos( new Vector2D(0.1f, 0), bot.smd),
                         bot.smd,
                         bot.telemetry
                 );
 
-                bot.autoMove.MoveToPosOld( targetPos, bot.smd, telemetry );
+                bot.autoMove.MoveToPos( false, targetPos, bot.smd, telemetry );
                 parked = true;
             }
 

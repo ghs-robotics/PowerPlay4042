@@ -50,11 +50,25 @@ public class Auto1 extends LinearOpMode {
             if (!parked) {
                 if (tag == null) telemetry.addLine("Tag is NULL");
 
+                //PLACE CONE
+                bot.autoMove.MoveAlongPath(
+                        true,
+                        new ArrayList<Double>(List.of(0.2, -0.5)),
+                        bot.smd,
+                        bot.telemetry
+                );
+                bot.autoMove.LiftToPos(bot.arm.getPoleHeight(1), bot.arm, telemetry);
+                bot.autoMove.MoveAlongPath(true, new ArrayList<Double>(List.of(0.2)), bot.smd, bot.telemetry);
+                bot.autoMove.RotateGripper(false, bot.arm);
+                bot.autoMove.MoveAlongPath(true, new ArrayList<Double>(List.of(-0.3)), bot.smd, bot.telemetry );
+                bot.autoMove.LiftToPos(bot.arm.getPoleHeight(0), bot.arm, telemetry);
+
+                //MOVE TO ZONE
                 if (tag == null || tag.id == LEFT) {
                     //GO TO ZONE 1
-                    bot.autoMove.MoveAlongPath(
-                            false,
-                            new ArrayList<Double>(List.of(1.0, 1.5)),
+                    bot.autoMove.MoveToPos(
+                 false,
+                            bot.autoMove.TileCords(new Vector2D(1.5, 5.5)),
                             bot.smd,
                             bot.telemetry
                     );
@@ -63,9 +77,9 @@ public class Auto1 extends LinearOpMode {
                     //telemetry.addLine("Setting path to Zone 1: pos:" + targetPos.toString());
                 } else if (tag.id == MIDDLE) {
                     //GO TO ZONE 2
-                    bot.autoMove.MoveAlongPath(
-                            true,
-                            new ArrayList<Double>(List.of(1.5)),
+                    bot.autoMove.MoveToPos(
+                            false,
+                            bot.autoMove.TileCords(new Vector2D(1.5, 4.5)),
                             bot.smd,
                             bot.telemetry
                     );
@@ -74,9 +88,9 @@ public class Auto1 extends LinearOpMode {
                     //telemetry.addLine("Setting path to Zone 2: pos:" + targetPos.toString());
                 } else {
                     //GO TO ZONE 3
-                    bot.autoMove.MoveAlongPath(
+                    bot.autoMove.MoveToPos(
                             false,
-                            new ArrayList<Double>(List.of(-1.0, 1.5)),
+                            bot.autoMove.TileCords(new Vector2D(1.5, 3.5)),
                             bot.smd,
                             bot.telemetry
                     );
@@ -88,17 +102,8 @@ public class Auto1 extends LinearOpMode {
                 parked = true;
             }
 
-            //MOVE TO TARGET POSITION
-            /*telemetry.addLine("Moving to Zone: pos:" + targetPos.toString());
-            telemetry.update();
-            if (!parked) {
-                bot.autoMove.MoveToPosOld( targetPos, bot.smd, telemetry );
-                parked = true;
-            }*/
-
             telemetry.addLine("Ending OPMode");
             telemetry.update();
-
         }
     }
 

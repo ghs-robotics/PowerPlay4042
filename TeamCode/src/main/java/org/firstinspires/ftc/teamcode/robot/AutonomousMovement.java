@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.robot;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -22,6 +25,10 @@ public class AutonomousMovement {
     private final double MoveToSlowSpd = 0.4;
     private final double MoveToStopDist = 0.1;
 
+    private final double ArmStopDist = 0.1;
+
+    private final double GripperStopDist = 0.01;
+
     public Vector2D TileCords( Vector2D tile ) {
         //index from ( 0, 0 ) to ( 6, 6 )
         return new Vector2D(
@@ -36,18 +43,17 @@ public class AutonomousMovement {
                 crntPos.getY() + tileDist.getY() * TileDimensions.getY()
         );
     }
-    public void MoveToPosOld(Vector2D target, SampleMecanumDrive smd, Telemetry telemetry ) {
+    public void MoveToPos(boolean moveOnXAxis, Vector2D target, SampleMecanumDrive smd, Telemetry telemetry ) {
         Pose2d crntPos = smd.getPoseEstimate();
         double crntSpd = MoveToSpd;
 
         int axesMovedOn = 0;
-        boolean moveOnXAxis = false;
 
         //Check if Y axis of the robot is further from a poll
-        if ( Math.abs( ( Math.abs( crntPos.getX() ) % TileDimensions.getX() ) - ( TileDimensions.getX() / 2 ) ) >
+        /*if ( Math.abs( ( Math.abs( crntPos.getX() ) % TileDimensions.getX() ) - ( TileDimensions.getX() / 2 ) ) >
                 Math.abs( ( Math.abs( crntPos.getY() ) % TileDimensions.getY() ) - ( TileDimensions.getY() / 2 ) ) ) {
             moveOnXAxis = false;
-        }
+        }*/
 
         while ( axesMovedOn < 2 ) {
             crntPos = smd.getPoseEstimate();
@@ -82,12 +88,6 @@ public class AutonomousMovement {
             }
 
             smd.setWeightedDrivePower(new Pose2d(0, 0, 0));
-
-            Pose2d estimate = smd.getPoseEstimate();
-
-            telemetry.addData("x pos:", estimate.getX());
-            telemetry.addData("y pos:", estimate.getY());
-            telemetry.addData("heading", Math.toDegrees(estimate.getHeading()));
 
             smd.update();
             telemetry.update();
@@ -126,5 +126,53 @@ public class AutonomousMovement {
 
         smd.update();
         telemetry.update();
+    }
+    public void LiftToPos( int targetPos, Arm arm, Telemetry telemetry ) {
+        DcMotorEx liftMotor1 = arm.liftMotor1;
+        DcMotorEx liftMotor2 = arm.liftMotor2;
+
+        int crntPos = liftMotor1.getCurrentPosition();
+        int error = liftMotor2.getCurrentPosition() - arm.liftMotor2.getCurrentPosition();//add to telemetry?
+
+        double dif = targetPos - crntPos;
+        double absDif = Math.abs( dif );
+
+        liftMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        liftMotor1.setTargetPosition(targetPos);
+        liftMotor2.setTargetPosition(targetPos); //account for error?
+
+        arm.driveArm(1);//does this stay set or need called every frame
+
+        while (absDif > ArmStopDist) {
+            crntPos = liftMotor1.getCurrentPosition();
+
+            dif = targetPos - crntPos;
+            absDif = Math.abs( dif );
+        }
+
+        arm.driveArm(0);
+
+        liftMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+    public void RotateGripper(boolean intake, Arm arm) {
+        Servo gripServo = arm.gripServo;
+
+        double targetPos = intake ? Servo.MIN_POSITION : Servo.MAX_POSITION;
+        gripServo.setPosition(targetPos);
+
+        double crntPos = gripServo.getPosition();
+
+        double dif = targetPos - crntPos;
+        double absDif = Math.abs( dif );
+
+        while(absDif > GripperStopDist) {
+            crntPos = gripServo.getPosition();
+
+            dif = targetPos - crntPos;
+            absDif = Math.abs( dif );
+        }
     }
 }
