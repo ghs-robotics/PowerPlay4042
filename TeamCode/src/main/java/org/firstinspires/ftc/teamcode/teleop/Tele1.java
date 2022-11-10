@@ -41,11 +41,6 @@ public class Tele1 extends LinearOpMode {
             //////////////////////////////////////////////////////////////////////////////////////////////////
 
             //GET INPUT
-            /*Pose2d input = new Pose2d(
-                gamepad1.left_stick_x * tempInputScaler.getX(),
-                gamepad1.left_stick_y * tempInputScaler.getY(),
-                gamepad1.right_stick_x * tempInputScaler.getHeading()
-            );*/
             Pose2d input = GetInput();
             Pose2d scaledInput = new Pose2d(
                     input.getX() * inputScaler.getX(),
@@ -54,24 +49,15 @@ public class Tele1 extends LinearOpMode {
             );
 
             //MOVEMENT
+            //convert global input direction to local robot direction
             Pose2d localDir = GetLocalDir(
-                    new Pose2d(-scaledInput.getY() * YToXMovementRatio, scaledInput.getX(), scaledInput.getHeading()),
+                    new Pose2d(-scaledInput.getY(), scaledInput.getX(), scaledInput.getHeading()),
                     bot
             );
-            bot.smd.setWeightedDrivePower(localDir);
-
-            /*//dpad movement
-            if (gamepad1.dpad_up)
-                targetPos = bot.autoMove.RelativeToGlobalPos( new Vector2D( 1, 0 ), bot.smd );
-
-            if (gamepad1.dpad_down)
-                targetPos = bot.autoMove.RelativeToGlobalPos( new Vector2D( -1, 0 ), bot.smd );
-
-            if (gamepad1.dpad_left)
-                targetPos = bot.autoMove.RelativeToGlobalPos( new Vector2D( 0, 1 ), bot.smd );
-
-            if (gamepad1.dpad_right)
-                targetPos = bot.autoMove.RelativeToGlobalPos( new Vector2D( 0, -1 ), bot.smd );*/
+            //scale X axis so that irl movement speed on X and Y axis is that same
+            bot.smd.setWeightedDrivePower(
+                    new Pose2d(localDir.getX() * YToXMovementRatio, localDir.getY(), localDir.getHeading())
+            );
 
             //////////////////////////////////////////////////////////////////////////////////////////////////
             ////////////////////////////////           Controller 2           ////////////////////////////////
@@ -83,15 +69,12 @@ public class Tele1 extends LinearOpMode {
             boolean useDriveArm = gamepad2.b || gamepad2.a || gamepad2.x || gamepad2.y;
 
             //ARM MOVEMENT - won't work while running arm to position
-            if (!useDriveArm)
-                bot.arm.driveArm(-gamepad2.left_stick_y);
+            if (!useDriveArm) bot.arm.driveArm(-gamepad2.left_stick_y);
 
             //GRIPPER MOVEMENT - bumpers for full range, triggers for 20 deg
             boolean lTrig = gamepad2.left_trigger > 0.5;
             boolean rTrig = gamepad2.right_trigger > 0.5;
             bot.arm.runGripper(gamepad2.left_bumper, gamepad2.right_bumper, lTrig, rTrig);
-
-
 
             /////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////           Telemetry           /////////////////////////////////
