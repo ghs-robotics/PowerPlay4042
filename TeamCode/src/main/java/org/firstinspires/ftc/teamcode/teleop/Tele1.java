@@ -14,7 +14,8 @@ public class Tele1 extends LinearOpMode {
     private final float dpadInputScaler = 0.35f; // controls the speed of dpad movement as a percentage of the max speed
     private final float bezierP2Y = 0.5f; // 0.5 = no effect | 0.0 = max effect
 
-    private Pose2d tempInputScaler = new Pose2d(0.75, 0.75, 0.75);
+    private Pose2d inputScaler = new Pose2d(0.75, 0.75, 0.75);
+    private double YToXMovementRatio = 0.8;
 
     private Vector2D targetPos = new Vector2D(0, 0);
 
@@ -41,28 +42,22 @@ public class Tele1 extends LinearOpMode {
 
             //GET INPUT
             Pose2d input = GetInput();
-            /*Pose2d input = new Pose2d(
-                gamepad1.left_stick_x * tempInputScaler.getX(),
-                gamepad1.left_stick_y * tempInputScaler.getY(),
-                gamepad1.right_stick_x * tempInputScaler.getHeading()
-            );*/
+            Pose2d scaledInput = new Pose2d(
+                    input.getX() * inputScaler.getX(),
+                    input.getY() * inputScaler.getY(),
+                    input.getHeading() * inputScaler.getHeading()
+            );
 
             //MOVEMENT
+            //convert global input direction to local robot direction
+            Pose2d localDir = GetLocalDir(
+                    new Pose2d(-scaledInput.getY(), scaledInput.getX(), scaledInput.getHeading()),
+                    bot
+            );
+            //scale X axis so that irl movement speed on X and Y axis is that same
             bot.smd.setWeightedDrivePower(
-               new Pose2d(-input.getY(), input.getX(), input.getHeading()));
-
-            /*//dpad movement
-            if (gamepad1.dpad_up)
-                targetPos = bot.autoMove.RelativeToGlobalPos( new Vector2D( 1, 0 ), bot.smd );
-
-            if (gamepad1.dpad_down)
-                targetPos = bot.autoMove.RelativeToGlobalPos( new Vector2D( -1, 0 ), bot.smd );
-
-            if (gamepad1.dpad_left)
-                targetPos = bot.autoMove.RelativeToGlobalPos( new Vector2D( 0, 1 ), bot.smd );
-
-            if (gamepad1.dpad_right)
-                targetPos = bot.autoMove.RelativeToGlobalPos( new Vector2D( 0, -1 ), bot.smd );*/
+                    new Pose2d(localDir.getX() * YToXMovementRatio, localDir.getY(), localDir.getHeading())
+            );
 
             //////////////////////////////////////////////////////////////////////////////////////////////////
             ////////////////////////////////           Controller 2           ////////////////////////////////
@@ -74,15 +69,12 @@ public class Tele1 extends LinearOpMode {
             boolean useDriveArm = gamepad2.b || gamepad2.a || gamepad2.x || gamepad2.y;
 
             //ARM MOVEMENT - won't work while running arm to position
-            if (!useDriveArm)
-                bot.arm.driveArm(-gamepad2.left_stick_y);
+            if (!useDriveArm) bot.arm.driveArm(-gamepad2.left_stick_y);
 
             //GRIPPER MOVEMENT - bumpers for full range, triggers for 20 deg
             boolean lTrig = gamepad2.left_trigger > 0.5;
             boolean rTrig = gamepad2.right_trigger > 0.5;
             bot.arm.runGripperContinuous(gamepad2.left_bumper, gamepad2.right_bumper);
-
-
 
             /////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////           Telemetry           /////////////////////////////////
@@ -145,11 +137,7 @@ public class Tele1 extends LinearOpMode {
         rAxis = gamepad1.right_stick_x;
         //rAxis = LinearBezierY( gamepad1.right_stick_x );
 
-        return new Pose2d(
-            hAxis * tempInputScaler.getX(),
-            vAxis * tempInputScaler.getY(),
-            rAxis * tempInputScaler.getHeading()
-        );
+        return new Pose2d(hAxis, vAxis, rAxis);
     }
     private double LinearBezierY( double t ){
         //Uses the Y coordinates of 3 points to solve for the Y coordinate along the linear bezier curve at percentage "t"
@@ -166,5 +154,14 @@ public class Tele1 extends LinearOpMode {
 
         double oneMinusT = 1 - t;
         return negativeValue * ( ( oneMinusT * oneMinusT * y1 ) + ( 2 * oneMinusT * t * y2 ) + ( t * t * y3 ) );
+    }
+    private Pose2d GetLocalDir( Pose2d globalDir, Robot bot ) {
+        double crntHeadingRad = Math.toRadians(bot.smd.getPoseEstimate().getHeading());
+
+        Vector2D rotatedVector = new Vector2D(
+                globalDir.getX() * Math.cos(crntHeadingRad) - globalDir.getY() * Math.sin(crntHeadingRad),
+                globalDir.getX() * Math.sin(crntHeadingRad) + globalDir.getY() * Math.cos(crntHeadingRad)
+        );
+        return new Pose2d(rotatedVector.getX(), rotatedVector.getY(), globalDir.getHeading());
     }
 }
