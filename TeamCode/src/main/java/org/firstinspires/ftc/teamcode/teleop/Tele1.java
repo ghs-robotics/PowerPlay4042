@@ -80,7 +80,7 @@ public class Tele1 extends LinearOpMode {
             //GRIPPER MOVEMENT - bumpers for full range, triggers for 20 deg
             boolean lTrig = gamepad2.left_trigger > 0.5;
             boolean rTrig = gamepad2.right_trigger > 0.5;
-            bot.arm.runGripper(gamepad2.left_bumper, gamepad2.right_bumper, lTrig, rTrig);
+            bot.arm.runGripperContinuous(gamepad2.left_bumper, gamepad2.right_bumper);
 
 
 
@@ -90,7 +90,7 @@ public class Tele1 extends LinearOpMode {
 
             Pose2d estimate = bot.smd.getPoseEstimate();
 
-            telemetry.addData("gripper status: ", bot.arm.gripperStatus());
+            //telemetry.addData("gripper status: ", bot.arm.gripperStatus());
             telemetry.addData("lift 1 pos", bot.arm.liftMotor1.getCurrentPosition());
             telemetry.addData("lift 2 pos", bot.arm.liftMotor2.getCurrentPosition());
 //            telemetry.addData("targetPosX:", targetPos.getX());
