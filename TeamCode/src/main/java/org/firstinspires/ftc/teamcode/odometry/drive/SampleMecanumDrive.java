@@ -19,6 +19,8 @@ import com.acmerobotics.roadrunner.drive.MecanumDrive;
 import com.acmerobotics.roadrunner.followers.HolonomicPIDVAFollower;
 import com.acmerobotics.roadrunner.followers.TrajectoryFollower;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstraint;
@@ -247,6 +249,20 @@ public class SampleMecanumDrive extends MecanumDrive {
         for (DcMotorEx motor : motors) {
             motor.setPIDFCoefficients(runMode, compensatedCoefficients);
         }
+    }
+
+
+    public void calculateMetaDrive(Pose2d inputs){
+        Pose2d position = getPoseEstimate();
+
+        double x = -inputs.getX();
+        double y = inputs.getY();
+        double angle = -position.getHeading();
+
+        double newX = x * Math.cos(angle) + y * Math.sin(angle);
+        double newY = x * Math.sin(angle) - y * Math.cos(angle);
+
+        setWeightedDrivePower(new Pose2d(newX, -newY, inputs.getHeading()));
     }
 
     public void setWeightedDrivePower(Pose2d drivePower) {
