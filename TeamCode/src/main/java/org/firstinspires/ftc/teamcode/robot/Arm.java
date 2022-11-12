@@ -48,6 +48,16 @@ public class Arm {
         liftMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
+    public int getPoleHeight(int pole) {
+        // 0 = ground | 1 = low | 2 = middle | 3 = high
+
+        switch (pole) {
+            case 1: return lowPole;
+            case 2: return middlePole;
+            case 3: return highPole;
+        }
+        return 0;
+    }
     public void calibrateLift() {
         liftMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         liftMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

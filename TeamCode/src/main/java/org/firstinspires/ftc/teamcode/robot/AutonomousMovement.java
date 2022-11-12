@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.robot;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -157,7 +156,7 @@ public class AutonomousMovement {
         liftMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         liftMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
-    public void RotateGripper(boolean intake, Arm arm) {
+    /*public void RotateGripper(boolean intake, Arm arm) {                       ADD CRSERVO COMPATIBILITY
         Servo gripServo = arm.gripServo;
 
         double targetPos = intake ? Servo.MIN_POSITION : Servo.MAX_POSITION;
@@ -174,5 +173,5 @@ public class AutonomousMovement {
             dif = targetPos - crntPos;
             absDif = Math.abs( dif );
         }
-    }
+    }*/
 }
