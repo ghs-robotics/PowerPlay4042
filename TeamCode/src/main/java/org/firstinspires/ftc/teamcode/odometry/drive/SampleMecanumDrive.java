@@ -20,6 +20,7 @@ import com.acmerobotics.roadrunner.drive.MecanumDrive;
 import com.acmerobotics.roadrunner.followers.HolonomicPIDVAFollower;
 import com.acmerobotics.roadrunner.followers.TrajectoryFollower;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
@@ -28,6 +29,7 @@ import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -46,6 +48,7 @@ import org.firstinspires.ftc.teamcode.Old.Old.util.LynxModuleUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Vector;
 
 /*
  * Simple mecanum drive hardware implementation for REV hardware.
@@ -73,95 +76,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     private List<DcMotorEx> motors;
 
     private VoltageSensor batteryVoltageSensor;
-
-    //region AutonomousMovement -------------------------------------------------------------------------------------------|
-    private final Vector2D ArenaDimensions = new Vector2D( 144, 144 );
-    private final Vector2D TileDimensions = new Vector2D( 24, 24 );
-    private final Vector2D TileNumber =
-            new Vector2D(
-                    ArenaDimensions.getX() / TileDimensions.getX(),
-                    ArenaDimensions.getY() / TileDimensions.getY()
-            );
-
-    private final double MoveToSpd = 0.5;
-    private final double MoveToSlowDist = 5;
-    private final double MoveToSlowSpd = 0.2;
-    private final double MoveToStopDist = 0.1;
-
-    public Vector2D TileCords( Vector2D index, Vector2D percentInTile ) {
-        //index from ( 0, 0 ) to ( 5, 5 )
-        Vector2D bottomLeftCorner = new Vector2D(
-                ( index.getX() * TileDimensions.getX() ) - ( ArenaDimensions.getX() / 2 ),
-                ( index.getY() * TileDimensions.getY() ) - ( ArenaDimensions.getY() / 2 )
-        );
-        Vector2D distInTile = new Vector2D(
-                percentInTile.getX() * TileDimensions.getX(),
-                percentInTile.getY() * TileDimensions.getY()
-        );
-        return new Vector2D(
-                bottomLeftCorner.getX() + distInTile.getX(),
-                bottomLeftCorner.getY() + distInTile.getY()
-        );
-    }
-    public void MoveToPosLoop(Vector2D target, SampleMecanumDrive robot, Telemetry telemetry ) {
-        Pose2d crntPos = getPoseEstimate();
-        double crntSpd = MoveToSpd;
-
-        int axesMovedOn = 0;
-        boolean moveOnXAxis = false;
-
-        //Check if Y axis of the robot is further from a poll
-        if ( Math.abs( ( Math.abs( crntPos.getX() ) % TileDimensions.getX() ) - ( TileDimensions.getX() / 2 ) ) >
-                Math.abs( ( Math.abs( crntPos.getY() ) % TileDimensions.getY() ) - ( TileDimensions.getY() / 2 ) ) ) {
-            moveOnXAxis = true;
-        }
-
-        moveOnXAxis = true;
-
-        while ( axesMovedOn < 2 ) {
-            crntPos = getPoseEstimate();
-
-            if ( moveOnXAxis ) {
-                double dif = target.getX() - crntPos.getX();
-                double absDif = Math.abs( dif );
-
-                if ( absDif > MoveToStopDist) {
-                    if ( absDif <= MoveToSlowDist ) crntSpd = MoveToSlowSpd;
-                    setWeightedDrivePower( new Pose2d( Math.signum( dif ) * crntSpd, 0, 0 ) );
-                }
-                else {
-                    moveOnXAxis = false;
-                    crntSpd = MoveToSpd;
-                    axesMovedOn++;
-                }
-            }
-            else {
-                double dif = target.getY() - crntPos.getY();
-                double absDif = Math.abs( dif );
-
-                if ( Math.abs( dif ) > MoveToStopDist) {
-                    if ( absDif <= MoveToSlowDist ) crntSpd = MoveToSlowSpd;
-                    setWeightedDrivePower( new Pose2d( 0, -Math.signum( dif ) * crntSpd, 0 ) );
-                }
-                else {
-                    moveOnXAxis = true;
-                    crntSpd = MoveToSpd;
-                    axesMovedOn++;
-                }
-            }
-
-            Pose2d estimate = robot.getPoseEstimate();
-
-            telemetry.addData("x pos:", estimate.getX());
-            telemetry.addData("y pos:", estimate.getY());
-            telemetry.addData("heading", Math.toDegrees(estimate.getHeading()));
-
-            robot.update();
-            update();
-            telemetry.update();
-        }
-    }
-    //endregion -----------------------------------------------------------------------------------------------------------|
+    private BNO055IMU imu;
 
     public SampleMecanumDrive(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
@@ -172,6 +87,11 @@ public class SampleMecanumDrive extends MecanumDrive {
         LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
 
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        imu.initialize(parameters);
+
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
@@ -300,6 +220,20 @@ public class SampleMecanumDrive extends MecanumDrive {
         }
     }
 
+
+    public void calculateMetaDrive(Pose2d inputs){
+        Pose2d position = getPoseEstimate();
+
+        double x = -inputs.getX();
+        double y = inputs.getY();
+        double angle = -position.getHeading();
+
+        double newX = x * Math.cos(angle) + y * Math.sin(angle);
+        double newY = x * Math.sin(angle) - y * Math.cos(angle);
+
+        setWeightedDrivePower(new Pose2d(newX, -newY, inputs.getHeading()));
+    }
+
     public void setWeightedDrivePower(Pose2d drivePower) {
         Pose2d vel = drivePower;
 
@@ -354,12 +288,12 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     @Override
     public double getRawExternalHeading() {
-        return 0;
+        return 0.0;//imu.getAngularOrientation().firstAngle;
     }
 
     @Override
     public Double getExternalHeadingVelocity() {
-        return null;
+        return 0.0;//(double) imu.getAngularVelocity().zRotationRate;
     }
 
     public static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {

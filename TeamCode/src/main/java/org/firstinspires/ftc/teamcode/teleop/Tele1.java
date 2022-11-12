@@ -40,8 +40,9 @@ public class Tele1 extends LinearOpMode {
             //get input
             Pose2d input = GetInput();
 
-            robot.setWeightedDrivePower(new Pose2d(-input.getX(), input.getY(), input.getHeading()));
+            //robot.setWeightedDrivePower(new Pose2d(-input.getX(), input.getY(), input.getHeading()));
 
+            robot.calculateMetaDrive(new Pose2d(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x));
             /*//switch drive
             if (gamepad1.a)
                 switchDrive = !switchDrive;
@@ -56,27 +57,6 @@ public class Tele1 extends LinearOpMode {
             //////////////////////////////////////////////////////////////////////////////////////////////////
             ////////////////////////////////           Controller 2           ////////////////////////////////
             //////////////////////////////////////////////////////////////////////////////////////////////////
-
-            //Reset Pose2D
-            if ( gamepad2.a ) {
-                Vector2D startPos = robot.TileCords( new Vector2D( 0, 2 ), new Vector2D( 0.5, 1 ) );
-                robot.setPoseEstimate( new Pose2d( startPos.getX(), startPos.getY(), 0) );
-            }
-
-            //MoveTo calls
-            if ( gamepad2.x ) {
-                targetPos = robot.TileCords( new Vector2D( 4, 5 ), new Vector2D( 0.5, 0.5 ) );
-            }
-            else if ( gamepad2.y ) {
-                targetPos = robot.TileCords( new Vector2D( 1, 1 ), new Vector2D( 0.5, 0.5 ) );
-            }
-            else if ( gamepad2.b ) {
-                targetPos = robot.TileCords( new Vector2D( 3, 2 ), new Vector2D( 0.5, 0.5 ) );
-            }
-
-            if ( gamepad2.right_bumper ) {
-                robot.MoveToPosLoop( targetPos, robot, telemetry );
-            }
 
             /////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////           Telemetry           /////////////////////////////////
