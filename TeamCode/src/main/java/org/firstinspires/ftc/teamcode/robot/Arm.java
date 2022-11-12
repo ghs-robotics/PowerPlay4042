@@ -126,15 +126,15 @@ public class Arm {
         else
             return "cannot drop cone";
     }
-    public int getPoleHeight(int pole){
-        //0 = ground | 1 = low | 2 = middle | 3 = high
-        switch (pole){
-            case 1: return lowPole;
-            case 2: return middlePole;
-            case 3: return highPole;
-        }
-        return 0;
-    }
+//    public int getPoleHeight(int pole){
+//        //0 = ground | 1 = low | 2 = middle | 3 = high
+//        switch (pole){
+//            case 1: return lowPole;
+//            case 2: return middlePole;
+//            case 3: return highPole;
+//        }
+//        return 0;
+//    }
 }
     //CRServo code
 //    public void gripTest() {
