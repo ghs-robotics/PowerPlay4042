@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.firstinspires.ftc.teamcode.robot.Robot;
-import org.openftc.apriltag.AprilTagDetection;
+
 @Autonomous(name = "Auto2")
 public class Auto2 extends LinearOpMode {
 
@@ -46,17 +46,17 @@ public class Auto2 extends LinearOpMode {
 
             if (color == -1) telemetry.addLine("Color is -1");
 
-            if (color == -1 || color == LEFT) {
+            if (color == LEFT) {
                 //GO TO ZONE 1
-                targetPos = bot.autoMove.RelativeToGlobalPos( new Vector2D( 1.5f, 1 ), bot.smd );
+                targetPos = bot.autoMove.RelativeToGlobalPos( new Vector2D( 1.4f, 1 ), bot.smd );
                 telemetry.addLine("Setting path to Zone 1");
-            } else if (color == MIDDLE) {
+            } else if (color == -1 || color == MIDDLE) {
                 //GO TO ZONE 2
-                targetPos = bot.autoMove.RelativeToGlobalPos( new Vector2D( 1.5f, 0 ), bot.smd );
+                targetPos = bot.autoMove.RelativeToGlobalPos( new Vector2D( 1.4f, 0 ), bot.smd );
                 telemetry.addLine("Setting path to Zone 2");
             } else {
                 //GO TO ZONE 3
-                targetPos = bot.autoMove.RelativeToGlobalPos( new Vector2D( 1.5f, -1 ), bot.smd );
+                targetPos = bot.autoMove.RelativeToGlobalPos( new Vector2D( 1.4f, -1 ), bot.smd );
                 telemetry.addLine("Setting path to Zone 3");
             }
 
@@ -64,7 +64,14 @@ public class Auto2 extends LinearOpMode {
             telemetry.addLine("Moving to Zone");
             telemetry.update();
             if (!parked) {
-                bot.autoMove.MoveToPos( targetPos, bot.smd, telemetry );
+                bot.autoMove.MoveToPos(
+                        true,
+                        bot.autoMove.RelativeToGlobalPos( new Vector2D(0.1f, 0), bot.smd),
+                        bot.smd,
+                        bot.telemetry
+                );
+
+                bot.autoMove.MoveToPos( false, targetPos, bot.smd, telemetry );
                 parked = true;
             }
 

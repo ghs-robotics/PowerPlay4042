@@ -62,7 +62,7 @@ public class ColorDetectionPipeline extends OpenCvPipeline {
     final int[] lime = {38, 255, 255};
     final int[] magenta = {156, 255, 255};
     final int[] cyan = {95, 255, 255};
-    final int[] hues = {38, 156, 195};
+    final int[] hues = {38, 156, 95};
     private ArrayList<Double> hueTargets;
 
     public ColorDetectionPipeline(Telemetry telemetry) {
@@ -97,24 +97,11 @@ public class ColorDetectionPipeline extends OpenCvPipeline {
         hueTargets = new ArrayList<Double>();
         hueTargets.add(38.0);  //[ 38  ]
         hueTargets.add(156.0); //[ 156 ]
-        hueTargets.add(195.0); //[ 195 ]
+        hueTargets.add(95.0); //[ 195 ]
 
         //Compute distance from each target color hue
         ArrayList<Double> hueDiff = new ArrayList<Double>();
-//        Mat hueDupe = new Mat(3, 1, hueChannel.type());
-//        hueDupe.put(0, 0, hueChannel.get(0, 0)[0]);
-//        hueDupe.put(1, 0, hueChannel.get(0, 0)[0]);
-//        hueDupe.put(2, 0, hueChannel.get(0,0)[0]);
-        //hueTargets.convertTo(hueTargets, hueChannel.type());
-
-//        telemetry.addData("hueDupe shape:", hueDupe.size());
-//        telemetry.addData("hueDupe shape:", hueDupe.height());
-//        telemetry.addData("hueDupe type:", hueDupe.type());
-//        telemetry.addData("hueTargets shape: ", hueTargets.size());
-//        telemetry.addData("hueTargets shape:", hueTargets.height());
-//        telemetry.addData("hueTargets type:", hueTargets.type());
-//        telemetry.update();
-
+//
         for(int i=0; i<hueTargets.size(); i++) {
                 hueDiff.add(Math.abs(hueTargets.get(i) - hueChannel.get(0, 0)[0]));
             }
@@ -123,19 +110,19 @@ public class ColorDetectionPipeline extends OpenCvPipeline {
 //
 //        //Find location of min hue difference
         int result = -1;
-        int minIndex = 0;
-        double min = hueDiff.get(0);
-        for(int i=1; i<hueDiff.size(); i++) {
+        int minIndex = 2;
+        double min = hueDiff.get(2);
+        for(int i=1; i>=0; i--) {
             if(hueDiff.get(i) < min) {
                 minIndex = i;
                 min = hueDiff.get(i);
             }
         }
 
-        result = minIndex;
 //        telemetry.addLine("Sighted Hue: " + hueChannel.get(0, 0)[0]);
-//        telemetry.addLine("Hue Difference: " + hueDiff.get(result));
+//        telemetry.addLine("Hue Difference: " + hueDiff.get(minIndex));
 //        telemetry.addLine("Result is: " + result);
+//        telemetry.addLine("MinIndex is: " + minIndex);
 //        telemetry.addLine("" + hueDiff.get(0));
 //        telemetry.addLine("" + hueDiff.get(1));
 //        telemetry.addLine("" + hueDiff.get(2));
@@ -143,7 +130,8 @@ public class ColorDetectionPipeline extends OpenCvPipeline {
 //        telemetry.update();
 
         //Add color detection hue diff is small enough and not already detected
-        if(hueDiff.get(result) < hueThreshold ) {
+        if(hueDiff.get(minIndex) < hueThreshold ) {
+            result = minIndex;
             boolean included = false;
             for (int detection : colorDetections)
                 if (result == detection) included = true;
@@ -151,20 +139,11 @@ public class ColorDetectionPipeline extends OpenCvPipeline {
             //colorDetections.remove(0);
         }
 
-        //Draw rectangle around center 30x30 pixels to help line up cameraq2qafu
-
-
-
-
-
-
-
-
-
+        //Draw rectangle around center 30x30 pixels to help line up cameraq
 
         Point upperLeft = new Point((int)input.cols()/2 - 10, (int)input.cols()/2 + 10);
         Point bottomRight = new Point((int)input.cols()/2 + 10, (int)input.cols()/2 - 10);
-        rectangle(input, upperLeft, bottomRight, new Scalar(255, 25, 25), 3);
+        rectangle(input, upperLeft, bottomRight, new Scalar(255, 25, 25), 2);
 
         return input;
     }
