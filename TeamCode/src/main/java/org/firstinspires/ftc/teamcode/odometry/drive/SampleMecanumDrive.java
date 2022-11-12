@@ -76,7 +76,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     private List<DcMotorEx> motors;
 
     private VoltageSensor batteryVoltageSensor;
-    private BNO055IMU imu;
+    //private BNO055IMU imu;
 
     public SampleMecanumDrive(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
@@ -87,10 +87,10 @@ public class SampleMecanumDrive extends MecanumDrive {
         LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
 
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-        imu.initialize(parameters);
+//        imu = hardwareMap.get(BNO055IMU.class, "imu");
+//        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+//        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+//        imu.initialize(parameters);
 
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
