@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -16,7 +17,7 @@ public class Arm {
     public DcMotorEx liftMotor2;
 
     //private CRServo gripServo;
-    public Servo gripServo;
+    public CRServo gripServo;
 
     private final int maxArmHeight = 1100;
 
@@ -38,8 +39,8 @@ public class Arm {
         liftMotor2.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         liftMotor2.setDirection(DcMotor.Direction.REVERSE);
 
-        gripServo = hardwareMap.get(Servo.class, "GripServ");
-        gripServo.setDirection(Servo.Direction.FORWARD);
+        gripServo = hardwareMap.get(CRServo.class, "GripServ");
+        gripServo.setDirection(CRServo.Direction.FORWARD);
 
         liftMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -105,55 +106,37 @@ public class Arm {
             liftMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
+//
+//    public void runGripperRestricted(boolean inMax, boolean outMax, boolean inLimited, boolean outLimited) {
+//        double current = gripServo.getPosition();
+//        double twentyDeg = 20 / 300;
+//
+//        if (inLimited)
+//            gripServo.setPosition(current -twentyDeg);
+//        else if (outLimited)
+//            gripServo.setPosition(current +twentyDeg );
+//        else if (inMax)
+//            gripServo.setPosition(Servo.MIN_POSITION);
+//        else if (outMax)
+//            gripServo.setPosition(Servo.MAX_POSITION);
+//    }
+//
+//    public String gripperStatus(){
+//        if (gripServo.getPosition() < 0.5)
+//            return "cannot intake";
+//        else
+//            return "cannot drop cone";
+//    }
 
-    public void runGripper(boolean inMax, boolean outMax, boolean inLimited, boolean outLimited) {
-        double current = gripServo.getPosition();
-        double twentyDeg = 20 / 300;
-
-        if (inLimited)
-            gripServo.setPosition(current -twentyDeg);
-        else if (outLimited)
-            gripServo.setPosition(current +twentyDeg );
-        else if (inMax)
-            gripServo.setPosition(Servo.MIN_POSITION);
-        else if (outMax)
-            gripServo.setPosition(Servo.MAX_POSITION);
-    }
-
-    public String gripperStatus(){
-        if (gripServo.getPosition() < 0.5)
-            return "cannot intake";
-        else
-            return "cannot drop cone";
-    }
-    public int getPoleHeight(int pole){
-        //0 = ground | 1 = low | 2 = middle | 3 = high
-        switch (pole){
-            case 1: return lowPole;
-            case 2: return middlePole;
-            case 3: return highPole;
-        }
-        return 0;
-    }
-}
     //CRServo code
-//    public void gripTest() {
-//        telemetry.addLine("Testing Gripper");
-//        telemetry.update();
-//
-//        gripServo.setDirection(CRServo.Direction.FORWARD);
-//        gripServo.setPower(0.5);
-//
-//
-////        sleep(10000);
-//    }
-//
-//    public void gripper( boolean posBtn, boolean negBtn ) {
-//        gripServo.setDirection(CRServo.Direction.FORWARD);
-//
-//        int pos = posBtn ? 1 : 0;
-//        int neg = negBtn ? 1 : 0;
-//
-//        gripServo.setPower( pos - neg );
-//    }
+ public void runGripperContinuous( boolean posBtn, boolean negBtn ) {
+        gripServo.setDirection(CRServo.Direction.FORWARD);
+
+        int pos = posBtn ? 1 : 0;
+        int neg = negBtn ? 1 : 0;
+
+        gripServo.setPower( pos - neg );
+    }
+
+}
 

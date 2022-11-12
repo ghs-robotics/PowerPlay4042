@@ -109,34 +109,8 @@ public class AprilTagDetectionPipeline extends OpenCvPipeline
     public Mat processFrame(Mat input)
     {
         //Crop image to center 1/9th
-        Rect rectCrop = new Rect((int)(input.width()/2), (int)(input.height()/2), (int)(input.width()/6),(int)(input.height()/6));
-        input = new Mat(input, rectCrop);
-
-        //Sharpen image
-
-        //Creating our sharpening filter
-//        Mat kernel = new Mat(3,3, CvType.CV_32F) {
-//            {
-//                put(0, 0, 0);
-//                put(0, 1, -1);
-//                put(0, 2, 0);
-//
-//                put(1, 0, -1);
-//                put(1, 1, 5);
-//                put(1, 2, -1);
-//
-//                put(2, 0, 0);
-//                put(2, 1, -1);
-//                put(2, 2, 0);
-//            }
-//        };
-//
-//        // Applying cv2.filter2D function
-//        Mat sharpened = new Mat(input.rows(), input.cols(), input.type());
-//        org.opencv.imgproc.Imgproc.filter2D(input, sharpened, -1, kernel);
-//        input = sharpened;
-
-
+//        Rect rectCrop = new Rect((int)(input.width()/2), (int)(input.height()/2), (int)(input.width()/3),(int)(input.height()/3));
+//        input = new Mat(input, rectCrop);
 
         // Convert to greyscale
         Imgproc.cvtColor(input, grey, Imgproc.COLOR_RGBA2GRAY);

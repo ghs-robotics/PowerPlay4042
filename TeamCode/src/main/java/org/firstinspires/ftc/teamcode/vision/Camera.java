@@ -17,6 +17,9 @@ public class Camera {
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
 
+//    private final int cameraWidth = 1920; //320
+//    private final int cameraHeight = 1080; // 240
+
     // Lens intrinsics
     // UNITS ARE PIXELS
     // NOTE: this calibration is for the C920 webcam at 800x448.
@@ -61,7 +64,7 @@ public class Camera {
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                camera.startStreaming(1920, 1080, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -130,18 +133,6 @@ public class Camera {
     public void setupTagDetection() {
         OpenCvCamera camera;
 
-        // Lens intrinsics
-        // UNITS ARE PIXELS
-        // NOTE: this calibration is for the C920 webcam at 800x448.
-        // You will need to do your own calibration for other configurations!
-        double fx = 578.272;
-        double fy = 578.272;
-        double cx = 402.145;
-        double cy = 221.506;
-        // UNITS ARE METERS
-        //0.166 IRL - This is 30% of original pdf size
-        double tagsize = 0.166; //This is an eighth of the IRL size
-
         //Tag IDs for 3 different park locations
         LEFT = 11;
         MIDDLE = 12;
@@ -156,7 +147,7 @@ public class Camera {
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                camera.startStreaming(1920, 1080, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -211,7 +202,7 @@ public class Camera {
             }
 
             telemetry.update();
-            sleep(20);
+            sleep(200);
 
     ////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////
