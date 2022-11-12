@@ -25,6 +25,9 @@ public class Tele1 extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         Robot bot = new Robot(hardwareMap, telemetry);
 
+        //false = non-meta drive
+        boolean driveType = false;
+
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
@@ -48,16 +51,28 @@ public class Tele1 extends LinearOpMode {
                     input.getHeading() * inputScaler.getHeading()
             );
 
-            //MOVEMENT
+            //to change Drive type
+            if (gamepad1.a)
+                driveType = !driveType;
+
+            //STANDARD DRIVE - inputs need to be updated, ran out of time to correct
+            if (driveType)
+                bot.smd.setWeightedDrivePower(
+                        new Pose2d(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x));
             //convert global input direction to local robot direction
-            Pose2d localDir = GetLocalDir(
-                    new Pose2d(-scaledInput.getY(), scaledInput.getX(), scaledInput.getHeading()),
-                    bot
-            );
+//            Pose2d localDir = GetLocalDir(
+//                    new Pose2d(-scaledInput.getY(), scaledInput.getX(), scaledInput.getHeading()),
+//                    bot
+//            );
+            //META DRIVE - inputs need to be updated, ran out of time to correct
+            else
+                bot.smd.calculateMetaDrive(
+                    new Pose2d(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x)
+                );
             //scale X axis so that irl movement speed on X and Y axis is that same
-            bot.smd.setWeightedDrivePower(
-                    new Pose2d(localDir.getX() * YToXMovementRatio, localDir.getY(), localDir.getHeading())
-            );
+//            bot.smd.setWeightedDrivePower(
+//                    new Pose2d(localDir.getX() * YToXMovementRatio, localDir.getY(), localDir.getHeading())
+//            );
 
             //////////////////////////////////////////////////////////////////////////////////////////////////
             ////////////////////////////////           Controller 2           ////////////////////////////////
@@ -85,6 +100,7 @@ public class Tele1 extends LinearOpMode {
             //telemetry.addData("gripper status: ", bot.arm.gripperStatus());
             telemetry.addData("lift 1 pos", bot.arm.liftMotor1.getCurrentPosition());
             telemetry.addData("lift 2 pos", bot.arm.liftMotor2.getCurrentPosition());
+            telemetry.addData("drive mode: ", bot.smd.returnDriveType(driveType));
 //            telemetry.addData("targetPosX:", targetPos.getX());
 //            telemetry.addData("targetPosY:", targetPos.getY());
 //

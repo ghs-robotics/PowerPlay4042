@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.robot;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -156,22 +158,28 @@ public class AutonomousMovement {
         liftMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         liftMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
-    /*public void RotateGripper(boolean intake, Arm arm) {                       ADD CRSERVO COMPATIBILITY
-        Servo gripServo = arm.gripServo;
-
-        double targetPos = intake ? Servo.MIN_POSITION : Servo.MAX_POSITION;
-        gripServo.setPosition(targetPos);
-
-        double crntPos = gripServo.getPosition();
-
-        double dif = targetPos - crntPos;
-        double absDif = Math.abs( dif );
-
-        while(absDif > GripperStopDist) {
-            crntPos = gripServo.getPosition();
-
-            dif = targetPos - crntPos;
-            absDif = Math.abs( dif );
+    public void RotateGripper(boolean intake, Arm arm) {   //ADD CRSERVO COMPATIBILITY
+//        Servo gripServo = arm.gripServo;
+//
+//        double targetPos = intake ? Servo.MIN_POSITION : Servo.MAX_POSITION;
+//        gripServo.setPosition(targetPos);
+//
+//        double crntPos = gripServo.getPosition();
+//
+//        double dif = targetPos - crntPos;
+//        double absDif = Math.abs( dif );
+//
+//        while(absDif > GripperStopDist) {
+//            crntPos = gripServo.getPosition();
+//
+//            dif = targetPos - crntPos;
+//            absDif = Math.abs( dif );
+        ElapsedTime timer = new ElapsedTime();
+        while (timer.milliseconds() < 750) {
+            if (intake)
+                arm.runGripperContinuous(true, false);
+            else
+                arm.runGripperContinuous(false, true);
         }
-    }*/
+    }
 }

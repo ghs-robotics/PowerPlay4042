@@ -12,8 +12,8 @@ public class Arm {
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
 
-    public DcMotor liftMotor1;
-    public DcMotor liftMotor2;
+    public DcMotorEx liftMotor1;
+    public DcMotorEx liftMotor2;
 
     //private CRServo gripServo;
     public CRServo gripServo;
@@ -30,11 +30,13 @@ public class Arm {
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
 
-        liftMotor1 = hardwareMap.get(DcMotor.class, "LiftMot1");
+        //liftMotor1 = hardwareMap.get(DcMotor.class, "LiftMot1");
+        liftMotor1 = hardwareMap.get(DcMotorEx.class, "LiftMot1");
         liftMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftMotor1.setDirection(DcMotor.Direction.FORWARD);
 
-        liftMotor2 = hardwareMap.get(DcMotor.class, "LiftMot2");
+        //liftMotor2 = hardwareMap.get(DcMotor.class, "LiftMot2");
+        liftMotor2 = hardwareMap.get(DcMotorEx.class, "LiftMot2");
         liftMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftMotor2.setDirection(DcMotor.Direction.REVERSE);
 
@@ -137,12 +139,12 @@ public class Arm {
 //            return "cannot drop cone";
 //    }
 
-    //CRServo code
- public void runGripperContinuous( boolean posBtn, boolean negBtn ) {
+    //CRServo code - previously posbtn and negbtn
+ public void runGripperContinuous( boolean intakeBtn, boolean releaseBtn ) {
         gripServo.setDirection(CRServo.Direction.FORWARD);
 
-        int pos = posBtn ? 1 : 0;
-        int neg = negBtn ? 1 : 0;
+        int pos = intakeBtn ? 1 : 0;
+        int neg = releaseBtn ? 1 : 0;
 
         gripServo.setPower( pos - neg );
     }

@@ -69,95 +69,6 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     private VoltageSensor batteryVoltageSensor;
 
-    //region AutonomousMovement -------------------------------------------------------------------------------------------|
-    private final Vector2D ArenaDimensions = new Vector2D( 144, 144 );
-    private final Vector2D TileDimensions = new Vector2D( 24, 24 );
-    private final Vector2D TileNumber =
-            new Vector2D(
-                    ArenaDimensions.getX() / TileDimensions.getX(),
-                    ArenaDimensions.getY() / TileDimensions.getY()
-            );
-
-    private final double MoveToSpd = 0.5;
-    private final double MoveToSlowDist = 5;
-    private final double MoveToSlowSpd = 0.2;
-    private final double MoveToStopDist = 0.1;
-
-    public Vector2D TileCords( Vector2D index, Vector2D percentInTile ) {
-        //index from ( 0, 0 ) to ( 5, 5 )
-        Vector2D bottomLeftCorner = new Vector2D(
-                ( index.getX() * TileDimensions.getX() ) - ( ArenaDimensions.getX() / 2 ),
-                ( index.getY() * TileDimensions.getY() ) - ( ArenaDimensions.getY() / 2 )
-        );
-        Vector2D distInTile = new Vector2D(
-                percentInTile.getX() * TileDimensions.getX(),
-                percentInTile.getY() * TileDimensions.getY()
-        );
-        return new Vector2D(
-                bottomLeftCorner.getX() + distInTile.getX(),
-                bottomLeftCorner.getY() + distInTile.getY()
-        );
-    }
-    public void MoveToPosLoop(Vector2D target, SampleMecanumDrive robot, Telemetry telemetry ) {
-        Pose2d crntPos = getPoseEstimate();
-        double crntSpd = MoveToSpd;
-
-        int axesMovedOn = 0;
-        boolean moveOnXAxis = false;
-
-        //Check if Y axis of the robot is further from a poll
-        if ( Math.abs( ( Math.abs( crntPos.getX() ) % TileDimensions.getX() ) - ( TileDimensions.getX() / 2 ) ) >
-                Math.abs( ( Math.abs( crntPos.getY() ) % TileDimensions.getY() ) - ( TileDimensions.getY() / 2 ) ) ) {
-            moveOnXAxis = true;
-        }
-
-        moveOnXAxis = true;
-
-        while ( axesMovedOn < 2 ) {
-            crntPos = getPoseEstimate();
-
-            if ( moveOnXAxis ) {
-                double dif = target.getX() - crntPos.getX();
-                double absDif = Math.abs( dif );
-
-                if ( absDif > MoveToStopDist) {
-                    if ( absDif <= MoveToSlowDist ) crntSpd = MoveToSlowSpd;
-                    setWeightedDrivePower( new Pose2d( Math.signum( dif ) * crntSpd, 0, 0 ) );
-                }
-                else {
-                    moveOnXAxis = false;
-                    crntSpd = MoveToSpd;
-                    axesMovedOn++;
-                }
-            }
-            else {
-                double dif = target.getY() - crntPos.getY();
-                double absDif = Math.abs( dif );
-
-                if ( Math.abs( dif ) > MoveToStopDist) {
-                    if ( absDif <= MoveToSlowDist ) crntSpd = MoveToSlowSpd;
-                    setWeightedDrivePower( new Pose2d( 0, -Math.signum( dif ) * crntSpd, 0 ) );
-                }
-                else {
-                    moveOnXAxis = true;
-                    crntSpd = MoveToSpd;
-                    axesMovedOn++;
-                }
-            }
-
-            Pose2d estimate = robot.getPoseEstimate();
-
-            telemetry.addData("x pos:", estimate.getX());
-            telemetry.addData("y pos:", estimate.getY());
-            telemetry.addData("heading", Math.toDegrees(estimate.getHeading()));
-
-            robot.update();
-            update();
-            telemetry.update();
-        }
-    }
-    //endregion -----------------------------------------------------------------------------------------------------------|
-
     public SampleMecanumDrive(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
 
@@ -197,60 +108,13 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     }
 
-    public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
-        return new TrajectoryBuilder(startPose, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
+    public String returnDriveType(boolean drivetype){
+        if (drivetype)
+            return "not using meta-drive";
+        else
+            return "metadrive";
+
     }
-
-    public TrajectoryBuilder trajectoryBuilder(Pose2d startPose, boolean reversed) {
-        return new TrajectoryBuilder(startPose, reversed, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
-    }
-
-    public TrajectoryBuilder trajectoryBuilder(Pose2d startPose, double startHeading) {
-        return new TrajectoryBuilder(startPose, startHeading, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
-    }
-
-    public TrajectorySequenceBuilder trajectorySequenceBuilder(Pose2d startPose) {
-        return new TrajectorySequenceBuilder(
-                startPose,
-                VEL_CONSTRAINT, ACCEL_CONSTRAINT,
-                MAX_ANG_VEL, MAX_ANG_ACCEL
-        );
-    }
-
-
-    public void update() {
-        updatePoseEstimate();
-    }
-
-    public void waitForIdle() {
-        while (!Thread.currentThread().isInterrupted())
-            update();
-    }
-
-
-    public void setMode(DcMotor.RunMode runMode) {
-        for (DcMotorEx motor : motors) {
-            motor.setMode(runMode);
-        }
-    }
-
-    public void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior zeroPowerBehavior) {
-        for (DcMotorEx motor : motors) {
-            motor.setZeroPowerBehavior(zeroPowerBehavior);
-        }
-    }
-
-    public void setPIDFCoefficients(DcMotor.RunMode runMode, PIDFCoefficients coefficients) {
-        PIDFCoefficients compensatedCoefficients = new PIDFCoefficients(
-                coefficients.p, coefficients.i, coefficients.d,
-                coefficients.f * 12 / batteryVoltageSensor.getVoltage()
-        );
-
-        for (DcMotorEx motor : motors) {
-            motor.setPIDFCoefficients(runMode, compensatedCoefficients);
-        }
-    }
-
 
     public void calculateMetaDrive(Pose2d inputs){
         Pose2d position = getPoseEstimate();
@@ -259,10 +123,12 @@ public class SampleMecanumDrive extends MecanumDrive {
         double y = inputs.getY();
         double angle = -position.getHeading();
 
-        double newX = x * Math.cos(angle) + y * Math.sin(angle);
-        double newY = x * Math.sin(angle) - y * Math.cos(angle);
+        Vector2D newPos = new Vector2D(
+                x * Math.cos(angle) + y * Math.sin(angle),
+                x * Math.sin(angle) - y * Math.cos(angle)
+        );
 
-        setWeightedDrivePower(new Pose2d(newX, -newY, inputs.getHeading()));
+        setWeightedDrivePower(new Pose2d(newPos.getX(), -newPos.getY(), inputs.getHeading()));
     }
 
     public void setWeightedDrivePower(Pose2d drivePower) {
@@ -320,6 +186,60 @@ public class SampleMecanumDrive extends MecanumDrive {
     @Override
     public double getRawExternalHeading() {
         return 0;
+    }
+
+    public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
+        return new TrajectoryBuilder(startPose, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
+    }
+
+    public TrajectoryBuilder trajectoryBuilder(Pose2d startPose, boolean reversed) {
+        return new TrajectoryBuilder(startPose, reversed, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
+    }
+
+    public TrajectoryBuilder trajectoryBuilder(Pose2d startPose, double startHeading) {
+        return new TrajectoryBuilder(startPose, startHeading, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
+    }
+
+    public TrajectorySequenceBuilder trajectorySequenceBuilder(Pose2d startPose) {
+        return new TrajectorySequenceBuilder(
+                startPose,
+                VEL_CONSTRAINT, ACCEL_CONSTRAINT,
+                MAX_ANG_VEL, MAX_ANG_ACCEL
+        );
+    }
+
+
+    public void update() {
+        updatePoseEstimate();
+    }
+
+    public void waitForIdle() {
+        while (!Thread.currentThread().isInterrupted())
+            update();
+    }
+
+
+    public void setMode(DcMotor.RunMode runMode) {
+        for (DcMotorEx motor : motors) {
+            motor.setMode(runMode);
+        }
+    }
+
+    public void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior zeroPowerBehavior) {
+        for (DcMotorEx motor : motors) {
+            motor.setZeroPowerBehavior(zeroPowerBehavior);
+        }
+    }
+
+    public void setPIDFCoefficients(DcMotor.RunMode runMode, PIDFCoefficients coefficients) {
+        PIDFCoefficients compensatedCoefficients = new PIDFCoefficients(
+                coefficients.p, coefficients.i, coefficients.d,
+                coefficients.f * 12 / batteryVoltageSensor.getVoltage()
+        );
+
+        for (DcMotorEx motor : motors) {
+            motor.setPIDFCoefficients(runMode, compensatedCoefficients);
+        }
     }
 
     @Override
