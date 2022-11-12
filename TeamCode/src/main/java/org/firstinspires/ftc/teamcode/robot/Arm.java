@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -49,6 +48,16 @@ public class Arm {
         liftMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
+    public int getPoleHeight(int pole) {
+        // 0 = ground | 1 = low | 2 = middle | 3 = high
+
+        switch (pole) {
+            case 1: return lowPole;
+            case 2: return middlePole;
+            case 3: return highPole;
+        }
+        return 0;
+    }
     public void calibrateLift() {
         liftMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         liftMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
