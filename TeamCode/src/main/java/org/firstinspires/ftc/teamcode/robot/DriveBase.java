@@ -29,9 +29,9 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.odometry.drive.StandardTrackingWheelLocalizer;
-import org.firstinspires.ftc.teamcode.Old.Old.trajectorysequence.TrajectorySequenceBuilder;
-import org.firstinspires.ftc.teamcode.Old.Old.trajectorysequence.TrajectorySequenceRunner;
-import org.firstinspires.ftc.teamcode.Old.Old.util.LynxModuleUtil;
+import org.firstinspires.ftc.teamcode.odometry.trajectorysequence.TrajectorySequenceBuilder;
+import org.firstinspires.ftc.teamcode.odometry.trajectorysequence.TrajectorySequenceRunner;
+import org.firstinspires.ftc.teamcode.odometry.util.LynxModuleUtil;
 
 import static org.firstinspires.ftc.teamcode.odometry.drive.DriveConstants.MAX_ACCEL;
 import static org.firstinspires.ftc.teamcode.odometry.drive.DriveConstants.MAX_ANG_ACCEL;
