@@ -4,14 +4,17 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.sun.tools.javac.util.List;
 
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 
+import java.util.ArrayList;
+
 @TeleOp
 //Want to try using Opmode instead of LinearOp since I heard this is better for TeleOp
 public class Tele1 extends LinearOpMode {
-    private final float dpadInputScaler = 0.35f; // controls the speed of dpad movement as a percentage of the max speed
+    private final float dpadInputScaler = 0.75f; // controls the speed of dpad movement as a percentage of the max speed
     private final float bezierP2Y = 0.5f; // 0.5 = no effect | 0.0 = max effect
 
     private Pose2d inputScaler = new Pose2d(0.75, 0.75, 0.75);
@@ -45,6 +48,15 @@ public class Tele1 extends LinearOpMode {
 
             Controller1(bot);
 
+            if (gamepad1.a) {
+                bot.autoMove.MoveAlongPath(
+                        true,
+                        new ArrayList<Double>(List.of(0.2, -0.5)),
+                        bot.smd,
+                        bot.telemetry
+                );
+            }
+
             /*//to change Drive type
             if (gamepad1.a)
                 driveType = !driveType;
@@ -77,6 +89,7 @@ public class Tele1 extends LinearOpMode {
             telemetry.addData("drive mode: ", bot.smd.returnDriveType(driveType));
 
             telemetry.update();*/
+            bot.smd.update();
         }
     }
     private void Controller1(Robot bot) {
