@@ -43,15 +43,9 @@ public class Tele1 extends LinearOpMode {
             ////////////////////////////////           Controller 1           ////////////////////////////////
             //////////////////////////////////////////////////////////////////////////////////////////////////
 
-            //GET INPUT
-            Pose2d input = GetInput();
-            Pose2d scaledInput = new Pose2d(
-                    input.getX() * inputScaler.getX(),
-                    input.getY() * inputScaler.getY(),
-                    input.getHeading() * inputScaler.getHeading()
-            );
+            Controller1(bot);
 
-            //to change Drive type
+            /*//to change Drive type
             if (gamepad1.a)
                 driveType = !driveType;
 
@@ -59,67 +53,63 @@ public class Tele1 extends LinearOpMode {
             if (driveType)
                 bot.smd.setWeightedDrivePower(
                         new Pose2d(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x));
-            //convert global input direction to local robot direction
-//            Pose2d localDir = GetLocalDir(
-//                    new Pose2d(-scaledInput.getY(), scaledInput.getX(), scaledInput.getHeading()),
-//                    bot
-//            );
-            //META DRIVE - inputs need to be updated, ran out of time to correct
+                //META DRIVE - inputs need to be updated, ran out of time to correct
             else
                 bot.smd.calculateMetaDrive(
-                    new Pose2d(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x)
-                );
-            //scale X axis so that irl movement speed on X and Y axis is that same
-//            bot.smd.setWeightedDrivePower(
-//                    new Pose2d(localDir.getX() * YToXMovementRatio, localDir.getY(), localDir.getHeading())
-//            );
+                        new Pose2d(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x)
+                );*/
 
             //////////////////////////////////////////////////////////////////////////////////////////////////
             ////////////////////////////////           Controller 2           ////////////////////////////////
             //////////////////////////////////////////////////////////////////////////////////////////////////
 
-            //run arm to position and release cone
-            //reset, low, middle, high
-            bot.arm.runLiftToPos(gamepad2.b, gamepad2.a, gamepad2.x, gamepad2.y);
-            boolean useDriveArm = gamepad2.b || gamepad2.a || gamepad2.x || gamepad2.y;
-
-            //ARM MOVEMENT - won't work while running arm to position
-            if (!useDriveArm) bot.arm.driveArm(-gamepad2.left_stick_y);
-
-            //GRIPPER MOVEMENT - bumpers for full range, triggers for 20 deg
-            boolean lTrig = gamepad2.left_trigger > 0.5;
-            boolean rTrig = gamepad2.right_trigger > 0.5;
-            bot.arm.runGripperContinuous(gamepad2.left_bumper, gamepad2.right_bumper);
+            Controller2(bot);
 
             /////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////           Telemetry           /////////////////////////////////
             /////////////////////////////////////////////////////////////////////////////////////////////////
 
-            Pose2d estimate = bot.smd.getPoseEstimate();
+            /*Pose2d estimate = bot.smd.getPoseEstimate();
 
             //telemetry.addData("gripper status: ", bot.arm.gripperStatus());
             telemetry.addData("lift 1 pos", bot.arm.liftMotor1.getCurrentPosition());
             telemetry.addData("lift 2 pos", bot.arm.liftMotor2.getCurrentPosition());
             telemetry.addData("drive mode: ", bot.smd.returnDriveType(driveType));
-//            telemetry.addData("targetPosX:", targetPos.getX());
-//            telemetry.addData("targetPosY:", targetPos.getY());
-//
-//            telemetry.addData("horizontalInput", input.getY());
-//            telemetry.addData("verticalInput", input.getX());
-//            telemetry.addData("rotationInput", input.getHeading());
-            //telemetry.addData("gamepad1.right_stick_y", gamepad1.right_stick_y);
 
-            //telemetry.addData("gamepad2.right_stick_y", gamepad2.right_stick_y);
-            //telemetry.addData("gamepad2.right_stick_x", gamepad2.right_stick_x);
-            //telemetry.addData("gamepad2.left_stick_y", gamepad2.left_stick_y);
-
-            //telemetry.addData("rotationInput", input.getX());
-            //telemetry.addData("gamepad1.right_stick_y", gamepad1.right_stick_y);
-            //telemetry.addData("horizontalInput", input.getY());
-            //telemetry.addData("verticalInput", input.getHeading());
-
-            telemetry.update();
+            telemetry.update();*/
         }
+    }
+    private void Controller1(Robot bot) {
+        //GET INPUT
+        Pose2d input = GetInput();
+        Pose2d scaledInput = new Pose2d(
+                input.getX() * inputScaler.getX(),
+                input.getY() * inputScaler.getY(),
+                input.getHeading() * inputScaler.getHeading()
+        );
+        //convert global input direction to local robot direction
+        Pose2d localDir = GetLocalDir(
+                new Pose2d(-scaledInput.getY(), scaledInput.getX(), scaledInput.getHeading()),
+                bot
+        );
+        //scale X axis so that irl movement speed on X and Y axis is that same
+        bot.smd.setWeightedDrivePower(
+                new Pose2d(localDir.getX() * YToXMovementRatio, localDir.getY(), localDir.getHeading())
+        );
+    }
+    private void Controller2(Robot bot) {
+        //run arm to position and release cone
+        //reset, low, middle, high
+        bot.arm.runLiftToPos(gamepad2.b, gamepad2.a, gamepad2.x, gamepad2.y);
+        boolean useDriveArm = gamepad2.b || gamepad2.a || gamepad2.x || gamepad2.y;
+
+        //ARM MOVEMENT - won't work while running arm to position
+        if (!useDriveArm) bot.arm.driveArm(-gamepad2.left_stick_y);
+
+        //GRIPPER MOVEMENT - bumpers for full range, triggers for 20 deg
+        boolean lTrig = gamepad2.left_trigger > 0.5;
+        boolean rTrig = gamepad2.right_trigger > 0.5;
+        bot.arm.runGripperContinuous(gamepad2.left_bumper, gamepad2.right_bumper);
     }
     private Pose2d GetInput() {
         double hAxis = 0;
