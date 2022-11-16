@@ -14,10 +14,10 @@ import java.util.ArrayList;
 @TeleOp
 //Want to try using Opmode instead of LinearOp since I heard this is better for TeleOp
 public class Tele1 extends LinearOpMode {
-    private final float dpadInputScaler = 0.75f; // controls the speed of dpad movement as a percentage of the max speed
+    private final float dpadInputScaler = 0.35f; // controls the speed of dpad movement as a percentage of the max speed
     private final float bezierP2Y = 0.5f; // 0.5 = no effect | 0.0 = max effect
 
-    private Pose2d inputScaler = new Pose2d(0.75, 0.75, 0.75);
+    private Pose2d inputScaler = new Pose2d(0.8, 0.8, 0.6);
     private double YToXMovementRatio = 0.8;
 
     private Vector2D targetPos = new Vector2D(0, 0);
@@ -81,7 +81,8 @@ public class Tele1 extends LinearOpMode {
             /////////////////////////////////           Telemetry           /////////////////////////////////
             /////////////////////////////////////////////////////////////////////////////////////////////////
 
-            /*Pose2d estimate = bot.smd.getPoseEstimate();
+            /*bot.smd.update();
+            Pose2d estimate = bot.smd.getPoseEstimate();
 
             //telemetry.addData("gripper status: ", bot.arm.gripperStatus());
             telemetry.addData("lift 1 pos", bot.arm.liftMotor1.getCurrentPosition());
@@ -175,6 +176,7 @@ public class Tele1 extends LinearOpMode {
         return negativeValue * ( ( oneMinusT * oneMinusT * y1 ) + ( 2 * oneMinusT * t * y2 ) + ( t * t * y3 ) );
     }
     private Pose2d GetLocalDir( Pose2d globalDir, Robot bot ) {
+        bot.smd.update();
         double crntHeadingRad = Math.toRadians(bot.smd.getPoseEstimate().getHeading());
 
         Vector2D rotatedVector = new Vector2D(

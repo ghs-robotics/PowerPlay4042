@@ -20,10 +20,10 @@ public class AutonomousMovement {
             TileDimensions.getY() * TileNumber.getY()
         );
 
-    private final double MoveToSpd = 0.65;
-    private final double MoveToSlowDist = 4;
-    private final double MoveToSlowSpd = 0.4;
-    private final double MoveToStopDist = 0.1;
+    private final double MoveToSpd = 0.5;
+    private final double MoveToSlowDist = 6;
+    private final double MoveToSlowSpd = 0.25;
+    private final double MoveToStopDist = 0.15;
 
     private final double ArmStopDist = 0.1;
 
@@ -44,8 +44,10 @@ public class AutonomousMovement {
         );
     }
     public void MoveToPos(boolean moveOnXAxis, Vector2D target, SampleMecanumDrive smd, Telemetry telemetry ) {
-        Pose2d crntPos = smd.getPoseEstimate();
         double crntSpd = MoveToSpd;
+
+        smd.update();
+        Pose2d crntPos = smd.getPoseEstimate();
 
         int axesMovedOn = 0;
 
@@ -56,6 +58,7 @@ public class AutonomousMovement {
         }*/
 
         while ( axesMovedOn < 2 ) {
+            smd.update();
             crntPos = smd.getPoseEstimate();
 
             if ( moveOnXAxis ) {
@@ -96,6 +99,8 @@ public class AutonomousMovement {
     public void MoveAlongPath(boolean moveOnXAxis, ArrayList<Double> distances, SampleMecanumDrive smd, Telemetry telemetry ){
         for (double distance : distances ) {
             double crntSpd = MoveToSpd;
+
+            smd.update();
             Pose2d crntPos = smd.getPoseEstimate();
 
             double startDist = moveOnXAxis ? crntPos.getX() : crntPos.getY();
@@ -114,7 +119,6 @@ public class AutonomousMovement {
                 smd.setWeightedDrivePower( movePose );
 
                 smd.update();
-
                 crntPos = smd.getPoseEstimate();
 
                 telemetry.addData("crntPosX: ", crntPos.getX());
@@ -124,7 +128,6 @@ public class AutonomousMovement {
                 dif = moveOnXAxis ? targetDist - crntPos.getX() : targetDist - crntPos.getY();
                 absDif = Math.abs( dif );
 
-                smd.update();
                 telemetry.update();
             }
 

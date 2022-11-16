@@ -53,15 +53,15 @@ public class Auto1 extends LinearOpMode {
                 //PLACE CONE
                 bot.autoMove.MoveAlongPath(
                         true,
-                        new ArrayList<Double>(List.of(0.2, -0.5)),
+                        new ArrayList<Double>(List.of(0.1, -0.5)),
                         bot.smd,
                         bot.telemetry
                 );
-                bot.autoMove.LiftToPos(bot.arm.getPoleHeight(1), bot.arm, telemetry);
-                bot.autoMove.MoveAlongPath(true, new ArrayList<Double>(List.of(0.2)), bot.smd, bot.telemetry);
+                //bot.autoMove.LiftToPos(bot.arm.getPoleHeight(1), bot.arm, telemetry);
+                bot.autoMove.MoveAlongPath(true, new ArrayList<Double>(List.of(0.15)), bot.smd, bot.telemetry);
                 //bot.autoMove.RotateGripper(false, bot.arm);
-                bot.autoMove.MoveAlongPath(true, new ArrayList<Double>(List.of(-0.3)), bot.smd, bot.telemetry );
-                bot.autoMove.LiftToPos(bot.arm.getPoleHeight(0), bot.arm, telemetry);
+                bot.autoMove.MoveAlongPath(true, new ArrayList<Double>(List.of(-0.2)), bot.smd, bot.telemetry );
+                //bot.autoMove.LiftToPos(bot.arm.getPoleHeight(0), bot.arm, telemetry);
 
                 //MOVE TO ZONE
                 if (tag == null || tag.id == LEFT) {
