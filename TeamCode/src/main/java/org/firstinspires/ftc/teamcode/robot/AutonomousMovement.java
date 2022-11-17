@@ -61,40 +61,26 @@ public class AutonomousMovement {
             smd.update();
             crntPos = smd.getPoseEstimate();
 
-            if ( moveOnXAxis ) {
-                double dif = target.getX() - crntPos.getX();
-                double absDif = Math.abs( dif );
+            double dif = moveOnXAxis ? target.getX() - crntPos.getX() : target.getY() - crntPos.getY();
+            double absDif = Math.abs( dif );
 
-                if ( absDif > MoveToStopDist) {
-                    if ( absDif <= MoveToSlowDist ) crntSpd = MoveToSlowSpd;
-                    smd.setWeightedDrivePower( new Pose2d( Math.signum( dif ) * crntSpd, 0, 0 ) );
-                }
-                else {
-                    moveOnXAxis = false;
-                    crntSpd = MoveToSpd;
-                    axesMovedOn++;
-                }
+            if ( absDif > MoveToStopDist) {
+                if ( absDif <= MoveToSlowDist ) crntSpd = MoveToSlowSpd;
+
+                if (moveOnXAxis) smd.setWeightedDrivePower( new Pose2d( Math.signum( dif ) * crntSpd, 0, 0 ) );
+                else smd.setWeightedDrivePower( new Pose2d( 0, -Math.signum( dif ) * crntSpd, 0 ) );
             }
             else {
-                double dif = target.getY() - crntPos.getY();
-                double absDif = Math.abs( dif );
-
-                if ( Math.abs( dif ) > MoveToStopDist) {
-                    if ( absDif <= MoveToSlowDist ) crntSpd = MoveToSlowSpd;
-                    smd.setWeightedDrivePower( new Pose2d( 0, -Math.signum( dif ) * crntSpd, 0 ) );
-                }
-                else {
-                    moveOnXAxis = true;
-                    crntSpd = MoveToSpd;
-                    axesMovedOn++;
-                }
+                moveOnXAxis = !moveOnXAxis;
+                crntSpd = MoveToSpd;
+                axesMovedOn++;
             }
-
-            smd.setWeightedDrivePower(new Pose2d(0, 0, 0));
-
-            smd.update();
-            telemetry.update();
         }
+
+        smd.setWeightedDrivePower(new Pose2d(0, 0, 0));
+
+        smd.update();
+        telemetry.update();
     }
     public void MoveAlongPath(boolean moveOnXAxis, ArrayList<Double> distances, SampleMecanumDrive smd, Telemetry telemetry ){
         for (double distance : distances ) {
