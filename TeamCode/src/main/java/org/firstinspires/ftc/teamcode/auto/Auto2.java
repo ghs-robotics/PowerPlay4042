@@ -39,7 +39,7 @@ public class Auto2 extends LinearOpMode {
 
         while (opModeIsActive()) {
             //SET START POS
-            Vector2D startPos = bot.autoMove.TileCords( new Vector2D( 0.5, 4.5 ) );
+            Vector2D startPos = bot.drive.TileCords( new Vector2D( 0.5, 4.5 ) );
             bot.smd.setPoseEstimate( new Pose2d( startPos.getX(), startPos.getY(), 0) );
 
             Vector2D targetPos = new Vector2D(0, 0);
@@ -48,15 +48,15 @@ public class Auto2 extends LinearOpMode {
 
             if (color == LEFT) {
                 //GO TO ZONE 1
-                targetPos = bot.autoMove.RelativeToGlobalPos( new Vector2D( 1.4f, 1 ), bot.smd );
+                targetPos = bot.drive.RelativeToGlobalPos( new Vector2D( 1.4f, 1 ), bot.smd );
                 telemetry.addLine("Setting path to Zone 1");
             } else if (color == -1 || color == MIDDLE) {
                 //GO TO ZONE 2
-                targetPos = bot.autoMove.RelativeToGlobalPos( new Vector2D( 1.4f, 0 ), bot.smd );
+                targetPos = bot.drive.RelativeToGlobalPos( new Vector2D( 1.4f, 0 ), bot.smd );
                 telemetry.addLine("Setting path to Zone 2");
             } else {
                 //GO TO ZONE 3
-                targetPos = bot.autoMove.RelativeToGlobalPos( new Vector2D( 1.4f, -1 ), bot.smd );
+                targetPos = bot.drive.RelativeToGlobalPos( new Vector2D( 1.4f, -1 ), bot.smd );
                 telemetry.addLine("Setting path to Zone 3");
             }
 
@@ -64,14 +64,14 @@ public class Auto2 extends LinearOpMode {
             telemetry.addLine("Moving to Zone");
             telemetry.update();
             if (!parked) {
-                bot.autoMove.MoveToPos(
+                bot.drive.MoveToPos(
                         true,
-                        bot.autoMove.RelativeToGlobalPos( new Vector2D(0.1f, 0), bot.smd),
+                        bot.drive.RelativeToGlobalPos( new Vector2D(0.1f, 0), bot.smd),
                         bot.smd,
                         bot.telemetry
                 );
 
-                bot.autoMove.MoveToPos( false, targetPos, bot.smd, telemetry );
+                bot.drive.MoveToPos( false, targetPos, bot.smd, telemetry );
                 parked = true;
             }
 
