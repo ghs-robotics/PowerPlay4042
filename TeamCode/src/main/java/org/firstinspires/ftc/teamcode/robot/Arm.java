@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -17,6 +18,8 @@ public class Arm {
 
     //private CRServo gripServo;
     public CRServo gripServo;
+
+    public Servo brake
 
     private final int maxArmHeight = 1100;
 
@@ -95,7 +98,7 @@ public class Arm {
 
     public void runLiftToPos(boolean reset, boolean low, boolean mid, boolean high) {
         int targetPos = liftMotor1.getCurrentPosition();
-        int error = liftMotor1.getCurrentPosition() - liftMotor2.getCurrentPosition();
+        int difference = liftMotor1.getCurrentPosition() - liftMotor2.getCurrentPosition();
 
         if (low)
             targetPos = lowPole;
@@ -117,6 +120,17 @@ public class Arm {
             liftMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
+
+    //CRServo code - previously posbtn and negbtn
+ public void runGripperContinuous( boolean intakeBtn, boolean releaseBtn ) {
+        gripServo.setDirection(CRServo.Direction.FORWARD);
+
+        int pos = intakeBtn ? 1 : 0;
+        int neg = releaseBtn ? 1 : 0;
+
+        gripServo.setPower( pos - neg );
+    }
+
 //
 //    public void runGripperRestricted(boolean inMax, boolean outMax, boolean inLimited, boolean outLimited) {
 //        double current = gripServo.getPosition();
@@ -138,16 +152,5 @@ public class Arm {
 //        else
 //            return "cannot drop cone";
 //    }
-
-    //CRServo code - previously posbtn and negbtn
- public void runGripperContinuous( boolean intakeBtn, boolean releaseBtn ) {
-        gripServo.setDirection(CRServo.Direction.FORWARD);
-
-        int pos = intakeBtn ? 1 : 0;
-        int neg = releaseBtn ? 1 : 0;
-
-        gripServo.setPower( pos - neg );
-    }
-
 }
 
