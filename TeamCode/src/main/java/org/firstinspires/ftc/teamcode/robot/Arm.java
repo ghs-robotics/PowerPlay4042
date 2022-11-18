@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -140,14 +141,24 @@ public class Arm {
 //    }
 
     //CRServo code - previously posbtn and negbtn
- public void runGripperContinuous( boolean intakeBtn, boolean releaseBtn ) {
+    public void runGripperContinuous( boolean intakeBtn, boolean releaseBtn ) {
         gripServo.setDirection(CRServo.Direction.FORWARD);
 
-        int pos = intakeBtn ? 1 : 0;
-        int neg = releaseBtn ? 1 : 0;
+        int intake = intakeBtn ? 1 : 0;
+        int release = releaseBtn ? 1 : 0;
 
-        gripServo.setPower( pos - neg );
+        gripServo.setPower( release - intake );
     }
 
+    public void RotateGripperForDuration(boolean intake, int milliseconds) {
+        gripServo.setDirection(CRServo.Direction.FORWARD);
+
+        int dir = intake ? -1 : 1;
+
+        ElapsedTime timer = new ElapsedTime();
+        gripServo.setPower( dir );
+        while (timer.milliseconds() < milliseconds) {}
+        gripServo.setPower( 0 );
+    }
 }
 

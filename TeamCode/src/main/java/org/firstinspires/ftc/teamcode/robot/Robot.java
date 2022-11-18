@@ -16,7 +16,7 @@ public class Robot {
 
     public SampleMecanumDrive smd;
 
-    public AutonomousMovement autoMove;
+    public InputManager inputMan;
 
     public Robot(HardwareMap hardwareMap, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
@@ -28,6 +28,6 @@ public class Robot {
 
         smd = new SampleMecanumDrive(hardwareMap);
 
-        autoMove = new AutonomousMovement();
+        inputMan = new InputManager(this);
     }
 }
