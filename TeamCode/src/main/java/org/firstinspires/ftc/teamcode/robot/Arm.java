@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode.robot;
 
+import static android.os.SystemClock.sleep;
+
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -150,14 +151,13 @@ public class Arm {
         gripServo.setPower( release - intake );
     }
 
-    public void RotateGripperForDuration(boolean intake, int milliseconds) {
+    public void RotateGripperForDuration(boolean intake, long milliseconds) {
         gripServo.setDirection(CRServo.Direction.FORWARD);
 
         int dir = intake ? -1 : 1;
 
-        ElapsedTime timer = new ElapsedTime();
         gripServo.setPower( dir );
-        while (timer.milliseconds() < milliseconds) {}
+        sleep(milliseconds);
         gripServo.setPower( 0 );
     }
 }

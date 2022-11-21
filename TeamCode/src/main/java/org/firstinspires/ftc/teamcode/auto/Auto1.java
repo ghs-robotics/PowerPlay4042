@@ -43,20 +43,39 @@ public class Auto1 extends LinearOpMode {
 
         while (opModeIsActive()) {
             //SET START POS
-            Vector2D startPos = bot.drive.TileCords( new Vector2D( 0.5, 4.5 ) );
+            Vector2D startPos = bot.drive.TileCords( new Vector2D( 0.4, 4.5 ) );
             bot.smd.setPoseEstimate( new Pose2d( startPos.getX(), startPos.getY(), 0) );
 
             //Vector2D targetPos = new Vector2D(0, 0);
             if (!parked) {
-                if (tag == null) telemetry.addLine("Tag is NULL");
+                //if (tag == null) telemetry.addLine("Tag is NULL");
 
                 //PLACE CONE
+                bot.smd.update();
+                Pose2d estimatedPos = bot.smd.getPoseEstimate();
+
+                telemetry.addData("PosX: ", estimatedPos.getX());
+                telemetry.addData("PosY: ", estimatedPos.getY());
+                telemetry.addData("PosHeading: ", estimatedPos.getHeading());
+
+                telemetry.update();
+
                 bot.drive.MoveAlongPath(
                         true,
                         new ArrayList<Double>(List.of(0.1, -0.5)),
                         bot.smd,
                         bot.telemetry
                 );
+
+                bot.smd.update();
+                estimatedPos = bot.smd.getPoseEstimate();
+
+                telemetry.addData("PosX: ", estimatedPos.getX());
+                telemetry.addData("PosY: ", estimatedPos.getY());
+                telemetry.addData("PosHeading: ", estimatedPos.getHeading());
+
+                telemetry.update();
+
                 //bot.autoMove.LiftToPos(bot.arm.getPoleHeight(1), bot.arm, telemetry);
                 bot.drive.MoveAlongPath(true, new ArrayList<Double>(List.of(0.15)), bot.smd, bot.telemetry);
                 bot.arm.RotateGripperForDuration(false, 750);
@@ -101,10 +120,6 @@ public class Auto1 extends LinearOpMode {
 
                 parked = true;
             }
-
-            telemetry.addLine("Ending OPMode");
-            telemetry.update();
         }
     }
-
 }
