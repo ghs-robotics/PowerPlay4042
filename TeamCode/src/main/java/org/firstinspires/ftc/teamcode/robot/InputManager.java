@@ -103,7 +103,7 @@ public class InputManager {
     }
     private Pose2d GetLocalDir(Pose2d globalDir) {
         bot.smd.update();
-        double crntHeadingRad = Math.toRadians(bot.smd.getPoseEstimate().getHeading());
+        double crntHeadingRad = bot.smd.getPoseEstimate().getHeading();
 
         Vector2D rotatedVector = new Vector2D(
                 globalDir.getX() * Math.cos(crntHeadingRad) - globalDir.getY() * Math.sin(crntHeadingRad),

@@ -141,9 +141,9 @@ public class DriveBase {
                 smd.update();
                 crntPos = smd.getPoseEstimate();
 
-                telemetry.addData("crntPosX: ", crntPos.getX());
+                /*telemetry.addData("crntPosX: ", crntPos.getX());
                 telemetry.addData("crntPosY: ", crntPos.getY());
-                telemetry.addData("crntPosHeading: ", crntPos.getHeading());
+                telemetry.addData("crntPosHeading: ", crntPos.getHeading());*/
 
                 dif = moveOnXAxis ? targetDist - crntPos.getX() : targetDist - crntPos.getY();
                 absDif = Math.abs( dif );
