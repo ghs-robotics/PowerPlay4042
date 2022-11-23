@@ -50,7 +50,7 @@ public class PIDController {
     // Constructs a PID object that regulates a quantity (typically motor powers)
     public PIDController(double Kp, double Ki, double Kd, double tolerance, double minAbsVal, double min, double max) {
         k_P = Kp;
-        k_I = Ki;
+        k_I = Ki; //probably zero or negative
         k_D = Kd;
         toleranceRadius = tolerance;
         this.minAbsVal = minAbsVal;
@@ -70,9 +70,9 @@ public class PIDController {
 
         // Calculates the different errors
         double deltaTime = time.seconds() - prevTime;
-        p_error = error;
-        i_error += error * deltaTime;
-        d_error = (error - prevError) / deltaTime;
+        p_error = error; //Current dist from target => x
+        i_error += error * deltaTime; //How much distance you expect to gain by next time step => x * h
+        d_error = (error - prevError) / deltaTime; //Rate of change of your displacement (negative) => dx/dt
 
         // Updates the "prev" variables for the next loop
         prevError = error;
