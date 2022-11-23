@@ -22,23 +22,20 @@ public class InputManager {
         Pose2d input = GetAxisInput(gamepad1);
         Pose2d scaledInput = GetScaledInput(input);
         Pose2d correctedInput = ConvertInputToRobotAxis(scaledInput);
-        Pose2d localDir = GetLocalDir(correctedInput);
-        Pose2d correctedlocalDir = CorrectForAxesSpeedDifferences(localDir);
+        //Pose2d localDir = GetLocalDir(correctedInput);
+        Pose2d correctedlocalDir = CorrectForAxesSpeedDifferences(correctedInput);
 
         return  correctedlocalDir;
     }
     public void HandleController2Input(Gamepad gamepad2) {
-        bot.arm.driveArm(-gamepad2.left_stick_y);
-
         bot.arm.runGripperContinuous(gamepad2.left_bumper, gamepad2.right_bumper);
 
-        /*//run arm to position and release cone
-        //reset, low, middle, high
+        //RUN ARM TO POS: reset, low, middle, high
         bot.arm.runLiftToPos(gamepad2.b, gamepad2.a, gamepad2.x, gamepad2.y);
         boolean useDriveArm = gamepad2.b || gamepad2.a || gamepad2.x || gamepad2.y;
 
         //ARM MOVEMENT - won't work while running arm to position
-        if (!useDriveArm) bot.arm.driveArm(-gamepad2.left_stick_y);*/
+        if (!useDriveArm) bot.arm.driveArm(-gamepad2.left_stick_y);
     }
 
     private Pose2d GetAxisInput(Gamepad gamepad1) {

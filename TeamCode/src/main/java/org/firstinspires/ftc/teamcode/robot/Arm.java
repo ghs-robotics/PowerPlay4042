@@ -24,6 +24,8 @@ public class Arm {
 
     private final int maxArmHeight = 1100;
 
+    private final double AutoArmStopDist = 0.1;
+
     //TODO these numbers need to be added
     private final int highPole = maxArmHeight - 100;
     private final int middlePole = 2 * highPole / 3;
@@ -177,6 +179,35 @@ public class Arm {
         sleep(milliseconds);
 
         gripServo.setPower( 0 );
+    }
+    public void AutoLiftToPos(int targetPole) {
+        int targetHeight = getPoleHeight(targetPole);
+
+        int crntPos = liftMotor1.getCurrentPosition();
+        int error = liftMotor2.getCurrentPosition() - liftMotor2.getCurrentPosition();//add to telemetry?
+
+        double dif = targetHeight - crntPos;
+        double absDif = Math.abs( dif );
+
+        liftMotor1.setTargetPosition(targetHeight);
+        liftMotor2.setTargetPosition(targetHeight); //account for error?
+
+        liftMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        driveArm(1);//does this stay set or need called every frame
+
+        while (absDif > AutoArmStopDist) {
+            crntPos = liftMotor1.getCurrentPosition();
+
+            dif = targetHeight - crntPos;
+            absDif = Math.abs( dif );
+        }
+
+        driveArm(0);
+
+        liftMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 }
 

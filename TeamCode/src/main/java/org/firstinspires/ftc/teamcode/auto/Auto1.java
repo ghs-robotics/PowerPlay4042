@@ -51,36 +51,19 @@ public class Auto1 extends LinearOpMode {
                 //if (tag == null) telemetry.addLine("Tag is NULL");
 
                 //PLACE CONE
-                bot.smd.update();
-                Pose2d estimatedPos = bot.smd.getPoseEstimate();
-
-//                telemetry.addData("PosX: ", estimatedPos.getX());
-//                telemetry.addData("PosY: ", estimatedPos.getY());
-//                telemetry.addData("PosHeading: ", estimatedPos.getHeading());
-
                 bot.drive.MoveAlongPath(
                         true,
                         new ArrayList<Double>(List.of(0.1, -0.5)),
                         bot.smd,
                         bot.telemetry
                 );
-
-                bot.smd.update();
-                estimatedPos = bot.smd.getPoseEstimate();
-
-//                telemetry.addData("PosX: ", estimatedPos.getX());
-//                telemetry.addData("PosY: ", estimatedPos.getY());
-//                telemetry.addData("PosHeading: ", estimatedPos.getHeading());
-//
-//                telemetry.update();
-
-                //bot.autoMove.LiftToPos(bot.arm.getPoleHeight(1), bot.arm, telemetry);
+                bot.arm.AutoLiftToPos(1);
                 bot.drive.MoveAlongPath(true, new ArrayList<Double>(List.of(0.15)), bot.smd, bot.telemetry);
-
+                //region Gripper
                 telemetry.addLine("Dropping cone");
                 telemetry.update();
 
-//                bot.arm.RotateGripperForDuration(false, 750);
+                //bot.arm.RotateGripperForDuration(false, 750);
                 bot.arm.gripServo.setPower(1);
                 telemetry.addLine("Dropping Commenced");
                 telemetry.update();
@@ -91,12 +74,9 @@ public class Auto1 extends LinearOpMode {
                 telemetry.update();
 
                 bot.arm.gripServo.setPower(0);
-
-                telemetry.addLine("Move away from pole");
-                telemetry.update();
-
+                //endregion
                 bot.drive.MoveAlongPath(true, new ArrayList<Double>(List.of(-0.175)), bot.smd, bot.telemetry );
-                //bot.autoMove.LiftToPos(bot.arm.getPoleHeight(0), bot.arm, telemetry);
+                bot.arm.AutoLiftToPos(0);
 
                 //MOVE TO ZONE
                 if (tag == null || tag.id == LEFT) {
