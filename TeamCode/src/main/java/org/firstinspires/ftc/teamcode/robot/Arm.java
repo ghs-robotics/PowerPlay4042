@@ -101,8 +101,8 @@ public class Arm {
     }
 
     public void brakeArm(){
-        double brake = 1.0 / 3.0;
-        double letRun = 1.0 / 4.0;
+        double brake = 0.5;
+        double letRun = 0.35;
 
         if (liftMotor1.getPower() == 0 || liftMotor2.getPower() == 0)
             brakeServo.setPosition(brake);
