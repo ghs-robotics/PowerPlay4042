@@ -2,12 +2,18 @@ package org.firstinspires.ftc.teamcode.robot;
 
 import static android.os.SystemClock.sleep;
 
+import android.os.Build;
+
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 public class Arm {
 
@@ -157,8 +163,11 @@ public class Arm {
         int dir = intake ? -1 : 1;
 
         gripServo.setPower( dir );
+
         sleep(milliseconds);
-        gripServo.setPower( 0 );
+
+//        gripServo.setPower( 0 );
+        //dropping cone
     }
 }
 
