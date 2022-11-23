@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -17,8 +18,9 @@ public class Arm {
     public DcMotorEx liftMotor1;
     public DcMotorEx liftMotor2;
 
-    //private CRServo gripServo;
     public CRServo gripServo;
+
+    public Servo brakeServo;
 
     private final int maxArmHeight = 1100;
 
@@ -44,6 +46,8 @@ public class Arm {
 
         gripServo = hardwareMap.get(CRServo.class, "GripServ");
         gripServo.setDirection(CRServo.Direction.FORWARD);
+
+        brakeServo = hardwareMap.get(Servo.class, "brake");
 
         liftMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -93,6 +97,17 @@ public class Arm {
 
         liftMotor1.setPower(power);
         liftMotor2.setPower(power);
+        brakeArm();
+    }
+
+    public void brakeArm(){
+        double brake = 1.0 / 3.0;
+        double letRun = 1.0 / 4.0;
+
+        if (liftMotor1.getPower() == 0 || liftMotor2.getPower() == 0)
+            brakeServo.setPosition(brake);
+        else
+            brakeServo.setPosition(letRun);
     }
 
     public void runLiftToPos(boolean reset, boolean low, boolean mid, boolean high) {
@@ -118,6 +133,7 @@ public class Arm {
             liftMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             liftMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
+        brakeArm();
     }
 //
 //    public void runGripperRestricted(boolean inMax, boolean outMax, boolean inLimited, boolean outLimited) {
