@@ -60,9 +60,12 @@ public class Tele1 extends LinearOpMode {
             bot.smd.update();
             Pose2d estimatedPos = bot.smd.getPoseEstimate();
 
-            telemetry.addData("PosX: ", estimatedPos.getX());
-            telemetry.addData("PosY: ", estimatedPos.getY());
-            telemetry.addData("PosHeading: ", estimatedPos.getHeading());
+//            telemetry.addData("PosX: ", estimatedPos.getX());
+//            telemetry.addData("PosY: ", estimatedPos.getY());
+//            telemetry.addData("PosHeading: ", estimatedPos.getHeading());
+
+            //delete later
+            telemetry.addData("Servo Position", bot.arm.brakeServo.getPosition());
 
             telemetry.update();
         }
