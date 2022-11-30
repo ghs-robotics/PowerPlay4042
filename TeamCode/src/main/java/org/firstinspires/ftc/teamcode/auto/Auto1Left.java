@@ -3,13 +3,10 @@ package org.firstinspires.ftc.teamcode.auto;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.sun.tools.javac.util.List;
 
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.openftc.apriltag.AprilTagDetection;
-
-import java.util.ArrayList;
 
 @Autonomous(name = "Auto1")
 public class Auto1Left extends LinearOpMode {
@@ -51,15 +48,17 @@ public class Auto1Left extends LinearOpMode {
                 //if (tag == null) telemetry.addLine("Tag is NULL");
 
                 //PLACE CONE
-                bot.drive.MoveAlongPath(
+                /*bot.drive.MoveAlongPath(
                         true,
                         new ArrayList<Double>(List.of(0.1, -0.5)),
                         bot.smd,
                         bot.telemetry
-                );
+                );*/
+                telemetry.addLine("Raising arm");
+                telemetry.update();
                 bot.arm.AutoLiftToPos(1);
-                bot.drive.MoveAlongPath(true, new ArrayList<Double>(List.of(0.15)), bot.smd, bot.telemetry);
-                /*//region Gripper
+                //bot.drive.MoveAlongPath(true, new ArrayList<Double>(List.of(0.15)), bot.smd, bot.telemetry);
+                //region Gripper
                 telemetry.addLine("Dropping cone");
                 telemetry.update();
 
@@ -74,10 +73,10 @@ public class Auto1Left extends LinearOpMode {
                 telemetry.update();
 
                 bot.arm.gripServo.setPower(0);
-                //endregion*/
-                sleep(2000);
-                bot.drive.MoveAlongPath(true, new ArrayList<Double>(List.of(-0.175)), bot.smd, bot.telemetry );
+                //endregion
+                //bot.drive.MoveAlongPath(true, new ArrayList<Double>(List.of(-0.175)), bot.smd, bot.telemetry );
                 bot.arm.AutoLiftToPos(0);
+                sleep(2000);
 
                 //MOVE TO ZONE
                 if (tag == null || tag.id == LEFT) {

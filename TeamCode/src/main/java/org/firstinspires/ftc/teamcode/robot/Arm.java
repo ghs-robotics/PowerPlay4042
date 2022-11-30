@@ -26,6 +26,9 @@ public class Arm {
 
     private final double AutoArmStopDist = 0.1;
 
+    private double brakePos = 0.6;
+    private double letRunPos = 0.5;
+
     //TODO these numbers need to be added
     private final int highPole = maxArmHeight - 100;
     private final int middlePole = 2 * highPole / 3;
@@ -99,17 +102,18 @@ public class Arm {
 
         liftMotor1.setPower(power);
         liftMotor2.setPower(power);
-        brakeArm();
+        brakeArmAuto();
     }
 
-    public void brakeArm(){
-        double brake = 0.5;
-        double letRun = 0.35;
-
+    public void brakeArmAuto(){
         if (liftMotor1.getPower() == 0 || liftMotor2.getPower() == 0)
-            brakeServo.setPosition(brake);
+            brakeServo.setPosition(brakePos);
         else
-            brakeServo.setPosition(letRun);
+            brakeServo.setPosition(letRunPos);
+    }
+    private void brakeArmManual(boolean brake) {
+        if (brake) brakeServo.setPosition(brakePos);
+        else brakeServo.setPosition(letRunPos);
     }
 
     public void runLiftToPos(boolean reset, boolean low, boolean mid, boolean high) {
@@ -135,7 +139,7 @@ public class Arm {
             liftMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             liftMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
-        brakeArm();
+        brakeArmAuto();
     }
 //
 //    public void runGripperRestricted(boolean inMax, boolean outMax, boolean inLimited, boolean outLimited) {
@@ -194,6 +198,8 @@ public class Arm {
 
         liftMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        //while (Math.abs(brakePos - brakeServo.getPosition()) > 0.01) brakeArmManual(false);
 
         driveArm(1);//does this stay set or need called every frame
 
