@@ -12,7 +12,7 @@ import org.openftc.apriltag.AprilTagDetection;
 import java.util.ArrayList;
 
 @Autonomous(name = "Auto1")
-public class Auto1 extends LinearOpMode {
+public class Auto1Left extends LinearOpMode {
 
     private boolean parked = false;
     private AprilTagDetection tag;
@@ -59,7 +59,7 @@ public class Auto1 extends LinearOpMode {
                 );
                 bot.arm.AutoLiftToPos(1);
                 bot.drive.MoveAlongPath(true, new ArrayList<Double>(List.of(0.15)), bot.smd, bot.telemetry);
-                //region Gripper
+                /*//region Gripper
                 telemetry.addLine("Dropping cone");
                 telemetry.update();
 
@@ -74,7 +74,8 @@ public class Auto1 extends LinearOpMode {
                 telemetry.update();
 
                 bot.arm.gripServo.setPower(0);
-                //endregion
+                //endregion*/
+                sleep(2000);
                 bot.drive.MoveAlongPath(true, new ArrayList<Double>(List.of(-0.175)), bot.smd, bot.telemetry );
                 bot.arm.AutoLiftToPos(0);
 
