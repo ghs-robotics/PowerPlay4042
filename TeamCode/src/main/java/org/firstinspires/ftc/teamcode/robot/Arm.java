@@ -26,8 +26,8 @@ public class Arm {
 
     private final double AutoArmStopDist = 0.1;
 
-    private double brakePos = 0.6;
-    private double letRunPos = 0.5;
+    private double brakePos = 0.25;
+    private double letRunPos = 0.15;
 
     //TODO these numbers need to be added
     private final int highPole = maxArmHeight - 100;
@@ -99,17 +99,22 @@ public class Arm {
         else if ((current >= maxArmHeight && power > 0) || (current <= 0 && power < 0))
             power = 0.1;
 
-
+        //FLIPS ARM MOTION AT TOP MAYBE?
         liftMotor1.setPower(power);
         liftMotor2.setPower(power);
         brakeArmAuto();
     }
 
     public void brakeArmAuto(){
-        if (liftMotor1.getPower() == 0 || liftMotor2.getPower() == 0)
+        if (liftMotor1.getPower() == 0 || liftMotor2.getPower() == 0){
             brakeServo.setPosition(brakePos);
-        else
+            telemetry.addData("braking:", true);
+        }
+        else {
             brakeServo.setPosition(letRunPos);
+            telemetry.addData("braking:", false);
+        }
+        telemetry.update();
     }
     private void brakeArmManual(boolean brake) {
         if (brake) brakeServo.setPosition(brakePos);

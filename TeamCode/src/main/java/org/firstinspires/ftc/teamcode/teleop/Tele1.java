@@ -65,9 +65,9 @@ public class Tele1 extends LinearOpMode {
 //            telemetry.addData("PosHeading: ", estimatedPos.getHeading());
 
             //delete later
-            telemetry.addData("Servo Position", bot.arm.brakeServo.getPosition());
+            /*telemetry.addData("Servo Position", bot.arm.brakeServo.getPosition());
 
-            telemetry.update();
+            telemetry.update();*/
         }
     }
 }
