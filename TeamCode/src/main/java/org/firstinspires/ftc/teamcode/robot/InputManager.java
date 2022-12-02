@@ -30,12 +30,11 @@ public class InputManager {
     public void HandleController2Input(Gamepad gamepad2) {
         bot.arm.runGripperContinuous(gamepad2.left_bumper, gamepad2.right_bumper);
 
-        //RUN ARM TO POS: reset, low, middle, high
-        bot.arm.runLiftToPos(gamepad2.b, gamepad2.a, gamepad2.x, gamepad2.y);
+        //ARM MOVEMENT
         boolean useDriveArm = gamepad2.b || gamepad2.a || gamepad2.x || gamepad2.y;
 
-        //ARM MOVEMENT - won't work while running arm to position
-        if (!useDriveArm) bot.arm.driveArm(-gamepad2.left_stick_y);
+        if (useDriveArm) bot.arm.runLiftToPos(gamepad2.b, gamepad2.a, gamepad2.x, gamepad2.y);
+        else bot.arm.driveArm(-gamepad2.left_stick_y);
     }
 
     private Pose2d GetAxisInput(Gamepad gamepad1) {

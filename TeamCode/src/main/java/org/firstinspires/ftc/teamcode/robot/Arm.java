@@ -26,8 +26,8 @@ public class Arm {
 
     private final double AutoArmStopDist = 0.1;
 
-    private double brakePos = 0.25;
-    private double letRunPos = 0.15;
+    private double brakePos = 0.585;
+    private double letRunPos = 0.56;
 
     //TODO these numbers need to be added
     private final int highPole = maxArmHeight - 100;
@@ -94,27 +94,25 @@ public class Arm {
     public void driveArm(double power) {
         double current = liftMotor1.getCurrentPosition();
 
-        if (current >= maxArmHeight - 100)
-            power *= (maxArmHeight - current) / 100;
-        else if ((current >= maxArmHeight && power > 0) || (current <= 0 && power < 0))
-            power = 0.1;
+        if (brakeServo.getPosition() < brakePos - 0.01 ){
+            if (current >= maxArmHeight - 100 && power > 0) {
+                power *= (maxArmHeight - current) / 100;
+                if (power <= 0.05) power = 0.05;
+            }
+            else if ((current >= maxArmHeight && power > 0) || (current <= 0 && power < 0))
+                power = 0.1;
 
-        //FLIPS ARM MOTION AT TOP MAYBE?
-        liftMotor1.setPower(power);
-        liftMotor2.setPower(power);
-        brakeArmAuto();
+            liftMotor1.setPower(power);
+            liftMotor2.setPower(power);
+        }
+
+        if (power == 0) brakeArmManual(true);
+        else brakeArmManual(false);
     }
 
     public void brakeArmAuto(){
-        if (liftMotor1.getPower() == 0 || liftMotor2.getPower() == 0){
-            brakeServo.setPosition(brakePos);
-            telemetry.addData("braking:", true);
-        }
-        else {
-            brakeServo.setPosition(letRunPos);
-            telemetry.addData("braking:", false);
-        }
-        telemetry.update();
+        if (liftMotor1.getPower() == 0 || liftMotor2.getPower() == 0) brakeServo.setPosition(brakePos);
+        else brakeServo.setPosition(letRunPos);
     }
     private void brakeArmManual(boolean brake) {
         if (brake) brakeServo.setPosition(brakePos);
@@ -204,12 +202,14 @@ public class Arm {
         liftMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        //while (Math.abs(brakePos - brakeServo.getPosition()) > 0.01) brakeArmManual(false);
+        while (brakeServo.getPosition() < brakePos - 0.01 ) brakeArmManual(false);
 
         driveArm(1);//does this stay set or need called every frame
 
         while (absDif > AutoArmStopDist) {
             crntPos = liftMotor1.getCurrentPosition();
+
+            driveArm(1);
 
             dif = targetHeight - crntPos;
             absDif = Math.abs( dif );
