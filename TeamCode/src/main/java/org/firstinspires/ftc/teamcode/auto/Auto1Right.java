@@ -12,7 +12,7 @@ import org.openftc.apriltag.AprilTagDetection;
 import java.util.ArrayList;
 
 @Autonomous(name = "Auto1")
-public class Auto1Left extends LinearOpMode {
+public class Auto1Right extends LinearOpMode {
 
     private boolean parked = false;
     private AprilTagDetection tag;
@@ -43,7 +43,7 @@ public class Auto1Left extends LinearOpMode {
 
         while (opModeIsActive()) {
             //SET START POS
-            Vector2D startPos = bot.drive.TileCords( new Vector2D( 0.4, 4.5 ) );
+            Vector2D startPos = bot.drive.TileCords( new Vector2D( 0.4, 1.5 ) );
             bot.smd.setPoseEstimate( new Pose2d( startPos.getX(), startPos.getY(), 0) );
 
             //Vector2D targetPos = new Vector2D(0, 0);
@@ -53,7 +53,7 @@ public class Auto1Left extends LinearOpMode {
                 //PLACE CONE
                 bot.drive.MoveAlongPath(
                         true,
-                        new ArrayList<Double>(List.of(0.1, -0.5)),
+                        new ArrayList<Double>(List.of(0.1, 0.5)),
                         bot.smd,
                         bot.telemetry
                 );
@@ -85,7 +85,7 @@ public class Auto1Left extends LinearOpMode {
                     //GO TO ZONE 1
                     bot.drive.MoveToPos(
                  false,
-                            bot.drive.TileCords(new Vector2D(1.75, 5.6)),
+                            bot.drive.TileCords(new Vector2D(1.75, 2.6)),
                             bot.smd,
                             bot.telemetry
                     );
@@ -93,7 +93,7 @@ public class Auto1Left extends LinearOpMode {
                     //GO TO ZONE 2
                     bot.drive.MoveToPos(
                             false,
-                            bot.drive.TileCords(new Vector2D(1.75, 4.5)),
+                            bot.drive.TileCords(new Vector2D(1.75, 1.5)),
                             bot.smd,
                             bot.telemetry
                     );
@@ -101,7 +101,7 @@ public class Auto1Left extends LinearOpMode {
                     //GO TO ZONE 3
                     bot.drive.MoveToPos(
                             false,
-                            bot.drive.TileCords(new Vector2D(1.75, 3.5)),
+                            bot.drive.TileCords(new Vector2D(1.75, 0.5)),
                             bot.smd,
                             bot.telemetry
                     );

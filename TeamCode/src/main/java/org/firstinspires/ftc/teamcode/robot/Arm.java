@@ -24,7 +24,7 @@ public class Arm {
 
     private final int maxArmHeight = 1100;
 
-    private final double AutoArmStopDist = 0.1;
+    private final double AutoArmStopDist = 5;
 
     private double brakePos = 0.59;
     private double letRunPos = 0.565;
@@ -205,7 +205,7 @@ public class Arm {
 
         while (brakeServo.getPosition() > brakePos - 0.02 ) brakeArmManual(false);
 
-        driveArm(1);//does this stay set or need called every frame
+        driveArm(0.8);
 
         while (absDif > AutoArmStopDist) {
             crntPos = liftMotor1.getCurrentPosition();
