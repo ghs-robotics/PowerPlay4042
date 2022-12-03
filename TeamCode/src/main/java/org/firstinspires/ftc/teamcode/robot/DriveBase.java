@@ -29,9 +29,10 @@ public class DriveBase {
                     TileDimensions.getY() * TileNumber.getY()
             );
 
-    private final double MoveToSpd = 0.5;
-    private final double MoveToSlowDist = 6;
-    private final double MoveToSlowSpd = 0.25;
+    private final double MoveToSpd = 0.45;
+    private final double MoveToSlowDistStart = 0.75;
+    private final double MoveToSlowDistEnd = 6;
+    private final double MoveToSlowSpd = 0.2;
     private final double MoveToStopDist = 0.15;
 
 
@@ -91,15 +92,20 @@ public class DriveBase {
             moveOnXAxis = false;
         }*/
 
+        double dif = moveOnXAxis ? target.getX() - crntPos.getX() : target.getY() - crntPos.getY();
+        double absDif = Math.abs( dif );
+
+        double startDif = absDif;
         while ( axesMovedOn < 2 ) {
             smd.update();
             crntPos = smd.getPoseEstimate();
 
-            double dif = moveOnXAxis ? target.getX() - crntPos.getX() : target.getY() - crntPos.getY();
-            double absDif = Math.abs( dif );
+            dif = moveOnXAxis ? target.getX() - crntPos.getX() : target.getY() - crntPos.getY();
+            absDif = Math.abs( dif );
 
             if ( absDif > MoveToStopDist) {
-                if ( absDif <= MoveToSlowDist ) crntSpd = MoveToSlowSpd;
+                if ( absDif <= MoveToSlowDistEnd || absDif > startDif - MoveToSlowDistStart) crntSpd = MoveToSlowSpd;
+                else crntSpd = MoveToSpd;
 
                 if (moveOnXAxis) smd.setWeightedDrivePower( new Pose2d( Math.signum( dif ) * crntSpd, 0, 0 ) );
                 else smd.setWeightedDrivePower( new Pose2d( 0, -Math.signum( dif ) * crntSpd, 0 ) );
@@ -108,6 +114,11 @@ public class DriveBase {
                 moveOnXAxis = !moveOnXAxis;
                 crntSpd = MoveToSpd;
                 axesMovedOn++;
+
+                dif = moveOnXAxis ? target.getX() - crntPos.getX() : target.getY() - crntPos.getY();
+                absDif = Math.abs( dif );
+
+                startDif = absDif;
             }
         }
 
@@ -129,8 +140,10 @@ public class DriveBase {
             double dif = moveOnXAxis ? targetDist - crntPos.getX() : targetDist - crntPos.getY();
             double absDif = Math.abs( dif );
 
+            double startDif = absDif;
             while (absDif > MoveToStopDist){
-                if ( absDif <= MoveToSlowDist ) crntSpd = MoveToSlowSpd;
+                if ( absDif <= MoveToSlowDistEnd || absDif > startDif - MoveToSlowDistStart) crntSpd = MoveToSlowSpd;
+                else crntSpd = MoveToSpd;
 
                 Pose2d movePose;
                 if (moveOnXAxis) movePose = new Pose2d(Math.signum(dif) * crntSpd, 0, 0);

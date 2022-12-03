@@ -57,10 +57,8 @@ public class Auto1Left extends LinearOpMode {
                         bot.smd,
                         bot.telemetry
                 );
-                telemetry.addLine("Raising arm");
-                telemetry.update();
                 bot.arm.AutoLiftToPos(1);
-                bot.drive.MoveAlongPath(true, new ArrayList<Double>(List.of(0.17)), bot.smd, bot.telemetry);
+                bot.drive.MoveAlongPath(true, new ArrayList<Double>(List.of(0.195)), bot.smd, bot.telemetry);
                 /*//region Gripper
                 telemetry.addLine("Dropping cone");
                 telemetry.update();

@@ -31,10 +31,12 @@ public class InputManager {
         bot.arm.runGripperContinuous(gamepad2.left_bumper, gamepad2.right_bumper);
 
         //ARM MOVEMENT
-        boolean useDriveArm = gamepad2.b || gamepad2.a || gamepad2.x || gamepad2.y;
+        /*boolean useDriveArm = gamepad2.b || gamepad2.a || gamepad2.x || gamepad2.y;
 
         if (useDriveArm) bot.arm.runLiftToPos(gamepad2.b, gamepad2.a, gamepad2.x, gamepad2.y);
-        else bot.arm.driveArm(-gamepad2.left_stick_y);
+        else bot.arm.driveArm(-gamepad2.left_stick_y);*/
+
+        bot.arm.driveArm(-gamepad2.left_stick_y);
     }
 
     private Pose2d GetAxisInput(Gamepad gamepad1) {
