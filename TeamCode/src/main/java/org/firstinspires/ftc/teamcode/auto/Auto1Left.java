@@ -11,7 +11,7 @@ import org.openftc.apriltag.AprilTagDetection;
 
 import java.util.ArrayList;
 
-@Autonomous(name = "Auto1")
+@Autonomous(name = "Auto1Left")
 public class Auto1Left extends LinearOpMode {
 
     private boolean parked = false;
