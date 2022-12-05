@@ -53,12 +53,12 @@ public class Auto1Left extends LinearOpMode {
                 //PLACE CONE
                 bot.drive.MoveAlongPath(
                         true,
-                        new ArrayList<Double>(List.of(0.025, -0.5)),
+                        new ArrayList<Double>(List.of(0.035, -0.5)),
                         bot.smd,
                         bot.telemetry
                 );
                 bot.arm.AutoLiftToPos(1);
-                bot.drive.MoveAlongPath(true, new ArrayList<Double>(List.of(0.05)), bot.smd, bot.telemetry);
+                bot.drive.MoveAlongPath(true, new ArrayList<Double>(List.of(0.1)), bot.smd, bot.telemetry);
                 sleep(500);
                 //region Gripper
                 telemetry.addLine("Dropping cone");
