@@ -29,10 +29,10 @@ public class DriveBase {
                     TileDimensions.getY() * TileNumber.getY()
             );
 
-    private final double MoveToSpd = 0.45;//0.45;
+    private final double MoveToSpd = 0.45;
+    private final double MoveToSlowSpd = 0.25;
     private final double MoveToSlowDistStart = 0.75;
     private final double MoveToSlowDistEnd = 6;
-    private final double MoveToSlowSpd = 0.25;//0.2;
     private final double MoveToStopDist = 0.15;
 
 
@@ -79,7 +79,7 @@ public class DriveBase {
         );
     }
     public void MoveToPos(boolean moveOnXAxis, Vector2D target, SampleMecanumDrive smd, Telemetry telemetry ) {
-        double crntSpd = MoveToSpd;
+        double crntSpd;
 
         smd.update();
         Pose2d crntPos = smd.getPoseEstimate();
@@ -100,6 +100,11 @@ public class DriveBase {
             smd.update();
             crntPos = smd.getPoseEstimate();
 
+            telemetry.addData("xPos: ", crntPos.getX() );
+            telemetry.addData("yPos: ", crntPos.getY() );
+            telemetry.addData("heading: ", crntPos.getHeading() );
+            telemetry.update();
+
             dif = moveOnXAxis ? target.getX() - crntPos.getX() : target.getY() - crntPos.getY();
             absDif = Math.abs( dif );
 
@@ -112,7 +117,6 @@ public class DriveBase {
             }
             else {
                 moveOnXAxis = !moveOnXAxis;
-                crntSpd = MoveToSpd;
                 axesMovedOn++;
 
                 dif = moveOnXAxis ? target.getX() - crntPos.getX() : target.getY() - crntPos.getY();

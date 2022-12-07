@@ -43,6 +43,11 @@ public class Tele1 extends LinearOpMode {
             ////////////////////////////////           Controller 1           ////////////////////////////////
             //////////////////////////////////////////////////////////////////////////////////////////////////
 
+            if (gamepad1.left_bumper) {
+                Vector2D startPos = bot.drive.TileCords( new Vector2D( 0.4, 4.5 ) );
+                bot.smd.setPoseEstimate( new Pose2d( startPos.getX(), startPos.getY(), 0) );
+            }
+
             Pose2d movementVector = bot.inputMan.HandleController1Input(gamepad1);
 
             bot.smd.setWeightedDrivePower(movementVector);
@@ -60,14 +65,11 @@ public class Tele1 extends LinearOpMode {
             bot.smd.update();
             Pose2d estimatedPos = bot.smd.getPoseEstimate();
 
-//            telemetry.addData("PosX: ", estimatedPos.getX());
-//            telemetry.addData("PosY: ", estimatedPos.getY());
-//            telemetry.addData("PosHeading: ", estimatedPos.getHeading());
+            telemetry.addData("PosX: ", estimatedPos.getX());
+            telemetry.addData("PosY: ", estimatedPos.getY());
+            telemetry.addData("PosHeading: ", estimatedPos.getHeading());
 
-            //delete later
-            /*telemetry.addData("Servo Position", bot.arm.brakeServo.getPosition());
-
-            telemetry.update();*/
+            telemetry.update();
         }
     }
 }
