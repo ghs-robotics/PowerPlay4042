@@ -5,6 +5,7 @@ import static android.os.SystemClock.sleep;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -22,7 +23,7 @@ public class Arm {
 
     public Servo brakeServo;
 
-    public LimitSwitch liftlim;
+    public DigitalChannel liftlim;
 
     private final int maxArmHeight = 1100;
 
@@ -40,6 +41,8 @@ public class Arm {
     public Arm(HardwareMap hardwareMap, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
+
+        liftlim = hardwareMap.get(DigitalChannel.class, "liftLim");
 
         //liftMotor1 = hardwareMap.get(DcMotor.class, "LiftMot1");
         liftMotor1 = hardwareMap.get(DcMotorEx.class, "LiftMot1");
@@ -82,7 +85,7 @@ public class Arm {
                 power *= (maxArmHeight - current) / 100;
                 if (power <= 0.05) power = 0.05;
             }
-            else if (liftlim.isPressed() && power < 0)
+            else if (liftlim.getState() && power < 0)
                 power = 0;
             else if (current >= maxArmHeight && power > 0)
                 power = 0.1;
