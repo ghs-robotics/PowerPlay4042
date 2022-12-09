@@ -22,6 +22,8 @@ public class Arm {
 
     public Servo brakeServo;
 
+    public LimitSwitch liftlim;
+
     private final int maxArmHeight = 1100;
 
     private final double AutoArmStopDist = 5;
@@ -71,25 +73,6 @@ public class Arm {
         }
         return 0;
     }
-    public void calibrateLift() {
-        liftMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        liftMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        liftMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        liftMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-
-        telemetry.addData("moton 1 pos: ", liftMotor1.getCurrentPosition());
-        telemetry.addData("moton 2 pos: ", liftMotor2.getCurrentPosition());
-
-        telemetry.update();
-    }
-
-    public void resetLiftPos(boolean reset) {
-        if (reset) {
-            liftMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            liftMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        }
-    }
 
     public void driveArm(double power) {
         double current = liftMotor1.getCurrentPosition();
@@ -99,7 +82,9 @@ public class Arm {
                 power *= (maxArmHeight - current) / 100;
                 if (power <= 0.05) power = 0.05;
             }
-            else if ((current >= maxArmHeight && power > 0) || (current <= 0 && power < 0))
+            else if (liftlim.isPressed() && power < 0)
+                power = 0;
+            else if (current >= maxArmHeight && power > 0)
                 power = 0.1;
 
             liftMotor1.setPower(power);
@@ -143,6 +128,18 @@ public class Arm {
             liftMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
         brakeArmAuto();
+    }
+    public void calibrateLift() {
+        liftMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        liftMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        liftMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+        telemetry.addData("moton 1 pos: ", liftMotor1.getCurrentPosition());
+        telemetry.addData("moton 2 pos: ", liftMotor2.getCurrentPosition());
+
+        telemetry.update();
     }
 //
 //    public void runGripperRestricted(boolean inMax, boolean outMax, boolean inLimited, boolean outLimited) {

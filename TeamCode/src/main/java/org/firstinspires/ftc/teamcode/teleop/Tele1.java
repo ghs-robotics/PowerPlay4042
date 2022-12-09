@@ -33,7 +33,6 @@ public class Tele1 extends LinearOpMode {
 
         waitForStart();
         runtime.reset();
-        bot.arm.resetLiftPos(!opModeIsActive());
         while (opModeIsActive()){
             //reset lift at start
             double sec = runtime.seconds();
