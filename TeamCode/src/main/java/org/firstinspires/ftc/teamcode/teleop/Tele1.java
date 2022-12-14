@@ -6,25 +6,27 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
-import org.firstinspires.ftc.teamcode.odometry.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.robot.Robot;
 
 @TeleOp
+//Want to try using Opmode instead of LinearOp since I heard this is better for TeleOp
 public class Tele1 extends LinearOpMode {
-    //Input Variables
-    private final float dpadInputScaler = 1; // controls the speed of dpad movement as a percentage of the max speed
-    private final float bezierP2Y = 0.1f; // 0.5 = no effect | 0.0 = max effect
+    private final float dpadInputScaler = 0.35f; // controls the speed of dpad movement as a percentage of the max speed
+    private final float bezierP2Y = 0.5f; // 0.5 = no effect | 0.0 = max effect
 
-    private Vector2D targetPos = new Vector2D( 0, 0 );
+    private Pose2d inputScaler = new Pose2d(0.8, 0.8, 0.6);
+    private double YToXMovementRatio = 0.8;
 
-    //Robot robot = new Robot(hardwareMap, telemetry);
+    private Vector2D targetPos = new Vector2D(0, 0);
+
     ElapsedTime runtime = new ElapsedTime();
 
     @Override
     public void runOpMode() throws InterruptedException {
-        //Robot robot = new Robot(hardwareMap, telemetry);
-        SampleMecanumDrive robot = new SampleMecanumDrive( hardwareMap );
+        Robot bot = new Robot(hardwareMap, telemetry);
 
-        boolean switchDrive = true;
+        //false = non-meta drive
+        boolean driveType = false;
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -32,106 +34,41 @@ public class Tele1 extends LinearOpMode {
         waitForStart();
         runtime.reset();
         while (opModeIsActive()){
+            //reset lift at start
+            double sec = runtime.seconds();
+            //boolean release = sec < 3;
 
             //////////////////////////////////////////////////////////////////////////////////////////////////
             ////////////////////////////////           Controller 1           ////////////////////////////////
             //////////////////////////////////////////////////////////////////////////////////////////////////
 
-            //get input
-            Pose2d input = GetInput();
+            if (gamepad1.left_bumper) {
+                Vector2D startPos = bot.drive.TileCords( new Vector2D( 0.4, 4.5 ) );
+                bot.smd.setPoseEstimate( new Pose2d( startPos.getX(), startPos.getY(), 0) );
+            }
 
-            //robot.setWeightedDrivePower(new Pose2d(-input.getX(), input.getY(), input.getHeading()));
+            Pose2d movementVector = bot.inputMan.HandleController1Input(gamepad1);
 
-            robot.calculateMetaDrive(new Pose2d(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x));
-            /*//switch drive
-            if (gamepad1.a)
-                switchDrive = !switchDrive;
-
-            //driving
-            if (switchDrive)
-                robot.metaDrivePower(hInput, vInput, rInput);
-            else
-                robot.setWeightedDrivePower(new Pose2d(-hInput, vInput, rInput));*/
-
+            bot.smd.setWeightedDrivePower(movementVector);
 
             //////////////////////////////////////////////////////////////////////////////////////////////////
             ////////////////////////////////           Controller 2           ////////////////////////////////
             //////////////////////////////////////////////////////////////////////////////////////////////////
 
+            bot.inputMan.HandleController2Input(gamepad2);
+
             /////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////           Telemetry           /////////////////////////////////
             /////////////////////////////////////////////////////////////////////////////////////////////////
 
-            Pose2d estimate = robot.getPoseEstimate();
+            bot.smd.update();
+            Pose2d estimatedPos = bot.smd.getPoseEstimate();
 
-            telemetry.addData("targetPosX:", targetPos.getX() );
-            telemetry.addData("targetPosY:", targetPos.getY() );
+            telemetry.addData("PosX: ", estimatedPos.getX());
+            telemetry.addData("PosY: ", estimatedPos.getY());
+            telemetry.addData("PosHeading: ", estimatedPos.getHeading());
 
-            telemetry.addData("x pos:", estimate.getX());
-            telemetry.addData("y pos:", estimate.getY());
-            telemetry.addData("heading", Math.toDegrees(estimate.getHeading()));
-            telemetry.addData("switch ", switchDrive);
-            telemetry.addLine();
-
-            telemetry.addData("horizontalInput", input.getX());
-            telemetry.addData("verticalInput", input.getY());
-            telemetry.addData("rotationInput", input.getHeading());
-
-            //telemetry.addData("gamepad1.left_stick_x", gamepad1.left_stick_x);
-            //telemetry.addData("gamepad1.left_stick_y", gamepad1.left_stick_y);
-            //telemetry.addData("gamepad1.right_stick_x", gamepad1.right_stick_x);
-
-            robot.update();
             telemetry.update();
         }
-    }
-    private Pose2d GetInput() {
-        double hAxis = 0;
-        double vAxis = 0;
-        double rAxis = 0;
-
-        if ( gamepad1.dpad_right ) hAxis++;
-        if ( gamepad1.dpad_left ) hAxis--;
-
-        if ( gamepad1.dpad_up ) vAxis++;
-        if ( gamepad1.dpad_down ) vAxis--;
-
-        if ( hAxis == 0 && vAxis == 0 ) {
-            hAxis = gamepad1.left_stick_x;
-            vAxis = gamepad1.left_stick_y;
-
-            double mag = Math.hypot( hAxis, vAxis );
-            double curveMag = LinearBezierY( mag );
-
-            hAxis /= mag;
-            vAxis /= mag;
-
-            hAxis *= curveMag;
-            vAxis *= curveMag;
-        }
-        else {
-            hAxis *= dpadInputScaler;
-            vAxis *= dpadInputScaler;
-        }
-
-        rAxis = LinearBezierY( gamepad1.right_stick_x );
-
-        return new Pose2d( hAxis, vAxis, rAxis );
-    }
-    private double LinearBezierY( double t ){
-        //Uses the Y coordinates of 3 points to solve for the Y coordinate along the linear bezier curve at percentage "t"
-        double negativeValue = 1;
-        if ( t < 0 ) {
-            t *= -1;
-            negativeValue = -1;
-        }
-        if ( t > 1) t = 1;
-
-        float y1 = 0;
-        float y2 = bezierP2Y;
-        float y3 = 1;
-
-        double oneMinusT = 1 - t;
-        return negativeValue * ( ( oneMinusT * oneMinusT * y1 ) + ( 2 * oneMinusT * t * y2 ) + ( t * t * y3 ) );
     }
 }
