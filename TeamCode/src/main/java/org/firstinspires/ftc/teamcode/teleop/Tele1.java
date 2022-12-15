@@ -47,15 +47,17 @@ public class Tele1 extends LinearOpMode {
 //                bot.smd.setPoseEstimate( new Pose2d( startPos.getX(), startPos.getY(), 0) );
 //            }
 
-            Pose2d movementVector = bot.inputMan.HandleController1Input(gamepad1);
+            //Pose2d movementVector = bot.inputMan.HandleController1Input(gamepad1);
 
-            bot.smd.setWeightedDrivePower(movementVector);
+            //bot.smd.setWeightedDrivePower(movementVector);
+
+            bot.drive.metaDrivePower(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
 
             //////////////////////////////////////////////////////////////////////////////////////////////////
             ////////////////////////////////           Controller 2           ////////////////////////////////
             //////////////////////////////////////////////////////////////////////////////////////////////////
 
-            bot.inputMan.HandleController2Input(gamepad2);
+            //bot.inputMan.HandleController2Input(gamepad2);
 
             /////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////           Telemetry           /////////////////////////////////

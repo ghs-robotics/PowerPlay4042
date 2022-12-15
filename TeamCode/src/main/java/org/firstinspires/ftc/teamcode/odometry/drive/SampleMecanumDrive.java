@@ -203,6 +203,14 @@ public class SampleMecanumDrive extends MecanumDrive {
         }
     }
 
+    public void metaDrivePower(double x, double y, double r){
+        Pose2d estimate = getPoseEstimate();
+
+        Vector2d input = new Vector2d(x, y).rotated(-estimate.getHeading());
+
+        setWeightedDrivePower(new Pose2d(input.getX(), input.getY(), r));
+    }
+
     public void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior zeroPowerBehavior) {
         for (DcMotorEx motor : motors) {
             motor.setZeroPowerBehavior(zeroPowerBehavior);
