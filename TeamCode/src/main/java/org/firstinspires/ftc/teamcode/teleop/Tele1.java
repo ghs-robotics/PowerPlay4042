@@ -42,10 +42,10 @@ public class Tele1 extends LinearOpMode {
             ////////////////////////////////           Controller 1           ////////////////////////////////
             //////////////////////////////////////////////////////////////////////////////////////////////////
 
-            if (gamepad1.left_bumper) {
+            /*if (gamepad1.left_bumper) {
                 Vector2D startPos = bot.drive.TileCords( new Vector2D( 0.4, 4.5 ) );
                 bot.smd.setPoseEstimate( new Pose2d( startPos.getX(), startPos.getY(), 0) );
-            }
+            }*/
 
             Pose2d movementVector = bot.inputMan.HandleController1Input(gamepad1);
 

@@ -77,10 +77,12 @@ public class Arm {
         return 0;
     }
 
-    public void driveArm(double power) {
+    public void driveArm(double input) {
+        double power = input;
+
         double current = liftMotor1.getCurrentPosition();
 
-        if (brakeServo.getPosition() < brakePos - 0.02 ){
+        if (brakeServo.getPosition() < brakePos - 0.02){
             if (current >= maxArmHeight - 100 && power > 0) {
                 power *= (maxArmHeight - current) / 100;
                 if (power <= 0.05) power = 0.05;
@@ -94,7 +96,7 @@ public class Arm {
             liftMotor2.setPower(power);
         }
 
-        if (power == 0) brakeArmManual(true);
+        if (input == 0) brakeArmManual(true);
         else brakeArmManual(false);
     }
 
