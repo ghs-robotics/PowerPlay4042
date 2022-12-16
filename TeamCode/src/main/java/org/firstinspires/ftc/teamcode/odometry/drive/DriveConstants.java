@@ -48,13 +48,11 @@ public class DriveConstants {
      */
     //TODO tuning these values
     public static double kV = 0.01716;
-//    public static double kV = 1.0 / rpmToVelocity(MAX_RPM);
-    public static double kA = 0.003;
+    //    public static double kV = 1.0 / rpmToVelocity(MAX_RPM);
+    public static double kA = 0.003999999;
 
-    /**
-     * Dramatically affects the speed of feedforward
-     */
-    public static double kStatic = 0.0;
+    /** Dramatically affects the speed of feedforward */
+    public static double kStatic = 0.00625;
 
     /*
      * These values are used to generate the trajectories for you robot. To ensure proper operation,
@@ -63,12 +61,10 @@ public class DriveConstants {
      * small and gradually increase them later after everything is working. All distance units are
      * inches.
      */
-    public static double VEL_LIMIT = 0.8;
-    public static double MAX_VEL = VEL_LIMIT * (MAX_RPM / 60 * GEAR_RATIO * WHEEL_RADIUS * 2 * Math.PI);
-    public static double MAX_ACCEL = 30;
-    public static double MAX_ANG_VEL = Math.toRadians(60);
-    public static double MAX_ANG_ACCEL = Math.toRadians(60);
-
+    public static double MAX_VEL = 35;
+    public static double MAX_ACCEL = 35;
+    public static double MAX_ANG_VEL = MAX_VEL / TRACK_WIDTH; //Math.toRadians(60); is default
+    public static double MAX_ANG_ACCEL = Math.toRadians(180);
 
     public static double encoderTicksToInches(double ticks) {
         return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;
