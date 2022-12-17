@@ -5,7 +5,6 @@ import static android.os.SystemClock.sleep;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -23,9 +22,11 @@ public class Arm {
 
     public Servo brakeServo;
 
-    public DigitalChannel liftlim;
-
     private final int maxArmHeight = 1100;
+
+    private boolean lowerLimitBtnPressedLastFrame = false;
+    private boolean lowerLimitActive = true;
+    private double armPosError = 0;
 
     private final double AutoArmStopDist = 5;
 
@@ -41,8 +42,6 @@ public class Arm {
     public Arm(HardwareMap hardwareMap, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
-
-        liftlim = hardwareMap.get(DigitalChannel.class, "liftLim");
 
         //liftMotor1 = hardwareMap.get(DcMotor.class, "LiftMot1");
         liftMotor1 = hardwareMap.get(DcMotorEx.class, "LiftMot1");
@@ -80,16 +79,17 @@ public class Arm {
     public void driveArm(double input) {
         double power = input;
 
-        double current = liftMotor1.getCurrentPosition();
+        double crntPos = liftMotor1.getCurrentPosition();
 
         if (brakeServo.getPosition() < brakePos - 0.02){
-            if (current >= maxArmHeight - 100 && power > 0) {
-                power *= (maxArmHeight - current) / 100;
+            double maxArmHeightPlusError = maxArmHeight + armPosError;
+            if (crntPos >= maxArmHeightPlusError - 100 && power > 0) {
+                power *= (maxArmHeightPlusError - crntPos) / 100;
                 if (power <= 0.05) power = 0.05;
             }
-            else if (liftlim.getState() && power < 0)
+            else if (lowerLimitActive && crntPos <= armPosError && power < 0)
                 power = 0;
-            else if (current >= maxArmHeight && power > 0)
+            else if (crntPos >= maxArmHeightPlusError && power > 0)
                 power = 0.1;
 
             liftMotor1.setPower(power);
@@ -107,6 +107,14 @@ public class Arm {
     private void brakeArmManual(boolean brake) {
         if (brake) brakeServo.setPosition(brakePos);
         else brakeServo.setPosition(letRunPos);
+    }
+    public void RemoveAndSetLowerLimit(boolean btnPressed) {
+        if (btnPressed) lowerLimitActive = false;
+        else {
+            lowerLimitActive = true;
+            if (lowerLimitBtnPressedLastFrame) armPosError = liftMotor1.getCurrentPosition();
+        }
+        lowerLimitBtnPressedLastFrame = btnPressed;
     }
 
     public void runLiftToPos(boolean reset, boolean low, boolean mid, boolean high) {

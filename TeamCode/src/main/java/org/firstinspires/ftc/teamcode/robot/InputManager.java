@@ -36,6 +36,8 @@ public class InputManager {
         if (useDriveArm) bot.arm.runLiftToPos(gamepad2.b, gamepad2.a, gamepad2.x, gamepad2.y);
         else bot.arm.driveArm(-gamepad2.left_stick_y);*/
 
+        bot.arm.RemoveAndSetLowerLimit(gamepad2.y);
+
         bot.arm.driveArm(-gamepad2.left_stick_y);
     }
 

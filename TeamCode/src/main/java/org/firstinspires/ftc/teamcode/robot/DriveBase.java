@@ -29,8 +29,8 @@ public class DriveBase {
                     TileDimensions.getY() * TileNumber.getY()
             );
 
-    private final double MoveToSpd = 0.45;
-    private final double MoveToSlowSpd = 0.25;
+    private final double MoveToSpd = 0.4;
+    private final double MoveToSlowSpd = 0.2;
     private final double MoveToSlowDistStart = 0.75;
     private final double MoveToSlowDistEnd = 6;
     private final double MoveToStopDist = 0.15;

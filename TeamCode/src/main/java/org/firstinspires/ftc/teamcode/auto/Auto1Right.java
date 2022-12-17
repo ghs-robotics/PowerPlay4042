@@ -85,7 +85,7 @@ public class Auto1Right extends LinearOpMode {
                     //GO TO ZONE 1
                     bot.drive.MoveToPos(
                  false,
-                            bot.drive.TileCords(new Vector2D(1.75, 2.6)),
+                            bot.drive.TileCords(new Vector2D(1.75, 2.5)),
                             bot.smd,
                             bot.telemetry
                     );

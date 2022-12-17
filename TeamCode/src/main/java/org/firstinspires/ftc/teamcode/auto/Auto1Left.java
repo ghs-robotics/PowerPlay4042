@@ -53,7 +53,7 @@ public class Auto1Left extends LinearOpMode {
                 //PLACE CONE
                 bot.drive.MoveAlongPath(
                         true,
-                        new ArrayList<Double>(List.of(0.035, -0.5)),
+                        new ArrayList<Double>(List.of(0.035, -0.45)),
                         bot.smd,
                         bot.telemetry
                 );
@@ -77,7 +77,7 @@ public class Auto1Left extends LinearOpMode {
                 bot.arm.gripServo.setPower(0);
                 //endregion
                 sleep(500);
-                bot.drive.MoveAlongPath(true, new ArrayList<Double>(List.of(-0.12)), bot.smd, bot.telemetry );
+                bot.drive.MoveAlongPath(true, new ArrayList<Double>(List.of(-0.11)), bot.smd, bot.telemetry );
                 bot.arm.AutoLiftToPos(0);
 
                 //MOVE TO ZONE
@@ -85,7 +85,7 @@ public class Auto1Left extends LinearOpMode {
                     //GO TO ZONE 1
                     bot.drive.MoveToPos(
                  false,
-                            bot.drive.TileCords(new Vector2D(1.75, 5.6)),
+                            bot.drive.TileCords(new Vector2D(1.75, 5.5)),
                             bot.smd,
                             bot.telemetry
                     );
