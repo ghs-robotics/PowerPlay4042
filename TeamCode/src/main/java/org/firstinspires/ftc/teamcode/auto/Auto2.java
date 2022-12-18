@@ -68,10 +68,11 @@ public class Auto2 extends LinearOpMode {
                         true,
                         bot.drive.RelativeToGlobalPos( new Vector2D(0.1f, 0), bot.smd),
                         bot.smd,
-                        bot.telemetry
+                        bot.telemetry,
+                        this
                 );
 
-                bot.drive.MoveToPos( false, targetPos, bot.smd, telemetry );
+                bot.drive.MoveToPos( false, targetPos, bot.smd, telemetry,this );
                 parked = true;
             }
 

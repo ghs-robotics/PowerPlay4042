@@ -79,7 +79,7 @@ public class TestTele extends LinearOpMode {
             }
 
             if ( gamepad2.a ) {
-                bot.drive.MoveToPos( false, targetPos, bot.smd, telemetry );
+                bot.drive.MoveToPos( false, targetPos, bot.smd, telemetry, this );
             }
 
             /////////////////////////////////////////////////////////////////////////////////////////////////

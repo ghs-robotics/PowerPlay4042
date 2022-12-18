@@ -53,12 +53,13 @@ public class Auto1Left extends LinearOpMode {
                 //PLACE CONE
                 bot.drive.MoveAlongPath(
                         true,
-                        new ArrayList<Double>(List.of(0.035, -0.45)),
+                        new ArrayList<Double>(List.of(0.035, -0.5)),
                         bot.smd,
-                        bot.telemetry
+                        bot.telemetry,
+                        this
                 );
                 bot.arm.AutoLiftToPos(1);
-                bot.drive.MoveAlongPath(true, new ArrayList<Double>(List.of(0.1)), bot.smd, bot.telemetry);
+                bot.drive.MoveAlongPath(true, new ArrayList<Double>(List.of(0.12)), bot.smd, bot.telemetry, this);
                 sleep(500);
                 //region Gripper
                 telemetry.addLine("Dropping cone");
@@ -77,7 +78,7 @@ public class Auto1Left extends LinearOpMode {
                 bot.arm.gripServo.setPower(0);
                 //endregion
                 sleep(500);
-                bot.drive.MoveAlongPath(true, new ArrayList<Double>(List.of(-0.11)), bot.smd, bot.telemetry );
+                bot.drive.MoveAlongPath(true, new ArrayList<Double>(List.of(-0.13)), bot.smd, bot.telemetry, this );
                 bot.arm.AutoLiftToPos(0);
 
                 //MOVE TO ZONE
@@ -87,7 +88,8 @@ public class Auto1Left extends LinearOpMode {
                  false,
                             bot.drive.TileCords(new Vector2D(1.75, 5.5)),
                             bot.smd,
-                            bot.telemetry
+                            bot.telemetry,
+                            this
                     );
                 } else if (tag.id == MIDDLE) {
                     //GO TO ZONE 2
@@ -95,7 +97,8 @@ public class Auto1Left extends LinearOpMode {
                             false,
                             bot.drive.TileCords(new Vector2D(1.75, 4.5)),
                             bot.smd,
-                            bot.telemetry
+                            bot.telemetry,
+                            this
                     );
                 } else {
                     //GO TO ZONE 3
@@ -103,7 +106,8 @@ public class Auto1Left extends LinearOpMode {
                             false,
                             bot.drive.TileCords(new Vector2D(1.75, 3.5)),
                             bot.smd,
-                            bot.telemetry
+                            bot.telemetry,
+                            this
                     );
                 }
 

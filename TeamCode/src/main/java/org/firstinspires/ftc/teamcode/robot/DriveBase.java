@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -78,7 +79,8 @@ public class DriveBase {
                 crntPos.getY() + tileDist.getY() * TileDimensions.getY()
         );
     }
-    public void MoveToPos(boolean moveOnXAxis, Vector2D target, SampleMecanumDrive smd, Telemetry telemetry ) {
+    public void MoveToPos(boolean moveOnXAxis, Vector2D target, SampleMecanumDrive smd,
+                          Telemetry telemetry, LinearOpMode opMode ) {
         double crntSpd;
 
         smd.update();
@@ -97,6 +99,8 @@ public class DriveBase {
 
         double startDif = absDif;
         while ( axesMovedOn < 2 ) {
+            if (!opMode.opModeIsActive()) break;
+
             smd.update();
             crntPos = smd.getPoseEstimate();
 
@@ -131,8 +135,11 @@ public class DriveBase {
         smd.update();
         telemetry.update();
     }
-    public void MoveAlongPath(boolean moveOnXAxis, ArrayList<Double> distances, SampleMecanumDrive smd, Telemetry telemetry ){
+    public void MoveAlongPath(boolean moveOnXAxis, ArrayList<Double> distances,
+                              SampleMecanumDrive smd, Telemetry telemetry, LinearOpMode opMode){
         for (double distance : distances ) {
+            if (!opMode.opModeIsActive()) break;
+
             double crntSpd = MoveToSpd;
 
             smd.update();
@@ -146,6 +153,8 @@ public class DriveBase {
 
             double startDif = absDif;
             while (absDif > MoveToStopDist){
+                if (!opMode.opModeIsActive()) break;
+
                 if ( absDif <= MoveToSlowDistEnd || absDif > startDif - MoveToSlowDistStart) crntSpd = MoveToSlowSpd;
                 else crntSpd = MoveToSpd;
 
